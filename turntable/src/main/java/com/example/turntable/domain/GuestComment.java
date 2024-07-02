@@ -26,7 +26,7 @@ public class GuestComment {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Member visitorMember;
 
     @Column(nullable = false)
     private String comment;
