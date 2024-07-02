@@ -26,7 +26,7 @@
             <button class="submit-button"><i class="fa-solid fa-plus"></i></button>
         </div>
 
-        </div id="comments-container">
+        <div id="comments-container"></div>
 
         <!-- 모달 창 -->
         <div id="songModal" class="modal">
@@ -60,6 +60,7 @@
           const commentsContainer = document.getElementById('comments-container');
           commentsContainer.innerHTML = '';
           response.content.forEach(comment => {
+            console.log(comment);
             const commentElement = document.createElement('div');
             commentElement.classList.add('comment-info');
             commentElement.innerHTML = `
@@ -67,7 +68,7 @@
                 <i class="fas fa-music music-icon"></i>
                 <div class="comment-song">
                   <div class="comment-message">${'${comment.comment}'}</div>
-                  <div class="comment-song-info">${'${comment.spotifySongId}'}</div>
+                  <div class="comment-song-info">▶${'${comment.title}'}-${'${comment.artist}'}</div>
                 </div>
               </div>
               <div class="comment-footer">
@@ -104,8 +105,8 @@
           }),
           success: function() {
             // 성공 시 페이지 리다이렉트
-              window.location.href = "/commentsPage"; // 댓글 목록 페이지로 리다이렉트
-            },
+            window.location.href = "/comment"; // 댓글 목록 페이지로 리다이렉트
+          },
           error: function(error) {
             console.error('Error saving comment:', error);
           }
@@ -126,7 +127,7 @@
 
     // 모달 창 외부 클릭 시 닫기
     $(window).click(function(event) {
-      if (event.target.id == 'songModal') {
+      if (event.target.id === 'songModal') {
         $('#songModal').css('display', 'none');
       }
     });
@@ -200,7 +201,7 @@
         }
       });
     }
-  });
+  }); // 닫는 중괄호 추가
 </script>
 </body>
 </html>
