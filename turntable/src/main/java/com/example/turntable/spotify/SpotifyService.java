@@ -5,6 +5,7 @@ import com.example.turntable.spotify.dto.GenreResponsDto;
 import com.example.turntable.spotify.dto.RecommendRequestDto;
 import com.example.turntable.spotify.dto.TrackResponseDto;
 import com.wrapper.spotify.SpotifyApi;
+import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.specification.Artist;
 import com.wrapper.spotify.model_objects.specification.Paging;
 import com.wrapper.spotify.model_objects.specification.Recommendations;
@@ -14,6 +15,11 @@ import com.wrapper.spotify.requests.data.browse.GetRecommendationsRequest;
 import com.wrapper.spotify.requests.data.browse.miscellaneous.GetAvailableGenreSeedsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchArtistsRequest;
 import com.wrapper.spotify.requests.data.search.simplified.SearchTracksRequest;
+import com.wrapper.spotify.requests.data.tracks.GetTrackRequest;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -131,5 +137,26 @@ public class SpotifyService {
             }).collect(Collectors.toList()));
             return trackResponseDto;
         }).collect(Collectors.toList());
+    }
+
+    public Map<String, String> getTrackInfo(String trackId) {
+        GetTrackRequest getTrackRequest = spotifyApi.getTrack(trackId).build();
+
+        try {
+            Track track = getTrackRequest.execute();
+
+            String title = track.getName();
+            String artist = String.join(", ", track.getArtists()[0].getName());
+
+            Map<String, String> trackInfo = new HashMap<>();
+            trackInfo.put("title", title);
+            trackInfo.put("artist", artist);
+
+            return trackInfo;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (SpotifyWebApiException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
