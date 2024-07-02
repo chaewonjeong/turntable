@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.example.turntable.dto.CommentResponseDto" %>
 <%
     Long userId = (Long) session.getAttribute("userId");
 %>
@@ -13,12 +15,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Playwrite+IS:wght@100..400&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', (event) => {
-        const userId = "<%= userId %>";
-        console.log("UserId from session: " + userId); // 콘솔에 출력
-      });
-    </script>
 </head>
 <body>
 <jsp:include page="background.jsp" />
@@ -26,23 +22,12 @@
     <div class="main-content">
         <div class="input-section">
             <input type="text" class="input-field" placeholder="오늘의 기분을 입력해주세요">
-            <button class="song-button"><i class="fas fa-music music-icon" ></i></button>
+            <button class="song-button"><i class="fas fa-music music-icon"></i></button>
             <button class="submit-button"><i class="fa-solid fa-plus"></i></button>
         </div>
-        <div class="comment-info">
-            <div class="icon-commentinfo">
-                <i class="fas fa-music music-icon" ></i>
-                <div class="comment-song">
-                    <div class="comment-message">
-                    </div>
-                    <div class="comment-song-info"></div>
-                </div>
-            </div>
-            <div class="comment-footer">
-                <a class="comment-count"></a>
-                <div class="comment-date"></div>
-            </div>
-        </div>
+
+        </div id="comments-container">
+
         <!-- 모달 창 -->
         <div id="songModal" class="modal">
             <div class="modal-content">
@@ -61,6 +46,43 @@
 <script>
   $(document).ready(function() {
     let selectedSpotifySongId = ""; // 선택된 노래의 ID를 저장할 변수
+    let currentPage = 0;
+
+    // 페이지 로드 시 댓글 목록 불러오기
+    loadComments(currentPage);
+
+    function loadComments(page) {
+      $.ajax({
+        type: 'GET',
+        url: '/comments',
+        data: { page: page },
+        success: function(response) {
+          const commentsContainer = document.getElementById('comments-container');
+          commentsContainer.innerHTML = '';
+          response.content.forEach(comment => {
+            const commentElement = document.createElement('div');
+            commentElement.classList.add('comment-info');
+            commentElement.innerHTML = `
+              <div class="icon-commentinfo">
+                <i class="fas fa-music music-icon"></i>
+                <div class="comment-song">
+                  <div class="comment-message">${'${comment.comment}'}</div>
+                  <div class="comment-song-info">${'${comment.spotifySongId}'}</div>
+                </div>
+              </div>
+              <div class="comment-footer">
+                <a class="comment-count">댓글 ${'${comment.commentCount}'}</a>
+                <div class="comment-date">${'${new Date(comment.date).toLocaleString()}'}</div>
+              </div>
+            `;
+            commentsContainer.appendChild(commentElement);
+          });
+        },
+        error: function(error) {
+          console.error('Error loading comments:', error);
+        }
+      });
+    }
 
     // 댓글 작성 버튼 클릭 이벤트 처리
     $('.submit-button').click(function() {
@@ -82,7 +104,7 @@
           }),
           success: function() {
             // 성공 시 페이지 리다이렉트
-              window.location.href = "/comment"; // 댓글 목록 페이지로 리다이렉트
+              window.location.href = "/commentsPage"; // 댓글 목록 페이지로 리다이렉트
             },
           error: function(error) {
             console.error('Error saving comment:', error);
@@ -140,7 +162,7 @@
           success: function(data) {
             data.forEach(item => {
               const artists = item.artists.join(", ");
-              const displayName = item.name+ '-' + artists;
+              const displayName = item.name + '-' + artists;
               const resultItem = document.createElement('div');
               resultItem.textContent = displayName;
               resultItem.classList.add('result-item');
@@ -170,7 +192,7 @@
         });
       }
 
-      // 검색 입력의 Enter 키 이벤트에 대한 디버그 로그 추가
+      // 검색 입력의 Enter 키 이벤트 처리
       searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
           console.log(`Enter key pressed for ${type} search`);
