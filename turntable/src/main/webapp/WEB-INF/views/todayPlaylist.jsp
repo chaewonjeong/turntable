@@ -287,8 +287,6 @@
           };
       });
 
-
-
       const playlistData = {
           name: "Today's Playlist", // 예시로 이름 지정, 필요시 동적으로 설정
           tracks: recommendedTracks

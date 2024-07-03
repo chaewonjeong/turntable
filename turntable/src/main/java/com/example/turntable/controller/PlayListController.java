@@ -30,7 +30,7 @@ public class PlayListController {
     @PostMapping("/{status}")
     public ResponseEntity<Void> savePlayList(@SessionAttribute(name="userId", required = false) Long userId,
                                              @RequestBody PlayListDto playListDto,
-                                             @PathVariable String status) {
+                                             @PathVariable String status ) {
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
