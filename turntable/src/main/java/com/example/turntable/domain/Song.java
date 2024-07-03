@@ -23,6 +23,6 @@ public class Song {
     private String albumName;
     private String albumImgUrl;
 
-    private String youtubeId;
+    private String youtubeUrl;
 
 }

@@ -15,7 +15,4 @@ public class Artist {
 
     private String name;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "song_id")
-    private Song song;
 }
