@@ -2,6 +2,7 @@ package com.example.turntable.service;
 
 import com.example.turntable.domain.*;
 import com.example.turntable.dto.PlayListDto;
+import com.example.turntable.dto.SongDto;
 import com.example.turntable.repository.PlayListRepository;
 import com.example.turntable.repository.MemberRepository;
 import com.example.turntable.repository.PlayListSongRepository;
@@ -40,7 +41,7 @@ public class PlayListService {
     private List<PlayListSong> createSongs(PlayList playList, PlayListDto playListDto) {
         return playListDto.getTracks().stream()
                 .map(trackDto -> {
-                    Song song = Song.fromDto(trackDto);
+                    Song song = SongDto.toSong(trackDto);
                 return PlayListSong.of(playList, song);
                 })
                 .collect(Collectors.toList());

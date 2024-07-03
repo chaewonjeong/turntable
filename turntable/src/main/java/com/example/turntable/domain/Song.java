@@ -26,14 +26,4 @@ public class Song {
 
     private String youtubeUrl;
 
-
-    //== 생성 메서드 ==//
-    public static Song fromDto(SongDto songDto) {
-        return Song.builder()
-                .name(songDto.getName())
-                .albumName(songDto.getAlbumName())
-                .albumImgUrl(songDto.getAlbumImgUrl())
-                .build();
-    }
-
 }
