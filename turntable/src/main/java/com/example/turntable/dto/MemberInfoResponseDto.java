@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class MemberInfoResponseDto {
-    private Long memberId;
-    private String memberName;
-    private String bgImgUrl;
+    private final Long memberId;
+    private final String memberName;
+    private final String bgImgUrl;
 }
