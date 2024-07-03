@@ -28,6 +28,12 @@
 
         <div id="comments-container"></div>
 
+        <!-- 페이지네이션 버튼 -->
+        <div class="pagination-buttons">
+            <button id="prev-page" disabled>이전 페이지</button>
+            <button id="next-page">다음 페이지</button>
+        </div>
+
         <!-- 모달 창 -->
         <div id="songModal" class="modal">
             <div class="modal-content">
@@ -78,12 +84,29 @@
             `;
             commentsContainer.appendChild(commentElement);
           });
+          document.getElementById('prev-page').disabled = page <= 0;
+          document.getElementById('next-page').disabled = response.last;
         },
         error: function(error) {
           console.error('Error loading comments:', error);
         }
       });
     }
+
+    // 이전 페이지 버튼 클릭 이벤트 처리
+    $('#prev-page').click(function() {
+      if (currentPage > 0) {
+        currentPage--;
+        loadComments(currentPage);
+      }
+    });
+
+    // 다음 페이지 버튼 클릭 이벤트 처리
+    $('#next-page').click(function() {
+      currentPage++;
+      loadComments(currentPage);
+    });
+
 
     // 댓글 작성 버튼 클릭 이벤트 처리
     $('.submit-button').click(function() {

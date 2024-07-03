@@ -38,7 +38,7 @@ public class ncpController {
     }
 
     @GetMapping("/imgurl")
-    public ResponseEntity<String> getUserImageUrl(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader, HttpSession session) {
+    public ResponseEntity<String> getUserImageUrl(HttpSession session) {
         String username = (String) session.getAttribute("username");
         String userBgimg = memberService.getUserBgImg(username);
         return ResponseEntity.ok(userBgimg);
