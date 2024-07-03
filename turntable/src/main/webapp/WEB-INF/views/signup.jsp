@@ -35,6 +35,7 @@
             <div class="form-group">
                 <label for="bgImg">배경화면 업로드:</label>
                 <input type="file" id="bgImg" name="bgImg" accept="image/*">
+                <span id="file-message"></span>
             </div>
             <button type="submit">회원가입</button>
         </form>
@@ -43,6 +44,8 @@
 
 <script>
   $(document).ready(function() {
+    const MAX_FILE_SIZE = 10*1024*1024;
+
     $('#username').on('input', function() {
       $('#username-message').text('');
     });
@@ -72,6 +75,16 @@
       if (password !== confirmPassword) {
         $('#password-message').text('비밀번호가 일치하지 않습니다.').css('color', 'red');
         event.preventDefault();
+      }
+
+      const fileInput = $('#bgImg')[0];
+      if(fileInput.files.length>0){
+        const file = fileInput.files[0];
+        if(file.size>MAX_FILE_SIZE){
+          $('#file-message').text("파일 크기가 너무 큽니다. 10MB 이하로 줄여주세요.")
+          event.preventDefault();
+          return;
+        }
       }
     });
   });
