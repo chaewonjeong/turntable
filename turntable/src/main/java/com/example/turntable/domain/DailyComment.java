@@ -31,7 +31,7 @@ public class DailyComment {
     @Column(name = "comment", nullable = false)
     private String comment;
 
-    @OneToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "song_id")
     @Column(name = "song_id")
     private Song song;
