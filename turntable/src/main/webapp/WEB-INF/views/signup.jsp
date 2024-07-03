@@ -77,11 +77,11 @@
         event.preventDefault();
       }
 
-      const fileInput = $($('#bgImg')[0]);
+      const fileInput = $('#bgImg')[0];
       if(fileInput.files.length>0){
         const file = fileInput.files[0];
         if(file.size>MAX_FILE_SIZE){
-          $($('#file-message')).text("파일 크기가 너무 큽니다. 10MB 이하로 줄여주세요.")
+          $('#file-message').text("파일 크기가 너무 큽니다. 10MB 이하로 줄여주세요.")
           event.preventDefault();
           return;
         }
