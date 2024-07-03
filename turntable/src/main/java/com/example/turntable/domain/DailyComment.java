@@ -33,7 +33,6 @@ public class DailyComment {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "song_id")
-    @Column(name = "song_id")
     private Song song;
 
     @CreationTimestamp
