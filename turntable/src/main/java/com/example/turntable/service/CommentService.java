@@ -63,8 +63,15 @@ public class CommentService {
         });
     }
 
-
-
-
-
+    public CommentResponseDto getLatestComment(Long memberId){
+        Optional<DailyComment> comment = dailycommentRepository.findFirstByMember_IdOrderByCreatedAtDesc(memberId);
+        Map<String,String> trackInfo = spotifyService.getTrackInfo(comment.get().getSpotifySongId());
+        return new CommentResponseDto(
+            comment.get().getComment(),
+            comment.get().getCreatedAt(),
+            trackInfo.get("title"),
+            trackInfo.get("artiest"),
+            guestCommentRepository.findByDailyCommentId(comment.get().getId()).size()
+        );
+    }
 }
