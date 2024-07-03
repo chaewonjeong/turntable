@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class CommentResponseDto {
+    private final Long id;
     private final String comment;
     private final LocalDateTime date;
     private final String title;

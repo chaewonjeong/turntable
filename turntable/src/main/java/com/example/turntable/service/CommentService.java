@@ -54,6 +54,7 @@ public class CommentService {
             int count = guestCommentRepository.findByDailyCommentId(comment.getId()).size();
             Map<String,String> trackInfo = spotifyService.getTrackInfo(comment.getSpotifySongId());
             return new CommentResponseDto(
+                comment.getId(),
                 comment.getComment(),
                 comment.getCreatedAt(),
                 trackInfo.get("title"),
@@ -67,10 +68,11 @@ public class CommentService {
         Optional<DailyComment> comment = dailycommentRepository.findFirstByMember_IdOrderByCreatedAtDesc(memberId);
         Map<String,String> trackInfo = spotifyService.getTrackInfo(comment.get().getSpotifySongId());
         return new CommentResponseDto(
+            comment.get().getId(),
             comment.get().getComment(),
             comment.get().getCreatedAt(),
             trackInfo.get("title"),
-            trackInfo.get("artiest"),
+            trackInfo.get("artist"),
             guestCommentRepository.findByDailyCommentId(comment.get().getId()).size()
         );
     }

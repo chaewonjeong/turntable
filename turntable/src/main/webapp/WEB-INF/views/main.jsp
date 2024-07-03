@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String username = (String) session.getAttribute("username");
+    Long userId = (Long) session.getAttribute("userId");
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -18,64 +20,79 @@
     <script>
       document.addEventListener('DOMContentLoaded', (event) => {
         const username = "<%= username %>";
+        const userId = "<%= userId %>";
         console.log("Username from session: " + username); // 콘솔에 출력
         document.querySelector('.username-container').textContent = "@" + username;
+
+        // 최신 댓글 데이터를 가져와서 HTML에 추가
+        fetchLatestComment(userId);
       });
-    </script>
-</head>
-<body>
-<jsp:include page="background.jsp" />
-<div class="container">
-    <div id="main-content">
-        <div class="playlist-info" id="loadNextScreen">
-            <div class="icon-commentinfo">
+
+      function fetchLatestComment(userId) {
+        $.ajax({
+          url: '/comment/latest',
+          method: 'GET',
+          data: { userId: userId },
+          success: function(response) {
+            if (response) {
+              const commentInfo = document.querySelector('.icon-commentinfo');
+              commentInfo.innerHTML = `
                 <div class="icon"><i class="fas fa-music music-icon"></i></div>
                 <div class="comment-song">
-                    <div class="message">
-                        오늘 날씨가 너무 좋아요! 매콤한 떡볶이가 땡기네요 하핫 오늘은 기왕이면 소주도 탕탕후루루루루루 후루루루루
-                    </div>
-                    <div class="song-info">▶ 에스파 - supernova</div>
+                  <div class="message">
+                    ${'${response.comment}'}
+                  </div>
+                  <div class="song-info">▶ ${'${response.title}'} - ${'${response.artist}'}</div>
+                </div>
+              `;
+            }
+          },
+          error: function(error) {
+            console.error('Error fetching latest comment:', error);
+          }
+        });
+      }
+    </script>
+</head>
+    <body>
+    <jsp:include page="background.jsp" />
+    <div class="container">
+        <div id="main-content">
+            <div class="playlist-info" id="loadNextScreen">
+                <div class="icon-commentinfo">
+                    <!-- 최신 댓글이 여기 동적으로 로드됩니다 -->
                 </div>
             </div>
-        </div>
-        <div class="username-container" ></div>
-        <button class="playlist-button" id="todayPlaylistBtn"><i class="fa-solid fa-compact-disc" id="settings-icon"></i>Today Playlist</button>
+            <div class="username-container"></div>
+            <button class="playlist-button" id="todayPlaylistBtn"><i class="fa-solid fa-compact-disc" id="settings-icon"></i>Today Playlist</button>
 
-        <div class="input-section-container">
-            <div class="input-section">
-                <input type="text" class="input-field" placeholder="댓글을 입력하세요">
-                <button class="submit-button">등록</button>
+            <div class="input-section-container">
+                <div class="input-section">
+                    <input type="text" class="input-field" placeholder="댓글을 입력하세요">
+                    <button class="submit-button">등록</button>
+                </div>
+            </div>
+
+            <div class="comments">
+                <!-- 댓글들이 여기에 동적으로 로드됩니다 -->
             </div>
         </div>
+        <iframe id="comment-frame" style="width:100%; height:100%; border:none; display:none;"></iframe>
+    </div>
 
-        <div class="comments">
-            <div class="comment">
-                <div class="comment-left">
-                    <div class="comment-icon"><i class="fa-solid fa-circle"></i></div>
-                    <div class="comment-right">
-                        <div class="comment-username">@onegqueen</div>
-                        <div class="comment-content">잘듣고가요! 채원님 행복하세요 ^^~</div>
-                    </div>
-                </div>
+    <div id="settings-drawer" class="settings-drawer">
+        <div class="drawer-content">
+            <ul>
+                <li id="daily-turntable">dailyturntable</li>
+                <li id="my-turntable">myturntable</li>
+            </ul>
+            <div id="playlist-container">
+                <!-- 플레이리스트 아이템들이 여기에 동적으로 로드됩니다 -->
             </div>
         </div>
     </div>
-    <iframe id="comment-frame" style="width:100%; height:100%; border:none; display:none;"></iframe>
-</div>
 
-<div id="settings-drawer" class="settings-drawer">
-    <div class="drawer-content">
-        <ul>
-            <li id="daily-turntable">dailyturntable</li>
-            <li id="my-turntable">myturntable</li>
-        </ul>
-        <div id="playlist-container">
-            <!-- 플레이리스트 아이템들이 여기에 동적으로 로드됩니다 -->
-        </div>
-    </div>
-</div>
-
-<script>
+    <script>
       document.addEventListener("DOMContentLoaded", function(){
         document.getElementById("loadNextScreen").addEventListener("click", function() {
           window.location.href = "/comment";
@@ -131,17 +148,17 @@
           playlistItem.classList.add("playlist-item");
           playlistItem.setAttribute("data-playlist-id", item.id);
           playlistItem.innerHTML = `
-                    <div class="item-header">
-                        <div class="item-left">
-                            <i class="fas fa-heart"></i>
-                            <div class="item-text">
-                                <div class="playlist-name">${item.date}</div>
-                                <div class="madeby">${item.madeBy}</div>
+                        <div class="item-header">
+                            <div class="item-left">
+                                <i class="fas fa-heart"></i>
+                                <div class="item-text">
+                                    <div class="playlist-name">${'${item.date}'}</div>
+                                    <div class="madeby">${'${item.madeBy}'}</div>
+                                </div>
                             </div>
+                            <i class="fas fa-chevron-right"></i>
                         </div>
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                `;
+                    `;
           playlistContainer.appendChild(playlistItem);
         });
       }
@@ -158,14 +175,14 @@
         var details = document.createElement("div");
         details.classList.add("playlist-details");
         details.innerHTML = `
-                <div class="song-item"><i class="fas fa-music"></i> Song 1</div>
-                <div class="song-item"><i class="fas fa-music"></i> Song 2</div>
-                <div class="song-item"><i class="fas fa-music"></i> Song 3</div>
-            `;
+                    <div class="song-item"><i class="fas fa-music"></i> Song 1</div>
+                    <div class="song-item"><i class="fas fa-music"></i> Song 2</div>
+                    <div class="song-item"><i class="fas fa-music"></i> Song 3</div>
+                `;
 
         // 상세 목록을 클릭된 항목 아래에 추가
         item.insertAdjacentElement("afterend", details);
       }
     </script>
-</body>
-</html>
+    </body>
+    </html>
