@@ -10,6 +10,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @Builder
@@ -21,7 +23,7 @@ public class PlayList {
     @Column(name = "playlist_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -34,8 +36,14 @@ public class PlayList {
     @Enumerated(EnumType.STRING)
     private PlayListStatus state;
 
-    @OneToMany(mappedBy = "playlist")
-    private List<PlayListSong> PlayListSongs = new ArrayList<>();
-
+    // == 생성 메서드 == //
+    public static PlayList of(Member member, String name, PlayListStatus state) {
+        return PlayList.builder()
+                .member(member)
+                .name(name)
+                .date(LocalDate.now())
+                .state(state)
+                .build();
+    }
 
 }
