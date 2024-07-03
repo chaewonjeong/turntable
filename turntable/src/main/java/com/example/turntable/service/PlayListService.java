@@ -1,9 +1,6 @@
 package com.example.turntable.service;
 
-import com.example.turntable.domain.PlayList;
-import com.example.turntable.domain.PlayListSong;
-import com.example.turntable.domain.Member;
-import com.example.turntable.domain.PlayListStatus;
+import com.example.turntable.domain.*;
 import com.example.turntable.dto.PlayListDto;
 import com.example.turntable.repository.PlayListRepository;
 import com.example.turntable.repository.MemberRepository;
@@ -26,8 +23,8 @@ public class PlayListService {
     @Transactional
     public PlayList savePlayList(Long userId, PlayListDto playListDto, PlayListStatus playListStatus) {
         Member member = getMemberById(userId);
-        PlayList playList = createPlayList(member, playListDto.getName(), playListStatus);
-        List<PlayListSong> playListSongs = createPlayListSongs(playList, playListDto);
+        PlayList playList = PlayList.of(member, playListDto.getName(), playListStatus);
+        List<PlayListSong> playListSongs = createSongs(playList, playListDto);
 
         savePlayListAndSongs(playList, playListSongs);
 
@@ -39,21 +36,13 @@ public class PlayListService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
     }
 
-    private PlayList createPlayList(Member member, String name, PlayListStatus playListStatus) {
-        return PlayList.builder()
-                .member(member)
-                .name(name)
-                .date(LocalDate.now())
-                .state(playListStatus)
-                .build();
-    }
 
-    private List<PlayListSong> createPlayListSongs(PlayList playList, PlayListDto playListDto) {
+    private List<PlayListSong> createSongs(PlayList playList, PlayListDto playListDto) {
         return playListDto.getTracks().stream()
-                .map(trackDto -> PlayListSong.builder()
-                        .playlist(playList)
-                        .spotifySongId(trackDto.getSpotifySongId())
-                        .build())
+                .map(trackDto -> {
+                    Song song = Song.fromDto(trackDto);
+                return PlayListSong.of(playList, song);
+                })
                 .collect(Collectors.toList());
     }
 

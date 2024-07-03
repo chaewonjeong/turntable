@@ -23,5 +23,13 @@ public class PlayListSong {
     @JoinColumn(name = "song_id")
     private Song song;
 
+    //== 생성 메서드 ==//
+    public static PlayListSong of(PlayList playList, Song song) {
+        return PlayListSong.builder()
+                .playList(playList)
+                .song(song)
+                .build();
+    }
+
 
 }

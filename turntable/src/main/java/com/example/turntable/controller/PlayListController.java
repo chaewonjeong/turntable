@@ -27,7 +27,7 @@ public class PlayListController {
 
     }
 
-    @PostMapping("/{status}")
+    @PostMapping("create/{status}")
     public ResponseEntity<Void> savePlayList(@SessionAttribute(name="userId", required = false) Long userId,
                                              @RequestBody PlayListDto playListDto,
                                              @PathVariable String status) {

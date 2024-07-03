@@ -36,4 +36,14 @@ public class PlayList {
     @Enumerated(EnumType.STRING)
     private PlayListStatus state;
 
+    // == 생성 메서드 == //
+    public static PlayList of(Member member, String name, PlayListStatus state) {
+        return PlayList.builder()
+                .member(member)
+                .name(name)
+                .date(LocalDate.now())
+                .state(state)
+                .build();
+    }
+
 }

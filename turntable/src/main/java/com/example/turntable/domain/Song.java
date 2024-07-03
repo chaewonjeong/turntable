@@ -1,5 +1,6 @@
 package com.example.turntable.domain;
 
+import com.example.turntable.dto.SongDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,5 +25,15 @@ public class Song {
     private String albumImgUrl;
 
     private String youtubeUrl;
+
+
+    //== 생성 메서드 ==//
+    public static Song fromDto(SongDto songDto) {
+        return Song.builder()
+                .name(songDto.getName())
+                .albumName(songDto.getAlbumName())
+                .albumImgUrl(songDto.getAlbumImgUrl())
+                .build();
+    }
 
 }
