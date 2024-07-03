@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public class MemberInfoResponse {
+public class MemberInfoResponseDto {
     private Long memberId;
     private String memberName;
     private String bgImgUrl;
