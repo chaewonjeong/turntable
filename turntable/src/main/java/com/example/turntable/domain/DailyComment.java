@@ -31,8 +31,10 @@ public class DailyComment {
     @Column(name = "comment", nullable = false)
     private String comment;
 
-    @Column(name = "spotify_song_id")
-    private String spotifySongId;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "song_id")
+    @Column(name = "song_id")
+    private Song song;
 
     @CreationTimestamp
     @Column(updatable = false)
