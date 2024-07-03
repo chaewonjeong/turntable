@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ncpController {
 
     @Autowired
-    private NcpService ncpService;
+    private final NcpService ncpService;
     @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
 
     @GetMapping("image/{imageName}")
@@ -38,9 +38,9 @@ public class ncpController {
     }
 
     @GetMapping("/imgurl")
-    public ResponseEntity<String> getUserImageUrl(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader, HttpSession session) {
-        String userBgimg = memberService.getUserBgImg(authorizationHeader.replace("Bearer ", ""));
-        System.out.println("Logged in user: " + authorizationHeader.replace("Bearer ", ""));
+    public ResponseEntity<String> getUserImageUrl(HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        String userBgimg = memberService.getUserBgImg(username);
         return ResponseEntity.ok(userBgimg);
     }
 }

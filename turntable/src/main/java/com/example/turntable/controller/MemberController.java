@@ -24,7 +24,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public String signup(@ModelAttribute SignupRequestDto signupRequestDto, RedirectAttributes redirectAttributes) throws IOException {
-        if (memberService.create(signupRequestDto)){
+        if(memberService.create(signupRequestDto)){
             return "redirect:/login";
         }
         else{
@@ -43,7 +43,6 @@ public class MemberController {
 
     @GetMapping("/login-success")
     public String loginSuccess(HttpSession session) {
-        // 로그인 성공 시 세션에 사용자 이름 저장
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Long userId = memberService.getUserIdByName(username);
         session.setAttribute("username", username);
