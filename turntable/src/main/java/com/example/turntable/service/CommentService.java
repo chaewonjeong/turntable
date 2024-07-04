@@ -30,21 +30,22 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final SpotifyService spotifyService;
 
-    @Transactional
+    /*@Transactional
     public void create(WriteDailyCommentDto writeDailyCommentDto, Long memberId) {
         Optional<Member> memberOptional = memberRepository.findById(memberId);
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        LocalDateTime date = LocalDateTime.parse(writeDailyCommentDto.getDate(), formatter);
 
         final DailyComment dailyComment = DailyComment.builder()
             .comment(writeDailyCommentDto.getComment())
-            .createdAt(LocalDateTime.parse(writeDailyCommentDto.getDate(),formatter))
+            .createdAt(date)
             .spotifySongId(writeDailyCommentDto.getSpotifySongId())
             .member(memberOptional.get())
             .build();
         dailycommentRepository.save(dailyComment);
-    }
-
+    }*/
+/*
     public Page<CommentResponseDto> getCommentsByPage(int page,Long memberId){
         int pageSize = 5;
         PageRequest pageRequest = PageRequest.of(page,pageSize);
@@ -75,5 +76,5 @@ public class CommentService {
             trackInfo.get("artist"),
             guestCommentRepository.findByDailyCommentId(comment.get().getId()).size()
         );
-    }
+    }*/
 }

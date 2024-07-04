@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping("/comment")
+    /*@PostMapping("/comment")
     @ResponseBody
     public String writeComment(@RequestBody WriteDailyCommentDto writeDailyCommentDto, HttpSession session) {
         Long memberId = (Long) session.getAttribute("userId");
@@ -40,6 +40,6 @@ public class CommentController {
     public CommentResponseDto getLatestComment(HttpSession session){
         Long memberId = (Long) session.getAttribute("userId");
         return commentService.getLatestComment(memberId);
-    }
+    }*/
 
 }
