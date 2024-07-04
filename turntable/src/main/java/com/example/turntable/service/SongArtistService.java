@@ -21,15 +21,31 @@ public class SongArtistService {
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
 
-    @Transactional
-    public boolean saveSongs(List<TrackResponseDto> tracks){
-        List<Song> songs = new ArrayList<>();
+    public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
+        List<Song> trackSongs = new ArrayList<>();
+        List<Artist> trackArtists = new ArrayList<>();
+        List<SongArtist> trackSongArtists = new ArrayList<>();
+
         tracks.forEach(track -> {
-            if (!isSongExist(track.getName(), track.getArtists())) {
-                songs.add(track.toEntity());
+            if (!isSongExist(track.getName(),track.getArtists())) {
+                Song song = track.toEntity();
+                List<Artist> artists = artistsNeedToSave(track.getArtists());
+                List<SongArtist> songArtists = songArtistsNeedToSave(song,artists);
+
+                trackSongs.add(song);
+                trackSongArtists.addAll(songArtists);
+                trackArtists.addAll(artists);
             }
         });
+
+       return saveAllTracksNeedToSave(trackSongs,trackArtists,trackSongArtists);
+    }
+
+    @Transactional
+    public boolean saveAllTracksNeedToSave(List<Song> songs, List<Artist> artists,List<SongArtist> songArtists) {
         songRepository.saveAll(songs);
+        artistRepository.saveAll(artists);
+        songArtistRepository.saveAll(songArtists);
         return true;
     }
 
@@ -41,16 +57,34 @@ public class SongArtistService {
         return false;
     }
 
-    @Transactional
-    public boolean saveArtistsInTrack(List<String> trackArtists){
+    public List<Artist> artistsNeedToSave(List<String> trackArtists){
         List<Artist> artists = new ArrayList<>();
         trackArtists.forEach(trackartist -> {
             if(!isArtistExist(trackartist)){
                 artists.add(Artist.builder().name(trackartist).build());
             }
         });
-        artistRepository.saveAll(artists);
-        return true;
+
+        return artists;
+    }
+
+    public boolean isArtistExist(String artist) {
+        Optional<Artist> existingArtist = artistRepository.findByName(artist);
+        if(existingArtist.isPresent()){
+            return true;
+        }
+        return false;
+    }
+
+    public List<SongArtist> songArtistsNeedToSave(Song song, List<Artist> artists){
+        List<SongArtist> songArtists = new ArrayList<>();
+        artists.forEach(artist -> {
+            SongArtist songArtist = SongArtist.builder()
+                .song(song)
+                .artist(artist)
+                .build();
+        });
+        return songArtists;
     }
 
 }

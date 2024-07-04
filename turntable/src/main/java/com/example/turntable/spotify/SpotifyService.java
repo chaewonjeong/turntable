@@ -1,6 +1,6 @@
 package com.example.turntable.spotify;
 
-import com.example.turntable.service.SongService;
+import com.example.turntable.service.SongArtistService;
 import com.example.turntable.spotify.dto.ArtistResponseDto;
 import com.example.turntable.spotify.dto.GenreResponsDto;
 import com.example.turntable.spotify.dto.RecommendRequestDto;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class SpotifyService {
 
     private final SpotifyApi spotifyApi;
-    private final SongService songService;
+    private final SongArtistService songArtistService;
 
     public List<TrackResponseDto> searchTracks(String keyword){
         SearchTracksRequest searchTracksRequest = spotifyApi.searchTracks(keyword).build();
@@ -54,8 +54,6 @@ public class SpotifyService {
                 String trackAlbumImgUrl = track.getAlbum().getImages()[0].getUrl();
 
                 TrackResponseDto trackResponseDto = TrackResponseDto.of(trackId, trackName, trackArtists, trackAlbumName, trackAlbumImgUrl);
-
-                songService.saveSong(trackResponseDto);
                 return trackResponseDto;
             }).collect(Collectors.toList());
         } catch (Exception e) {
@@ -128,16 +126,26 @@ public class SpotifyService {
 
     }
 
-    public List<TrackResponseDto> getTrackList(TrackSimplified[] tracks){
-        return Arrays.stream(tracks).map(track -> {
-            TrackResponseDto trackResponseDto = new TrackResponseDto();
-            trackResponseDto.setId(track.getId());
-            trackResponseDto.setName(track.getName());
+    public List<TrackResponseDto> getTrackList(TrackSimplified[] trackSimplifieds){
+        return List.of(trackSimplifieds).stream().map(trackSimplified -> {
+            try {
+                GetTrackRequest getTrackRequest = spotifyApi.getTrack(trackSimplified.getId()).build();
+                Track track = getTrackRequest.execute();
 
-            trackResponseDto.setArtists(Arrays.stream(track.getArtists()).map(artist -> {
-                return artist.getName();
-            }).collect(Collectors.toList()));
-            return trackResponseDto;
+                String trackId = track.getId();
+                String trackName = track.getName();
+                List<String> trackArtists = Arrays.stream(track.getArtists()).map(artist->{
+                    return artist.getName();
+                }).collect(Collectors.toList());
+                String trackAlbumName = track.getAlbum().getName();
+                String trackAlbumImgUrl = track.getAlbum().getImages()[0].getUrl();
+
+                TrackResponseDto trackResponseDto = TrackResponseDto.of(trackId, trackName, trackArtists, trackAlbumName, trackAlbumImgUrl);
+                return trackResponseDto;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }).collect(Collectors.toList());
     }
 

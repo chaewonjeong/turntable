@@ -7,7 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 public class ArtistResponseDto {
     private String id;
     private String name;
