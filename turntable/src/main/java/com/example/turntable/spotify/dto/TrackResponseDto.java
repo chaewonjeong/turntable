@@ -1,5 +1,6 @@
 package com.example.turntable.spotify.dto;
 
+import com.example.turntable.domain.Song;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +21,14 @@ public class TrackResponseDto {
             .id(id)
             .name(name)
             .artists(artists)
+            .albumName(albumName)
+            .albumImgUrl(albumImgUrl)
+            .build();
+    }
+
+    public Song toEntity(){
+        return Song.builder()
+            .name(name)
             .albumName(albumName)
             .albumImgUrl(albumImgUrl)
             .build();

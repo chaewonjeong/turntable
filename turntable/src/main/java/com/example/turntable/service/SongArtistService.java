@@ -3,7 +3,9 @@ package com.example.turntable.service;
 import com.example.turntable.domain.Song;
 import com.example.turntable.domain.SongArtist;
 import com.example.turntable.repository.SongArtistRepository;
+import com.example.turntable.repository.SongRepository;
 import com.example.turntable.spotify.dto.TrackResponseDto;
+import com.wrapper.spotify.model_objects.specification.Artist;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,19 +15,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class SongService {
+public class SongArtistService {
     private final SongArtistRepository songArtistRepository;
+    private final SongRepository songRepository;
 
     @Transactional
     public boolean saveSongs(List<TrackResponseDto> tracks){
         List<Song> songs = new ArrayList<>();
         tracks.forEach(track -> {
             if (!isSongExist(track.getName(), track.getArtists())) {
-                Song song = song.of()
-
-
+                songs.add(track.toEntity());
             }
         });
+        songRepository.saveAll(songs);
+        return true;
     }
 
     public boolean isSongExist(String title, List<String> artists) {
@@ -35,5 +38,6 @@ public class SongService {
         }
         return false;
     }
+
 
 }
