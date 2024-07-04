@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SpotifyController {
 
     private final SpotifyService spotifyService;
-    private final SongArtistService songArtistService
+    private final SongArtistService songArtistService;
 
 
     @GetMapping("/search/track")

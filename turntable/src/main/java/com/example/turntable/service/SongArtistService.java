@@ -38,14 +38,15 @@ public class SongArtistService {
             }
         });
 
-       return saveAllTracksNeedToSave(trackSongs,trackArtists,trackSongArtists);
+       saveAllTracksNeedToSave(trackSongs,trackArtists,trackSongArtists);
+       songArtistRepository.saveAll(trackSongArtists);
+       return true;
     }
 
     @Transactional
     public boolean saveAllTracksNeedToSave(List<Song> songs, List<Artist> artists,List<SongArtist> songArtists) {
         songRepository.saveAll(songs);
         artistRepository.saveAll(artists);
-        songArtistRepository.saveAll(songArtists);
         return true;
     }
 
@@ -83,6 +84,7 @@ public class SongArtistService {
                 .song(song)
                 .artist(artist)
                 .build();
+            songArtists.add(songArtist);
         });
         return songArtists;
     }

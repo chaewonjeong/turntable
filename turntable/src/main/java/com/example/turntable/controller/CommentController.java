@@ -20,15 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
     private final CommentService commentService;
 
-    /*@PostMapping("/comment")
+    @PostMapping("/comment")
     @ResponseBody
     public String writeComment(@RequestBody WriteDailyCommentDto writeDailyCommentDto, HttpSession session) {
         Long memberId = (Long) session.getAttribute("userId");
-        commentService.create(writeDailyCommentDto,memberId);
+        //commentService.create(writeDailyCommentDto,memberId);
         return "redirect:/comment";
     }
 
-    @GetMapping("/comments")
+    /*@GetMapping("/comments")
     @ResponseBody
     public Page<CommentResponseDto> getDailyComments(@RequestParam int page, HttpSession session){
         Long memberId = (Long) session.getAttribute("userId");

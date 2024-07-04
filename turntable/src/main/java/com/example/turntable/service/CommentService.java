@@ -30,7 +30,7 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final SpotifyService spotifyService;
 
-    /*@Transactional
+    @Transactional
     public void create(WriteDailyCommentDto writeDailyCommentDto, Long memberId) {
         Optional<Member> memberOptional = memberRepository.findById(memberId);
 
@@ -40,20 +40,20 @@ public class CommentService {
         final DailyComment dailyComment = DailyComment.builder()
             .comment(writeDailyCommentDto.getComment())
             .createdAt(date)
-            .spotifySongId(writeDailyCommentDto.getSpotifySongId())
+            //.spotifySongId(writeDailyCommentDto.getSpotifySongId())
             .member(memberOptional.get())
             .build();
         dailycommentRepository.save(dailyComment);
-    }*/
-/*
-    public Page<CommentResponseDto> getCommentsByPage(int page,Long memberId){
+    }
+
+    /*public Page<CommentResponseDto> getCommentsByPage(int page,Long memberId){
         int pageSize = 5;
         PageRequest pageRequest = PageRequest.of(page,pageSize);
         Page<DailyComment> comments = dailycommentRepository.findAll(pageRequest);
 
         return comments.map(comment -> {
             int count = guestCommentRepository.findByDailyCommentId(comment.getId()).size();
-            Map<String,String> trackInfo = spotifyService.getTrackInfo(comment.getSpotifySongId());
+            //Map<String,String> trackInfo = spotifyService.getTrackInfo(comment.getSpotifySongId());
             return new CommentResponseDto(
                 comment.getId(),
                 comment.getComment(),
