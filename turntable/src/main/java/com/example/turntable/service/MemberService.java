@@ -38,7 +38,7 @@ public class MemberService {
         memberRepository.save(member);
         return true;
     }
-    public Page<MemberInfoResponseDto> getUsersInfo(int page){
+    public Page<MemberInfoResponseDto> getAllUsersInfo(int page){
         int pageSize = 9;
         PageRequest pageRequest = PageRequest.of(page,pageSize);
         Page<Member> members = memberRepository.findAll(pageRequest);
@@ -51,6 +51,7 @@ public class MemberService {
             );}
         );
     }
+
     public Long getUserIdByName(String username){
         return memberRepository.findByName(username).map(Member::getId).orElse(null);
     }

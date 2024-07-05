@@ -35,6 +35,7 @@
           data: { userId: userId },
           success: function(response) {
             if (response) {
+              const artists = response.artists.join(', '); // 아티스트 리스트를 콤마로 구분된 문자열로 변환
               const commentInfo = document.querySelector('.icon-commentinfo');
               commentInfo.innerHTML = `
                 <div class="icon"><i class="fas fa-music music-icon"></i></div>
@@ -42,7 +43,7 @@
                   <div class="message">
                     ${'${response.comment}'}
                   </div>
-                  <div class="song-info">▶ ${'${response.title}'} - ${'${response.artist}'}</div>
+                  <div class="song-info">▶ ${'${response.title}'} - ${'artists'}</div>
                 </div>
               `;
             }

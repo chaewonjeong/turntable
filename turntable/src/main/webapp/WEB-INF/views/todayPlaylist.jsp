@@ -123,6 +123,7 @@
         method: 'GET',
         data: { keyword: query },
         success: function(data) {
+          console.log(data);
           data.forEach(item => {
             const resultItem = document.createElement('div');
             resultItem.textContent = item.name;

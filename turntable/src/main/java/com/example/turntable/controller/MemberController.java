@@ -1,5 +1,6 @@
 package com.example.turntable.controller;
 
+import com.example.turntable.dto.MemberInfoResponseDto;
 import com.example.turntable.dto.SignupRequestDto;
 import com.example.turntable.service.MemberService;
 import jakarta.servlet.http.HttpSession;
@@ -7,6 +8,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -49,5 +52,10 @@ public class MemberController {
         session.setAttribute("userId",userId);
         System.out.println(session.getAttribute("username").toString()+session.getAttribute("userId").toString());
         return "redirect:/main";
+    }
+
+    @GetMapping("/all-users")
+    public Page<MemberInfoResponseDto> findAllUsers(@RequestParam int page){
+        return memberService.getAllUsersInfo(page);
     }
 }
