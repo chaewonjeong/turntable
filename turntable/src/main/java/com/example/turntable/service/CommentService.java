@@ -2,6 +2,7 @@ package com.example.turntable.service;
 
 import com.example.turntable.domain.DailyComment;
 import com.example.turntable.domain.Member;
+import com.example.turntable.domain.Song;
 import com.example.turntable.dto.CommentResponseDto;
 import com.example.turntable.dto.WriteDailyCommentDto;
 import com.example.turntable.repository.DailyCommentRepository;
@@ -29,6 +30,7 @@ public class CommentService {
     private final GuestCommentRepository guestCommentRepository;
     private final MemberRepository memberRepository;
     private final SpotifyService spotifyService;
+    private final SongArtistService songArtistService;
 
     @Transactional
     public void create(WriteDailyCommentDto writeDailyCommentDto, Long memberId) {
@@ -36,11 +38,12 @@ public class CommentService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         LocalDateTime date = LocalDateTime.parse(writeDailyCommentDto.getDate(), formatter);
+        Optional<Song> song = songArtistService.findSongByTitleAndArtist(writeDailyCommentDto.getTitle(),writeDailyCommentDto.getArtists());
 
         final DailyComment dailyComment = DailyComment.builder()
             .comment(writeDailyCommentDto.getComment())
             .createdAt(date)
-            //.spotifySongId(writeDailyCommentDto.getSpotifySongId())
+            .song(song.get())
             .member(memberOptional.get())
             .build();
         dailycommentRepository.save(dailyComment);

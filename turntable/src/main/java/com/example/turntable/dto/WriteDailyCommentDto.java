@@ -13,5 +13,5 @@ public class WriteDailyCommentDto {
     private String comment;
     private String date;
     private String title;
-    private List<String> artist;
+    private List<String> artists;
 }
