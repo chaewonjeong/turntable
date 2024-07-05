@@ -18,26 +18,27 @@ public class PlayListController {
 
     private final PlayListService playListService;
 
-    // 상태 맵을 정의하여 경로와 PlayListStatus를 매핑
-    private static final Map<String, PlayListStatus> statusMap = new HashMap<>();
-
-    static {
-        statusMap.put("Daily", PlayListStatus.DAILY);
-        statusMap.put("My", PlayListStatus.MY);
-    }
-
-    @PostMapping("/{status}")
-    public ResponseEntity<Void> savePlayList(@SessionAttribute(name="userId", required = false) Long userId,
-                                             @RequestBody PlayListDto playListDto,
-                                             @PathVariable String status) {
+    @PostMapping("create/daily")
+    public ResponseEntity<Void> saveDailyPlayList(@SessionAttribute(name="userId", required = false) Long userId,
+                                             @RequestBody PlayListDto playListDto) {
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        PlayListStatus playListStatus = statusMap.get(status);
-        if (playListStatus == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        PlayListStatus playListStatus = PlayListStatus.DAILY;
+
+        playListService.savePlayList(userId, playListDto, playListStatus);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("create/my")
+    public ResponseEntity<Void> saveMyPlayList(@SessionAttribute(name="userId", required = false) Long userId,
+                                             @RequestBody PlayListDto playListDto) {
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
+        PlayListStatus playListStatus = PlayListStatus.MY;
 
         playListService.savePlayList(userId, playListDto, playListStatus);
         return ResponseEntity.ok().build();

@@ -4,7 +4,6 @@ import com.example.turntable.dto.CommentResponseDto;
 import com.example.turntable.dto.WriteDailyCommentDto;
 import com.example.turntable.service.CommentService;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,5 +39,4 @@ public class CommentController {
         Long memberId = (Long) session.getAttribute("userId");
         return commentService.getLatestComment(memberId);
     }
-
 }

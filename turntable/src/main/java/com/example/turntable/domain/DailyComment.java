@@ -10,27 +10,29 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class DailyComment {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Column(name = "comment", nullable = false)
     private String comment;
 
-    @Column(name = "spotify_song_id")
-    private String spotifySongId;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "song_id")
+    private Song song;
 
     @CreationTimestamp
     @Column(updatable = false)

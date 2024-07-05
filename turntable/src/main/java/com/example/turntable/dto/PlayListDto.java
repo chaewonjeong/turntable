@@ -9,5 +9,5 @@ import java.util.List;
 @Setter
 public class PlayListDto {
     private String name;
-    private List<PlayListSongDto> tracks;
+    private List<SongDto> tracks;
 }
