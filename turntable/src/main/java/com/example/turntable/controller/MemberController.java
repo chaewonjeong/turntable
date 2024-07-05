@@ -54,9 +54,15 @@ public class MemberController {
         return "redirect:/main";
     }
 
-    @GetMapping("/all-users")
+    @GetMapping("/users/all")
     @ResponseBody
     public Page<MemberInfoResponseDto> findAllUsers(@RequestParam int page){
         return memberService.getAllUsersInfo(page);
+    }
+
+    @GetMapping("/users/nickname")
+    @ResponseBody
+    public Page<MemberInfoResponseDto> findAllUsersByName(@RequestParam int page, @RequestParam String name){
+        return memberService.getAllUsersInfoByName(page, name);
     }
 }
