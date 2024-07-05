@@ -10,4 +10,5 @@ public class MemberInfoResponseDto {
     private final Long memberId;
     private final String memberName;
     private final String bgImgUrl;
+    private final int playlistCount;
 }
