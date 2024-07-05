@@ -24,7 +24,6 @@ public class PlayListController {
     static {
         statusMap.put("Daily", PlayListStatus.DAILY);
         statusMap.put("My", PlayListStatus.MY);
-
     }
 
     @PostMapping("/{status}")
