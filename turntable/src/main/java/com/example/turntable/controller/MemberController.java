@@ -55,6 +55,7 @@ public class MemberController {
     }
 
     @GetMapping("/all-users")
+    @ResponseBody
     public Page<MemberInfoResponseDto> findAllUsers(@RequestParam int page){
         return memberService.getAllUsersInfo(page);
     }

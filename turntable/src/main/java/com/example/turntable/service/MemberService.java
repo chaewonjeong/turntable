@@ -51,6 +51,20 @@ public class MemberService {
             );}
         );
     }
+    public Page<MemberInfoResponseDto> getAllUsersInfoByName(int page, String name){
+        int pageSize = 9;
+        PageRequest pageRequest = PageRequest.of(page,pageSize);
+        Page<Member> members = memberRepository.findByNameContaining(name,pageRequest);
+
+        return members.map(member -> {
+            return new MemberInfoResponseDto(
+                member.getId(),
+                member.getName(),
+                member.getBackGroundImage()
+            );}
+        );
+    }
+
 
     public Long getUserIdByName(String username){
         return memberRepository.findByName(username).map(Member::getId).orElse(null);
