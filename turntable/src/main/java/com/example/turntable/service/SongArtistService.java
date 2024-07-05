@@ -112,6 +112,15 @@ public class SongArtistService {
         return songArtists;
     }
 
+    public List<Artist> findArtistsBySong(Long songId){
+        List<SongArtist> songArtists = songArtistRepository.findBySongId(songId);
+        List<Artist> artists = new ArrayList<>();
+        songArtists.forEach(songArtist -> {
+            artists.add(songArtist.getArtist());
+        });
+        return artists;
+    }
+
     public Optional<Song> findSongByTitleAndArtist(String title,List<String> artists){
         List<SongNameInfo> existingSong = songArtistRepository.findBySongTitleAndArtistNamesIn(title,artists,artists.size());
         return songRepository.findById(existingSong.get(0).getSongId());

@@ -61,7 +61,6 @@
     loadComments(currentPage);
 
     function loadComments(page) {
-
       $.ajax({
         type: 'GET',
         url: '/comments',
@@ -71,18 +70,19 @@
           commentsContainer.innerHTML = '';
           response.content.forEach(comment => {
             console.log(comment);
+            const artists = comment.artists.join(', '); // 아티스트 리스트를 콤마로 구분된 문자열로 변환
             const commentElement = document.createElement('div');
             commentElement.classList.add('comment-info');
             commentElement.innerHTML = `
               <div class="icon-commentinfo">
                 <i class="fas fa-music music-icon"></i>
                 <div class="comment-song">
-                  <div class="comment-message">${comment.comment}</div>
-                  <div class="comment-song-info">▶${comment.title}-${comment.artist}</div>
+                  <div class="comment-message">${'${comment.comment}'}</div>
+                  <div class="comment-song-info">▶${'${comment.title}'}-${'${artists}'}</div>
                 </div>
               </div>
               <div class="comment-footer">
-                <a class="comment-count">댓글 ${comment.commentCount}</a>
+                <a class="comment-count">댓글 ${'${comment.commentCount}'}</a>
                 <div class="comment-date">${'${new Date(comment.date).toLocaleString()}'}</div>
               </div>
             `;

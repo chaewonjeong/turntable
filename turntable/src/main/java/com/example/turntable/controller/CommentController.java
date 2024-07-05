@@ -28,13 +28,13 @@ public class CommentController {
         return "redirect:/comment";
     }
 
-    /*@GetMapping("/comments")
+    @GetMapping("/comments")
     @ResponseBody
     public Page<CommentResponseDto> getDailyComments(@RequestParam int page, HttpSession session){
         Long memberId = (Long) session.getAttribute("userId");
         return commentService.getCommentsByPage(page,memberId);
     }
-
+/*
     @GetMapping("/comment/latest")
     @ResponseBody
     public CommentResponseDto getLatestComment(HttpSession session){
