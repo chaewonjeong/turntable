@@ -10,5 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DailyCommentRepository  extends JpaRepository<DailyComment, Long> {
+    DailyComment findFirstByMember_IdOrderByCreatedAtDesc(Long memberId);
     Page<DailyComment> findAllByMemberId(Pageable pageable, Long memberId);
 }

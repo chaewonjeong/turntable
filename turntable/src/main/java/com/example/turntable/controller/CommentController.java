@@ -34,12 +34,12 @@ public class CommentController {
         Long memberId = (Long) session.getAttribute("userId");
         return commentService.getCommentsByPage(page,memberId);
     }
-/*
+
     @GetMapping("/comment/latest")
     @ResponseBody
     public CommentResponseDto getLatestComment(HttpSession session){
         Long memberId = (Long) session.getAttribute("userId");
         return commentService.getLatestComment(memberId);
-    }*/
+    }
 
 }

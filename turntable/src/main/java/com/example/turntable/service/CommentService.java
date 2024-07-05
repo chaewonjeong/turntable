@@ -73,17 +73,20 @@ public class CommentService {
             );
         });
     }
-/*
+
     public CommentResponseDto getLatestComment(Long memberId){
-        Optional<DailyComment> comment = dailycommentRepository.findFirstByMember_IdOrderByCreatedAtDesc(memberId);
-        Map<String,String> trackInfo = spotifyService.getTrackInfo(comment.get().getSpotifySongId());
+        DailyComment comment = dailycommentRepository.findFirstByMember_IdOrderByCreatedAtDesc(memberId);
+
         return new CommentResponseDto(
-            comment.get().getId(),
-            comment.get().getComment(),
-            comment.get().getCreatedAt(),
-            trackInfo.get("title"),
-            trackInfo.get("artist"),
-            guestCommentRepository.findByDailyCommentId(comment.get().getId()).size()
+            comment.getId(),
+            comment.getComment(),
+            comment.getCreatedAt(),
+            comment.getSong().getName(),
+            songArtistService.findArtistsBySong(comment.getSong().getId()).stream()
+                .map(artist ->{
+                    return artist.getName();
+                }).collect(Collectors.toList()),
+            guestCommentRepository.findByDailyCommentId(comment.getId()).size()
         );
-    }*/
+    }
 }
