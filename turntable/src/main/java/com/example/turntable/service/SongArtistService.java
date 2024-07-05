@@ -3,6 +3,7 @@ package com.example.turntable.service;
 import com.example.turntable.domain.Artist;
 import com.example.turntable.domain.Song;
 import com.example.turntable.domain.SongArtist;
+import com.example.turntable.dto.SongDto;
 import com.example.turntable.repository.ArtistRepository;
 import com.example.turntable.repository.SongArtistRepository;
 import com.example.turntable.repository.SongNameInfo;
@@ -11,6 +12,7 @@ import com.example.turntable.spotify.dto.TrackResponseDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,7 @@ public class SongArtistService {
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
 
-    public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
+    public List<SongDto> saveTrackInfo(List<TrackResponseDto> tracks) {
         List<Song> trackSongs = new ArrayList<>();
         List<Artist> trackArtists = new ArrayList<>();
         List<SongArtist> trackSongArtists = new ArrayList<>();
@@ -39,16 +41,36 @@ public class SongArtistService {
             }
         });
 
-       saveAllTracksNeedToSave(trackSongs,trackArtists,trackSongArtists);
-       return true;
+       List<Song> savedSongs = saveAllTracksNeedToSave(trackSongs);
+       List<Artist> savedArtists = saveAllArtistsNeedToSave(trackArtists);
+       List<SongArtist> savedsongArtists = saveAllSongArtistsNeedToSave(trackSongArtists);
+
+       return savedSongs.stream()
+           .map(this::convertToSongDto)
+           .collect(Collectors.toList());
+    }
+
+    private SongDto convertToSongDto(Song song) {
+        List<SongArtist> songArtists = songArtistRepository.findBySongId(song.getId());
+        List<String> artistNames = songArtists.stream()
+            .map(songArtist -> artistRepository.findById(songArtist.getArtist().getId())
+                .orElseThrow(() -> new RuntimeException("Artist not found"))
+                .getName())
+            .collect(Collectors.toList());
+        return SongDto.from(song, artistNames);
     }
 
     @Transactional
-    public boolean saveAllTracksNeedToSave(List<Song> songs, List<Artist> artists,List<SongArtist> songArtists) {
-        songRepository.saveAll(songs);
-        artistRepository.saveAll(artists);
-        songArtistRepository.saveAll(songArtists);
-        return true;
+    public List<Song> saveAllTracksNeedToSave(List<Song> songs) {
+        return songRepository.saveAll(songs);
+    }
+    @Transactional
+    public List<Artist> saveAllArtistsNeedToSave(List<Artist> artists) {
+        return artistRepository.saveAll(artists);
+    }
+    @Transactional
+    public List<SongArtist> saveAllSongArtistsNeedToSave(List<SongArtist> songArtists) {
+        return songArtistRepository.saveAll(songArtists);
     }
 
     public boolean isSongExist(String title, List<String> artists) {
@@ -90,4 +112,17 @@ public class SongArtistService {
         return songArtists;
     }
 
+    public List<Artist> findArtistsBySong(Long songId){
+        List<SongArtist> songArtists = songArtistRepository.findBySongId(songId);
+        List<Artist> artists = new ArrayList<>();
+        songArtists.forEach(songArtist -> {
+            artists.add(songArtist.getArtist());
+        });
+        return artists;
+    }
+
+    public Optional<Song> findSongByTitleAndArtist(String title,List<String> artists){
+        List<SongNameInfo> existingSong = songArtistRepository.findBySongTitleAndArtistNamesIn(title,artists,artists.size());
+        return songRepository.findById(existingSong.get(0).getSongId());
+    }
 }

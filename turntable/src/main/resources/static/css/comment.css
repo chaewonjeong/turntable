@@ -13,14 +13,47 @@
   width: 60%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
 }
-
+#selected-song-info {
+  font-size: 12px; /* 폰트 크기를 줄이는 스타일 추가 */
+  margin-top: 2px;
+  color: white;
+  margin-left:10px;
+}
+.input-section .input-field {
+  width: calc(100% - 80px); /* 버튼 두 개의 넓이를 고려한 인풋 필드 넓이 */
+  display: inline-block;
+}
+.input-section .song-button,
+.input-section .submit-button {
+  display: inline-block;
+}
+.input-section #selected-song-info {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+}
 .input-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  position: relative;
 }
-
+.input-section .input-field {
+  width: calc(100% - 80px); /* 버튼 두 개의 넓이를 고려한 인풋 필드 넓이 */
+  display: inline-block;
+}
+.input-section .song-button,
+.input-section .submit-button {
+  display: inline-block;
+}
+.input-section #selected-song-info {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+}
 .input-field {
   flex: 1;
   padding: 20px;
@@ -57,6 +90,7 @@
 .song-button {
   background-color: #ff8a8a; /* 취소 버튼 색상 */
   color: white;
+  magin-right:2px;
 }
 
 .comment-info {

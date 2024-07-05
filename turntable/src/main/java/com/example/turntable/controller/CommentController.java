@@ -24,11 +24,11 @@ public class CommentController {
     @ResponseBody
     public String writeComment(@RequestBody WriteDailyCommentDto writeDailyCommentDto, HttpSession session) {
         Long memberId = (Long) session.getAttribute("userId");
-        //commentService.create(writeDailyCommentDto,memberId);
+        commentService.create(writeDailyCommentDto,memberId);
         return "redirect:/comment";
     }
 
-    /*@GetMapping("/comments")
+    @GetMapping("/comments")
     @ResponseBody
     public Page<CommentResponseDto> getDailyComments(@RequestParam int page, HttpSession session){
         Long memberId = (Long) session.getAttribute("userId");
@@ -40,6 +40,6 @@ public class CommentController {
     public CommentResponseDto getLatestComment(HttpSession session){
         Long memberId = (Long) session.getAttribute("userId");
         return commentService.getLatestComment(memberId);
-    }*/
+    }
 
 }
