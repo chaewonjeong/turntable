@@ -17,7 +17,6 @@ import static jakarta.persistence.FetchType.LAZY;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class DailyComment {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -32,7 +32,7 @@
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + username // 세션에서 가져온 사용자 이름을 사용
+
       }
     })
     .then(response => {

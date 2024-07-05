@@ -45,5 +45,4 @@ public class PlayList {
                 .state(state)
                 .build();
     }
-
 }
