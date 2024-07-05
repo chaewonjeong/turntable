@@ -5,6 +5,7 @@ import com.example.turntable.domain.Song;
 import com.example.turntable.domain.SongArtist;
 import com.example.turntable.repository.ArtistRepository;
 import com.example.turntable.repository.SongArtistRepository;
+import com.example.turntable.repository.SongNameInfo;
 import com.example.turntable.repository.SongRepository;
 import com.example.turntable.spotify.dto.TrackResponseDto;
 import java.util.ArrayList;
@@ -39,7 +40,6 @@ public class SongArtistService {
         });
 
        saveAllTracksNeedToSave(trackSongs,trackArtists,trackSongArtists);
-       songArtistRepository.saveAll(trackSongArtists);
        return true;
     }
 
@@ -47,15 +47,16 @@ public class SongArtistService {
     public boolean saveAllTracksNeedToSave(List<Song> songs, List<Artist> artists,List<SongArtist> songArtists) {
         songRepository.saveAll(songs);
         artistRepository.saveAll(artists);
+        songArtistRepository.saveAll(songArtists);
         return true;
     }
 
     public boolean isSongExist(String title, List<String> artists) {
-        Optional<SongArtist> existingSong = songArtistRepository.findBySongTitleAndArtistNamesIn(title,artists,artists.size());
-        if(existingSong.isPresent()){
-            return true;
+        List<SongNameInfo> existingSong = songArtistRepository.findBySongTitleAndArtistNamesIn(title,artists,artists.size());
+        if(existingSong.isEmpty()){
+            return false;
         }
-        return false;
+        return true;
     }
 
     public List<Artist> artistsNeedToSave(List<String> trackArtists){
