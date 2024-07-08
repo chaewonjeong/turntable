@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PlayListRepository extends JpaRepository<PlayList, Long> {
     Optional<PlayList> findByMember_Id(Long memberId);
+    int countByMember_Id(Long memberId);
 }
