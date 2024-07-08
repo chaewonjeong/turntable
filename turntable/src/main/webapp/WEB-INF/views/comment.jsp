@@ -61,8 +61,9 @@
       $.ajax({
         type: 'GET',
         url: '/comments',
-        data: {page: page,
-        memberId:pageOwnerId},
+        data: {
+          page: page,
+          memberId:pageOwnerId},
         success: function (response) {
           const commentsContainer = document.getElementById('comments-container');
           commentsContainer.innerHTML = '';
@@ -131,7 +132,7 @@
           }),
           success: function () {
             // 성공 시 페이지 리다이렉트
-            window.location.href = "/comment"; // 댓글 목록 페이지로 리다이렉트
+            window.location.href = "/comment?pageOwnerId="+pageOwnerId; // 댓글 목록 페이지로 리다이렉트
           },
           error: function (error) {
             console.error('Error saving comment:', error);

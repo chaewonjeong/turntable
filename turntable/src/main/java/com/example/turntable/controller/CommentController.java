@@ -23,7 +23,7 @@ public class CommentController {
     public String writeComment(@RequestBody WriteDailyCommentDto writeDailyCommentDto, HttpSession session) {
         Long memberId = (Long) session.getAttribute("userId");
         commentService.create(writeDailyCommentDto,memberId);
-        return "redirect:/comment";
+        return "redirect:/comment?pageOwnerId="+memberId;
     }
 
     @GetMapping("/comments")

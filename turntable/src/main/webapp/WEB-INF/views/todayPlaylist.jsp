@@ -68,7 +68,7 @@
 
 <script>
   $(document).ready(function() {
-      const username = "<%= sessionUsername %>";
+      const username = "<%= username %>";
       console.log(username);
 
     $("#header-placeholder").load("header.jsp", function() {

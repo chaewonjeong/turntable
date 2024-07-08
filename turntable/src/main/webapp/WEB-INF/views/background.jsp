@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.Objects" %><%
-    String sessionUsername = (String) session.getAttribute("username");
-    Long sessionUserId = (Long) session.getAttribute("userId");
+    String username = (String) session.getAttribute("username");
+    Long userId = (Long) session.getAttribute("userId");
     String pageOwner = request.getParameter("username");
     String pageOwnerIdParam = request.getParameter("pageOwnerId"); // URL 파라미터로 페이지 소유자 ID를 받음
     Long pageOwnerId = null;
@@ -10,17 +10,17 @@
         try {
             pageOwnerId = Long.parseLong(pageOwnerIdParam);
         } catch (NumberFormatException e) {
-            pageOwnerId = sessionUserId; // 예외 발생 시 기본값으로 설정
+            pageOwnerId = userId; // 예외 발생 시 기본값으로 설정
         }
     } else {
-        pageOwnerId = sessionUserId; // 파라미터가 없을 때 기본값으로 설정
+        pageOwnerId = userId; // 파라미터가 없을 때 기본값으로 설정
     }
 
     if (pageOwner == null) {
-        pageOwner = sessionUsername;
+        pageOwner = username;
     }
 
-    boolean isOwner = Objects.equals(sessionUserId, pageOwnerId); // 현재 로그인한 사용자와 페이지 소유자가 같은지 확인
+    boolean isOwner = Objects.equals(userId, pageOwnerId); // 현재 로그인한 사용자와 페이지 소유자가 같은지 확인
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,7 +41,7 @@
 </div>
 <script>
   $(function(){
-    const userId = "<%= sessionUserId %>";
+    const userId = "<%= userId %>";
 
       document.getElementById("home-icon").addEventListener("click", function() {
         window.location.href = "/main?pageOwnerId="+userId;
@@ -57,7 +57,7 @@
   $("#footer-placeholder").load("footer.html");
 
   $(document).ready(function() {
-    const username = "<%= sessionUsername %>";
+    const username = "<%= username %>";
     const pageOwnerId = "<%= pageOwnerId %>";
     console.log(username,pageOwnerId);
 

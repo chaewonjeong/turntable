@@ -24,45 +24,23 @@ public class SongArtistService {
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
 
-    public List<SongDto> saveTrackInfo(List<TrackResponseDto> tracks) {
-        List<Song> trackSongs = new ArrayList<>();
-        List<Artist> trackArtists = new ArrayList<>();
-        List<SongArtist> trackSongArtists = new ArrayList<>();
-
+    public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
         tracks.forEach(track -> {
             if (!isSongExist(track.getName(),track.getArtists())) {
                 Song song = track.toEntity();
+                saveTrackNeedToSave(song);
                 List<Artist> artists = artistsNeedToSave(track.getArtists());
-                List<SongArtist> songArtists = songArtistsNeedToSave(song,artists);
-
-                trackSongs.add(song);
-                trackSongArtists.addAll(songArtists);
-                trackArtists.addAll(artists);
+                saveAllArtistsNeedToSave(artists);
+                List<SongArtist> songArtists = songArtistsNeedToSave(song,track.getArtists());
+                saveAllSongArtistsNeedToSave(songArtists);
             }
         });
-
-       List<Song> savedSongs = saveAllTracksNeedToSave(trackSongs);
-       List<Artist> savedArtists = saveAllArtistsNeedToSave(trackArtists);
-       List<SongArtist> savedsongArtists = saveAllSongArtistsNeedToSave(trackSongArtists);
-
-       return savedSongs.stream()
-           .map(this::convertToSongDto)
-           .collect(Collectors.toList());
-    }
-
-    private SongDto convertToSongDto(Song song) {
-        List<SongArtist> songArtists = songArtistRepository.findBySongId(song.getId());
-        List<String> artistNames = songArtists.stream()
-            .map(songArtist -> artistRepository.findById(songArtist.getArtist().getId())
-                .orElseThrow(() -> new RuntimeException("Artist not found"))
-                .getName())
-            .collect(Collectors.toList());
-        return SongDto.from(song, artistNames);
+       return true;
     }
 
     @Transactional
-    public List<Song> saveAllTracksNeedToSave(List<Song> songs) {
-        return songRepository.saveAll(songs);
+    public Song saveTrackNeedToSave(Song song) {
+        return songRepository.save(song);
     }
     @Transactional
     public List<Artist> saveAllArtistsNeedToSave(List<Artist> artists) {
@@ -100,12 +78,12 @@ public class SongArtistService {
         return false;
     }
 
-    public List<SongArtist> songArtistsNeedToSave(Song song, List<Artist> artists){
+    public List<SongArtist> songArtistsNeedToSave(Song song, List<String> artists){
         List<SongArtist> songArtists = new ArrayList<>();
         artists.forEach(artist -> {
             SongArtist songArtist = SongArtist.builder()
                 .song(song)
-                .artist(artist)
+                .artist(artistRepository.findByName(artist).orElse(null))
                 .build();
             songArtists.add(songArtist);
         });
@@ -123,6 +101,7 @@ public class SongArtistService {
 
     public Optional<Song> findSongByTitleAndArtist(String title,List<String> artists){
         List<SongNameInfo> existingSong = songArtistRepository.findBySongTitleAndArtistNamesIn(title,artists,artists.size());
+
         return songRepository.findById(existingSong.get(0).getSongId());
     }
 }
