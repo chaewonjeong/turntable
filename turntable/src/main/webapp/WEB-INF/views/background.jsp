@@ -15,7 +15,10 @@
   $(function(){
     $("#header-placeholder").load("header.jsp", function() {
       document.getElementById("home-icon").addEventListener("click", function() {
-        window.location.href = "main.html";
+        window.location.href = "/main";
+      });
+      document.getElementById("users-icon").addEventListener("click", function() {
+        window.location.href = "/users";
       });
       document.getElementById("settings-icon").addEventListener("click", function() {
         document.getElementById("settings-drawer").classList.toggle("open");

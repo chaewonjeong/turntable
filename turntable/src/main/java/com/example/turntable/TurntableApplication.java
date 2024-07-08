@@ -38,4 +38,9 @@ public class TurntableApplication {
 	public String commentForm() {
 		return "comment";
 	}
+
+	@GetMapping("/users")
+	public String getUsers() {
+		return "users";
+	}
 }
