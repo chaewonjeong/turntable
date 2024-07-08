@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Today's Playlist</title>
     <link rel="stylesheet" href="/css/global.css">
-    <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/todayPlaylist.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -287,8 +286,6 @@
               albumName: item.querySelector('.track-album').textContent
           };
       });
-
-
 
       const playlistData = {
           name: "Today's Playlist", // 예시로 이름 지정, 필요시 동적으로 설정
