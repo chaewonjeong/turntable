@@ -1,9 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List" %>
-<%@ page import="com.example.turntable.dto.CommentResponseDto" %>
-<%
-    Long userId = (Long) session.getAttribute("userId");
-%>
+<%@include file="background.jsp"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -17,15 +13,16 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<jsp:include page="background.jsp" />
 <div class="comment-container">
     <div class="main-content">
+        <% if (isOwner) { %>
         <div class="input-section">
             <input type="text" class="input-field" placeholder="오늘의 기분을 입력해주세요">
              <div id="selected-song-info"></div> <!-- 선택된 음악 정보를 표시할 요소 추가 -->
             <button class="song-button"><i class="fas fa-music music-icon"></i></button>
             <button class="submit-button"><i class="fa-solid fa-plus"></i></button>
         </div>
+        <% } %>
 
         <div id="comments-container"></div>
 
@@ -52,10 +49,10 @@
 </div>
 <script>
   $(document).ready(function () {
-    let selectedSpotifySongId = ""; // 선택된 노래의 ID를 저장할 변수
     let selectedTitle = ""; // 선택된 노래의 제목을 저장할 변수
     let selectedArtists = []; // 선택된 노래의 아티스트를 저장할 배열
     let currentPage = 0;
+    const pageOwnerId = "<%= pageOwnerId %>";
 
     // 페이지 로드 시 댓글 목록 불러오기
     loadComments(currentPage);
@@ -64,7 +61,8 @@
       $.ajax({
         type: 'GET',
         url: '/comments',
-        data: {page: page},
+        data: {page: page,
+        memberId:pageOwnerId},
         success: function (response) {
           const commentsContainer = document.getElementById('comments-container');
           commentsContainer.innerHTML = '';
@@ -111,6 +109,7 @@
       loadComments(currentPage);
     });
 
+    <% if (isOwner) { %>
     // 댓글 작성 버튼 클릭 이벤트 처리
     $('.submit-button').click(function () {
       var commentInput = $('.input-field').val().trim();
@@ -233,6 +232,7 @@
         }
       });
     }
+    <% } %>
   }); // 닫는 중괄호 추가
 </script>
 </body>

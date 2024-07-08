@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="background.jsp"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -13,7 +14,6 @@
     </style>
 </head>
 <body>
-    <jsp:include page="background.jsp" />
     <div class="container">
         <input type="text" id="search" placeholder="Search..." class="search-box">
         <div class="grid" id="userGrid"></div>
@@ -64,6 +64,12 @@
         userCard.find('.profile-picture').attr('src', user.bgImgUrl);
         userCard.find('.username').text('@' + user.memberName);
         userCard.find('.email').text(user.playlistCount+'개의 플레이리스트');
+
+        // 사용자 카드에 클릭 이벤트 추가
+        userCard.on('click', function() {
+          window.location.href = '/main?pageOwnerId=' + user.memberId;
+        });
+
         userGrid.append(userCard);
       });
     }

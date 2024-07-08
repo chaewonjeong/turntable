@@ -70,7 +70,21 @@ public class MemberService {
         );
     }
 
-
+    public MemberInfoResponseDto getUserById(Long memberId){
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        if (optionalMember.isPresent()) {
+           Member member = optionalMember.get();
+            return new MemberInfoResponseDto(
+                member.getId(),
+                member.getName(),
+                member.getBackGroundImage(),
+                playListService.getPlaylistCount(member.getId())
+            );
+        }
+        else{
+            return null;
+        }
+    }
     public Long getUserIdByName(String username){
         return memberRepository.findByName(username).map(Member::getId).orElse(null);
     }
@@ -79,8 +93,8 @@ public class MemberService {
         return memberRepository.findByName(username).isEmpty();
     }
 
-    public String getUserBgImg(String username) {
-        Optional<Member> member = memberRepository.findByName(username);
+    public String getUserBgImg(Long username) {
+        Optional<Member> member = memberRepository.findById(username);
         return member.get().getBackGroundImage();
     }
 }
