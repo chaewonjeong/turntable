@@ -51,7 +51,13 @@ public class MemberController {
         session.setAttribute("username", username);
         session.setAttribute("userId",userId);
         System.out.println(session.getAttribute("username").toString()+session.getAttribute("userId").toString());
-        return "redirect:/main";
+        return "redirect:/main?pageOwnerId="+userId;
+    }
+
+    @GetMapping("/username")
+    @ResponseBody
+    public MemberInfoResponseDto findUserById(@RequestParam Long memberId){
+        return memberService.getUserById(memberId);
     }
 
     @GetMapping("/users/all")

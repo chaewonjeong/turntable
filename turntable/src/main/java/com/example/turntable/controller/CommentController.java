@@ -28,15 +28,13 @@ public class CommentController {
 
     @GetMapping("/comments")
     @ResponseBody
-    public Page<CommentResponseDto> getDailyComments(@RequestParam int page, HttpSession session){
-        Long memberId = (Long) session.getAttribute("userId");
+    public Page<CommentResponseDto> getDailyComments(@RequestParam int page, Long memberId){
         return commentService.getCommentsByPage(page,memberId);
     }
 
     @GetMapping("/comment/latest")
     @ResponseBody
-    public CommentResponseDto getLatestComment(HttpSession session){
-        Long memberId = (Long) session.getAttribute("userId");
+    public CommentResponseDto getLatestComment(@RequestParam Long memberId){
         return commentService.getLatestComment(memberId);
     }
 }
