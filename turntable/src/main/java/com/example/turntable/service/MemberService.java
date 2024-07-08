@@ -4,6 +4,7 @@ import com.example.turntable.domain.Member;
 import com.example.turntable.dto.MemberInfoResponseDto;
 import com.example.turntable.dto.SignupRequestDto;
 import com.example.turntable.repository.MemberRepository;
+import com.example.turntable.repository.PlayListRepository;
 import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -12,15 +13,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 @Transactional
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final PlayListRepository playListRepository;
     private final NcpService ncpService;
     private final PasswordEncoder passwordEncoder;
+    private final PlayListService playListService;
 
     @Transactional
     public boolean create(SignupRequestDto signupRequestDto) throws IOException {
@@ -47,7 +50,8 @@ public class MemberService {
             return new MemberInfoResponseDto(
                 member.getId(),
                 member.getName(),
-                member.getBackGroundImage()
+                member.getBackGroundImage(),
+                playListService.getPlaylistCount(member.getId())
             );}
         );
     }
@@ -60,7 +64,8 @@ public class MemberService {
             return new MemberInfoResponseDto(
                 member.getId(),
                 member.getName(),
-                member.getBackGroundImage()
+                member.getBackGroundImage(),
+                playListService.getPlaylistCount(member.getId())
             );}
         );
     }

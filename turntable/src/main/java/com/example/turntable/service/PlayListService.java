@@ -6,11 +6,11 @@ import com.example.turntable.dto.SongDto;
 import com.example.turntable.repository.PlayListRepository;
 import com.example.turntable.repository.MemberRepository;
 import com.example.turntable.repository.PlayListSongRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,6 +50,10 @@ public class PlayListService {
     private void savePlayListAndSongs(PlayList playList, List<PlayListSong> playListSongs) {
         playListRepository.save(playList);
         playListSongRepository.saveAll(playListSongs);
+    }
+
+    public int getPlaylistCount(Long memberId){
+        return playListRepository.countByMember_Id(memberId);
     }
 
 }
