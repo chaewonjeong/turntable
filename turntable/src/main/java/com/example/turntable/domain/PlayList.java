@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +39,22 @@ public class PlayList {
 
     // == 생성 메서드 == //
     public static PlayList of(Member member, String name, PlayListStatus state) {
-        return PlayList.builder()
-                .member(member)
-                .name(name)
-                .date(LocalDate.now())
-                .state(state)
-                .build();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy년 M월 d일");
+        if(state == PlayListStatus.DAILY){
+            return PlayList.builder()
+                    .member(member)
+                    .name(LocalDate.now().format(formatter))
+                    .date(LocalDate.now())
+                    .state(state)
+                    .build();
+        } else {
+            return PlayList.builder()
+                    .member(member)
+                    .name(name)
+                    .date(LocalDate.now())
+                    .state(state)
+                    .build();
+
+        }
     }
 }
