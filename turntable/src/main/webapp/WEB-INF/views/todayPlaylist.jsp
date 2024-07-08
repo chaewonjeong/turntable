@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="header.jsp"%>
+<%@include file="background.jsp"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,8 +12,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<jsp:include page="background.jsp" />
-
 <div class="container">
     <div id="playlist-section" class="content-box">
         <div class="playlist-header">
@@ -70,7 +68,7 @@
 
 <script>
   $(document).ready(function() {
-      const username = "<%= username %>";
+      const username = "<%= sessionUsername %>";
       console.log(username);
 
     $("#header-placeholder").load("header.jsp", function() {
