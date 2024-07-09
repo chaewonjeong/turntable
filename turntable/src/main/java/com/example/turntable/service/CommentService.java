@@ -1,26 +1,24 @@
 package com.example.turntable.service;
 
-import com.example.turntable.domain.Artist;
 import com.example.turntable.domain.DailyComment;
+import com.example.turntable.domain.GuestComment;
 import com.example.turntable.domain.Member;
 import com.example.turntable.domain.Song;
 import com.example.turntable.dto.CommentResponseDto;
+import com.example.turntable.dto.GuestCommentResponseDto;
 import com.example.turntable.dto.WriteDailyCommentDto;
+import com.example.turntable.dto.WriteGuestCommentDto;
 import com.example.turntable.repository.DailyCommentRepository;
 import com.example.turntable.repository.GuestCommentRepository;
 import com.example.turntable.repository.MemberRepository;
-import com.example.turntable.repository.SongRepository;
-import com.example.turntable.spotify.SpotifyService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +28,7 @@ public class CommentService {
     private final DailyCommentRepository dailycommentRepository;
     private final GuestCommentRepository guestCommentRepository;
     private final MemberRepository memberRepository;
-    private final SpotifyService spotifyService;
     private final SongArtistService songArtistService;
-    private final SongRepository songRepository;
 
     @Transactional
     public void create(WriteDailyCommentDto writeDailyCommentDto, Long memberId) {
@@ -49,6 +45,23 @@ public class CommentService {
             .member(memberOptional.get())
             .build();
         dailycommentRepository.save(dailyComment);
+    }
+
+    @Transactional
+    public void createGuestComment(WriteGuestCommentDto writeGuestCommentDto) {
+        Optional<Member> guest = memberRepository.findById(writeGuestCommentDto.getGuestId());
+        Optional<DailyComment> dailyComment = dailycommentRepository.findById(writeGuestCommentDto.getCommentId());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        LocalDateTime date = LocalDateTime.parse(writeGuestCommentDto.getDate(),formatter);
+
+        final GuestComment guestComment = GuestComment.builder()
+            .comment(writeGuestCommentDto.getComment())
+            .createdAt(date)
+            .dailyComment(dailyComment.get())
+            .visitorMember(guest.get())
+            .build();
+        guestCommentRepository.save(guestComment);
     }
 
     public Page<CommentResponseDto> getCommentsByPage(int page,Long memberId){
@@ -85,5 +98,15 @@ public class CommentService {
                 }).collect(Collectors.toList()),
             guestCommentRepository.findByDailyCommentId(comment.getId()).size()
         );
+    }
+
+    public Page<GuestCommentResponseDto> getGuestCommentsByPage(int page,Long dailyCommentId){
+        int pageSize = 5;
+        PageRequest pageRequest = PageRequest.of(page,pageSize,Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<GuestComment> comments = guestCommentRepository.findAllByDailyCommentId(pageRequest,dailyCommentId);
+
+        return comments.map(comment -> {
+            return GuestCommentResponseDto.from(comment);
+        });
     }
 }

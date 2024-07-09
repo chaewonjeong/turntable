@@ -42,6 +42,7 @@
 
 .message {
   font-size: 14px;
+  text-align: left;
 }
 
 .music-icon {
@@ -80,43 +81,6 @@
 
 .playlist-button:hover{
   background-color: #ff6262;
-}
-
-.comments {
-  margin-top: 20px;
-}
-
-.comment {
-  background: rgba(255, 255, 255, 0.8);
-  padding: 10px;
-  border-radius: 10px;
-  margin: 10px auto;
-  width: 60%;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  color:#000000;
-}
-
-.comment-date {
-  background-color: #000000;
-  display: flex;
-  justify-content: end;
-  font-size: 12px;
-  text-align: right;
-}
-
-.comment-left{
-  display: flex;
-  text-align: left;
-}
-.comment-right{
-  text-align: left;
-}
-.comment-icon {
-  margin-right: 10px;
-  font-size: 30px; /* 댓글 아이콘 크기 */
-  color: #ff6868;
 }
 
 .input-section-container {
@@ -260,4 +224,70 @@
 
 .song-item i {
   margin-right: 10px;
+}
+
+
+.comments {
+  margin-top: 20px;
+}
+
+.comment-item {
+  margin-bottom: 10px;
+}
+
+.comment-box {
+  background: rgba(255, 255, 255, 0.7);
+  color:black;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 20px auto;
+  width: 60%;
+  cursor: pointer; /* 클릭 가능하도록 포인터 변경 */
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  align-items: flex-start;
+}
+
+.comment-profile {
+  margin-right: 10px;
+}
+
+.comment-profile img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.comment-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.comment-header {
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0px;
+  font-size: 14px;
+}
+
+.comment-body {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  font-size: 13px;
+}
+
+.comment-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  margin-top: 0px;
+  font-size: 10px;
 }

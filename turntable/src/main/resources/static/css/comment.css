@@ -168,6 +168,38 @@
   font-size: 12px;
   color: #666;
 }
+
+.pagination-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination-button {
+  background-color: #4CAF50; /* Green background */
+  border: none; /* Remove borders */
+  color: white; /* White text */
+  padding: 10px 20px; /* Add some padding */
+  text-align: center; /* Center text */
+  text-decoration: none; /* Remove underline */
+  display: inline-block; /* Get the element to fit nicely */
+  font-size: 16px; /* Increase font size */
+  margin: 4px 2px; /* Add some margin */
+  cursor: pointer; /* Add a pointer cursor on hover */
+  border-radius: 12px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.pagination-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+.pagination-button:disabled {
+  background-color: #ccc; /* Grey background for disabled button */
+  cursor: not-allowed; /* Not allowed cursor for disabled button */
+}
+
 .modal {
   display: none;
   position: fixed;
