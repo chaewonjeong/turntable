@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.Objects" %><%
+<%@ page import="java.util.Objects" %>
+<%
     String username = (String) session.getAttribute("username");
     Long userId = (Long) session.getAttribute("userId");
     String pageOwner = request.getParameter("username");

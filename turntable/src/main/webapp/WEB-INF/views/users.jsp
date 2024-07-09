@@ -19,22 +19,12 @@
         <div class="grid" id="userGrid"></div>
         <div class="pagination" id="pagination"></div>
     </div>
-    <!-- User Card Template -->
-    <div class="user-card template">
-        <div class="user-card-content">
-            <img class="profile-picture" src="" alt="Profile Picture" width="50" height="50">
-            <div class="user-info">
-                <h3 class="username"></h3>
-                <p class="email">개의 플레이리스트</p>
-            </div>
-        </div>
-    </div>
+
 <script>
   $(document).ready(function() {
     const userGrid = $('#userGrid');
     const searchInput = $('#search');
     const pagination = $('#pagination');
-    const userCardTemplate = $('.user-card.template');
     let users = [];
     let currentPage = 0;
 
@@ -60,10 +50,17 @@
     function displayUsers() {
       userGrid.empty();
       users.forEach(function(user) {
-        const userCard = userCardTemplate.clone().removeClass('template');
-        userCard.find('.profile-picture').attr('src', user.bgImgUrl);
-        userCard.find('.username').text('@' + user.memberName);
-        userCard.find('.email').text(user.playlistCount+'개의 플레이리스트');
+        const userCard = $(`
+          <div class="user-card">
+            <div class="user-card-content">
+              <img class="profile-picture" src="${"${user.bgImgUrl}"}" alt="Profile Picture" width="50" height="50">
+              <div class="user-info">
+                <h3 class="username">@${"${user.memberName}"}</h3>
+                <p class="email">${"${user.playlistCount}"}개의 플레이리스트</p>
+              </div>
+            </div>
+          </div>
+        `);
 
         // 사용자 카드에 클릭 이벤트 추가
         userCard.on('click', function() {
