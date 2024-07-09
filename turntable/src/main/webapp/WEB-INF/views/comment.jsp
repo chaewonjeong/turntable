@@ -1,9 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List" %>
-<%@ page import="com.example.turntable.dto.CommentResponseDto" %>
-<%
-    Long userId = (Long) session.getAttribute("userId");
-%>
+<%@include file="background.jsp"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -17,14 +13,16 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<jsp:include page="background.jsp" />
 <div class="comment-container">
     <div class="main-content">
+        <% if (isOwner) { %>
         <div class="input-section">
             <input type="text" class="input-field" placeholder="오늘의 기분을 입력해주세요">
+             <div id="selected-song-info"></div> <!-- 선택된 음악 정보를 표시할 요소 추가 -->
             <button class="song-button"><i class="fas fa-music music-icon"></i></button>
             <button class="submit-button"><i class="fa-solid fa-plus"></i></button>
         </div>
+        <% } %>
 
         <div id="comments-container"></div>
 
@@ -50,9 +48,11 @@
     </div>
 </div>
 <script>
-  $(document).ready(function() {
-    let selectedSpotifySongId = ""; // 선택된 노래의 ID를 저장할 변수
+  $(document).ready(function () {
+    let selectedTitle = ""; // 선택된 노래의 제목을 저장할 변수
+    let selectedArtists = []; // 선택된 노래의 아티스트를 저장할 배열
     let currentPage = 0;
+    const pageOwnerId = "<%= pageOwnerId %>";
 
     // 페이지 로드 시 댓글 목록 불러오기
     loadComments(currentPage);
@@ -61,12 +61,15 @@
       $.ajax({
         type: 'GET',
         url: '/comments',
-        data: { page: page },
-        success: function(response) {
+        data: {
+          page: page,
+          memberId:pageOwnerId},
+        success: function (response) {
           const commentsContainer = document.getElementById('comments-container');
           commentsContainer.innerHTML = '';
           response.content.forEach(comment => {
             console.log(comment);
+            const artists = comment.artists.join(', '); // 아티스트 리스트를 콤마로 구분된 문자열로 변환
             const commentElement = document.createElement('div');
             commentElement.classList.add('comment-info');
             commentElement.innerHTML = `
@@ -74,7 +77,7 @@
                 <i class="fas fa-music music-icon"></i>
                 <div class="comment-song">
                   <div class="comment-message">${'${comment.comment}'}</div>
-                  <div class="comment-song-info">▶${'${comment.title}'}-${'${comment.artist}'}</div>
+                  <div class="comment-song-info">▶${'${comment.title}'}-${'${artists}'}</div>
                 </div>
               </div>
               <div class="comment-footer">
@@ -87,14 +90,14 @@
           document.getElementById('prev-page').disabled = page <= 0;
           document.getElementById('next-page').disabled = response.last;
         },
-        error: function(error) {
+        error: function (error) {
           console.error('Error loading comments:', error);
         }
       });
     }
 
     // 이전 페이지 버튼 클릭 이벤트 처리
-    $('#prev-page').click(function() {
+    $('#prev-page').click(function () {
       if (currentPage > 0) {
         currentPage--;
         loadComments(currentPage);
@@ -102,19 +105,19 @@
     });
 
     // 다음 페이지 버튼 클릭 이벤트 처리
-    $('#next-page').click(function() {
+    $('#next-page').click(function () {
       currentPage++;
       loadComments(currentPage);
     });
 
-
+    <% if (isOwner) { %>
     // 댓글 작성 버튼 클릭 이벤트 처리
-    $('.submit-button').click(function() {
+    $('.submit-button').click(function () {
       var commentInput = $('.input-field').val().trim();
 
       if (commentInput) {
         // 현재 날짜를 가져오기
-        var currentDate = new Date().toISOString().slice(0,-1);
+        var currentDate = new Date().toISOString().slice(0, -1);
 
         // 서버에 댓글을 저장하는 AJAX 호출
         $.ajax({
@@ -124,13 +127,14 @@
           data: JSON.stringify({
             comment: commentInput,
             date: currentDate,
-            spotifySongId: selectedSpotifySongId
+            title: selectedTitle,
+            artists: selectedArtists
           }),
-          success: function() {
+          success: function () {
             // 성공 시 페이지 리다이렉트
-            window.location.href = "/comment"; // 댓글 목록 페이지로 리다이렉트
+            window.location.href = "/comment?pageOwnerId="+pageOwnerId; // 댓글 목록 페이지로 리다이렉트
           },
-          error: function(error) {
+          error: function (error) {
             console.error('Error saving comment:', error);
           }
         });
@@ -138,28 +142,33 @@
     });
 
     // 모달 창 열기
-    $('.song-button').click(function() {
+    $('.song-button').click(function () {
       $('#songModal').css('display', 'block');
       setupSearch('track');
     });
 
     // 모달 창 닫기
-    $('.close').click(function() {
+    $('.close').click(function () {
       $('#songModal').css('display', 'none');
     });
 
     // 모달 창 외부 클릭 시 닫기
-    $(window).click(function(event) {
+    $(window).click(function (event) {
       if (event.target.id === 'songModal') {
         $('#songModal').css('display', 'none');
       }
     });
 
     // "음악 추가하기" 버튼 클릭 이벤트 처리
-    $('#add-music-button').click(function() {
+    $('#add-music-button').click(function () {
       const selectedItem = $('.selected-item').first();
       if (selectedItem.length) {
-        selectedSpotifySongId = selectedItem.data('id');
+        selectedTitle = selectedItem.text().split('-')[0];
+        selectedArtists = selectedItem.text().split('-')[1].split(', ');
+
+        // 선택된 음악 정보를 표시
+        $('#selected-song-info').text('▶'+selectedTitle + '-' + selectedArtists.join(', '));
+
         $('#songModal').css('display', 'none');
       } else {
         alert("음악을 선택해주세요.");
@@ -182,8 +191,8 @@
         $.ajax({
           url: `/search/` + type,
           method: 'GET',
-          data: { keyword: query },
-          success: function(data) {
+          data: {keyword: query},
+          success: function (data) {
             data.forEach(item => {
               const artists = item.artists.join(", ");
               const displayName = item.name + '-' + artists;
@@ -191,7 +200,7 @@
               resultItem.textContent = displayName;
               resultItem.classList.add('result-item');
               resultItem.dataset.id = item.id;
-              resultItem.addEventListener('click', function() {
+              resultItem.addEventListener('click', function () {
                 const selectedItemsCount = document.querySelectorAll('.selected-item').length;
                 if (selectedItemsCount >= 5) {
                   alert("최대 5개의 아이템만 선택할 수 있습니다.");
@@ -201,7 +210,7 @@
                 selectedItem.textContent = displayName;
                 selectedItem.classList.add('selected-item');
                 selectedItem.dataset.id = item.id;
-                selectedItem.addEventListener('click', function() {
+                selectedItem.addEventListener('click', function () {
                   selectedItem.remove();
                 });
                 selectedContainer.appendChild(selectedItem);
@@ -210,20 +219,21 @@
               resultsContainer.appendChild(resultItem);
             });
           },
-          error: function(xhr, status, error) {
+          error: function (xhr, status, error) {
             console.error(`Error: ${status}, ${error}`);
           }
         });
       }
 
       // 검색 입력의 Enter 키 이벤트 처리
-      searchInput.addEventListener('keypress', function(e) {
+      searchInput.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
           console.log(`Enter key pressed for ${type} search`);
           search();
         }
       });
     }
+    <% } %>
   }); // 닫는 중괄호 추가
 </script>
 </body>

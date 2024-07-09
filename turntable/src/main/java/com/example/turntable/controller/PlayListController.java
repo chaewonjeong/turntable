@@ -1,6 +1,7 @@
 package com.example.turntable.controller;
 
 import com.example.turntable.domain.PlayListStatus;
+import com.example.turntable.dto.PlayListCreateDto;
 import com.example.turntable.dto.PlayListDto;
 import com.example.turntable.service.PlayListService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -18,30 +20,26 @@ public class PlayListController {
 
     private final PlayListService playListService;
 
-    // 상태 맵을 정의하여 경로와 PlayListStatus를 매핑
-    private static final Map<String, PlayListStatus> statusMap = new HashMap<>();
-
-    static {
-        statusMap.put("Daily", PlayListStatus.DAILY);
-        statusMap.put("My", PlayListStatus.MY);
-
+    @PostMapping("/create")
+    public ResponseEntity<Void> savePlayList(@SessionAttribute(name = "userId", required=false) Long userId,
+                                             @RequestParam PlayListStatus state,
+                                             @RequestBody PlayListCreateDto playListCreateDto) {
+        if (userId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        playListService.savePlayList(userId,playListCreateDto,state);
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{status}")
-    public ResponseEntity<Void> savePlayList(@SessionAttribute(name="userId", required = false) Long userId,
-                                             @RequestBody PlayListDto playListDto,
-                                             @PathVariable String status) {
+
+    @GetMapping("status/{state}")
+    public ResponseEntity<List<PlayListDto>> getPlayList(@SessionAttribute(name = "userId", required = false) Long userId,
+                                                         @PathVariable PlayListStatus state) {
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        PlayListStatus playListStatus = statusMap.get(status);
-        if (playListStatus == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-
-        playListService.savePlayList(userId, playListDto, playListStatus);
-        return ResponseEntity.ok().build();
+        List<PlayListDto> playListDtos = playListService.getPlayListsByStatus(userId, state);
+        return ResponseEntity.ok(playListDtos);
     }
 }
 
