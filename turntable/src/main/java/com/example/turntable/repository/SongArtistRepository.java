@@ -1,5 +1,6 @@
 package com.example.turntable.repository;
 
+import com.example.turntable.domain.Song;
 import com.example.turntable.domain.SongArtist;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +20,6 @@ public interface SongArtistRepository extends JpaRepository<SongArtist, Long> {
         + "HAVING COUNT(DISTINCT A.id) = :artistCount")
     List<SongNameInfo> findBySongTitleAndArtistNamesIn(@Param("title") String title, @Param("artistNames") List<String> artistNames, @Param("artistCount") int artistCount);
     List<SongArtist> findBySongId(Long songId);
+
+    List<SongArtist> findAllBySong(Song song);
 }

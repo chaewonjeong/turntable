@@ -40,6 +40,8 @@ public class SpotifyController {
 
     @PostMapping("/recommendations")
     public List<TrackResponseDto> getRecommendations(@RequestBody RecommendRequestDto recommendationsRequestDto) {
-        return spotifyService.getRecommends(recommendationsRequestDto);
+        List<TrackResponseDto> result = spotifyService.getRecommends(recommendationsRequestDto);
+        songArtistService.saveTrackInfo(result);
+        return result;
     }
 }

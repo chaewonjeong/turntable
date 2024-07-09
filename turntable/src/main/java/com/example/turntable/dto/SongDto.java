@@ -6,21 +6,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
 public class SongDto {
     private Long id;
     private  String name;
-    private List<String> artist;
+    private List<String> artists;
     private  String albumName;
     private  String albumImgUrl;
 
-    public static SongDto from(Song song, List<String> artist) {
+    public static SongDto from(Song song, List<String> artists) {
         return SongDto.builder()
             .id(song.getId())
             .name(song.getName())
-            .artist(artist)
+            .artists(artists)
             .albumName(song.getAlbumName())
             .albumImgUrl(song.getAlbumImgUrl())
             .build();

@@ -1,13 +1,28 @@
 package com.example.turntable.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.example.turntable.domain.PlayList;
+import com.example.turntable.domain.PlayListStatus;
+import lombok.Builder;
 
-import java.util.List;
 
-@Getter
-@Setter
+import java.time.LocalDate;
+
+
+@Builder
 public class PlayListDto {
-    private String name;
-    private List<SongDto> tracks;
+    private final Long id;
+    private final String name;
+    private final LocalDate date;
+    private final PlayListStatus state;
+
+    public static PlayListDto from(PlayList playList) {
+        // return new PlayListDto(playList.getId(), playList.getName(), playList.getDate(), playList.getState());
+        return PlayListDto.builder()
+                .id(playList.getId())
+                .name(playList.getName())
+                .date(playList.getDate())
+                .state(playList.getState())
+                .build();
+    }
+
 }

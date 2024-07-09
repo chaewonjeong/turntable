@@ -162,6 +162,7 @@
 .recommendation-item {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 10px;
   padding: 10px;
   background: white;
@@ -197,4 +198,11 @@
 
 .save-playlist-button:hover {
   background-color: #45a049;
+}
+
+.track-album-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 5px;
+  margin-left: 10px;
 }

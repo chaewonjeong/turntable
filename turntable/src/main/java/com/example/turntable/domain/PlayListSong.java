@@ -19,7 +19,7 @@ public class PlayListSong {
     @JoinColumn(name = "playlist_id")
     private PlayList playList;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST,fetch = LAZY)
     @JoinColumn(name = "song_id")
     private Song song;
 
@@ -30,6 +30,5 @@ public class PlayListSong {
                 .song(song)
                 .build();
     }
-
 
 }
