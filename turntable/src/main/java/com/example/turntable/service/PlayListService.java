@@ -6,7 +6,6 @@ import com.example.turntable.dto.SongDto;
 import com.example.turntable.repository.PlayListRepository;
 import com.example.turntable.repository.MemberRepository;
 import com.example.turntable.repository.PlayListSongRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

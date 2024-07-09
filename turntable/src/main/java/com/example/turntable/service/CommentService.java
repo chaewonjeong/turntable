@@ -30,9 +30,7 @@ public class CommentService {
     private final DailyCommentRepository dailycommentRepository;
     private final GuestCommentRepository guestCommentRepository;
     private final MemberRepository memberRepository;
-    private final SpotifyService spotifyService;
     private final SongArtistService songArtistService;
-    private final SongRepository songRepository;
 
     @Transactional
     public void create(WriteDailyCommentDto writeDailyCommentDto, Long memberId) {
