@@ -33,10 +33,9 @@ public class PlayListController {
     }
 
 
-    @GetMapping("/{state}")
-    public List<PlayListDto> getPlayList(@SessionAttribute(name = "userId", required = false) Long userId,
-                                                         @PathVariable PlayListStatus state) {
-        return playListService.getPlayListsByStatus(userId, state);
+    @GetMapping("/{state}/{pageOwnerId}")
+    public List<PlayListDto> getPlayList(@PathVariable PlayListStatus state, @PathVariable Long pageOwnerId) {
+        return playListService.getPlayListsByStatus(pageOwnerId, state);
     }
 
     @GetMapping("/detail")

@@ -39,7 +39,7 @@ public class PlayList {
 
     // == 생성 메서드 == //
     public static PlayList of(Member member, String name, PlayListStatus state) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy년 M월 d일");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
         if(state == PlayListStatus.DAILY){
             return PlayList.builder()
                     .member(member)

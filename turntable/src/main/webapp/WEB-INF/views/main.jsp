@@ -13,150 +13,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Playwrite+IS:wght@100..400&display=swap" rel="stylesheet">
-    <script>
-      let latestCommentId = null;
-      let userId = "<%= userId %>"; // pageOwnerId를 userId로 사용
-      let pageOwnerId = "<%= pageOwnerId %>"; // 실제 값 설정
-      let currentPage = 0; // 현재 페이지 번호를 저장할 변수
-
-      $(document).ready(function() {
-        console.log("Page Owner from URL or Session: " + pageOwnerId);
-
-        // 최신 댓글 데이터를 가져와서 HTML에 추가
-        fetchLatestComment(userId);
-        fetchUserName(pageOwnerId);
-
-        // 댓글 작성 버튼 클릭 이벤트 처리
-        $('.submit-button').click(function () {
-          var commentInput = $('.input-field').val().trim();
-
-          if (commentInput) {
-            // 현재 날짜를 가져오기
-            var currentDate = new Date().toISOString().slice(0, -1);
-
-            // 서버에 댓글을 저장하는 AJAX 호출
-            $.ajax({
-              type: 'POST',
-              url: '/comment/guest', // 서버의 댓글 저장 엔드포인트
-              contentType: 'application/json',
-              data: JSON.stringify({
-                commentId: latestCommentId,
-                comment: commentInput,
-                date: currentDate,
-                guestId: userId
-              }),
-              success: function () {
-                // 성공 시 페이지 리다이렉트
-                window.location.href = "/main?pageOwnerId=" + pageOwnerId; // 댓글 목록 페이지로 리다이렉트
-              },
-              error: function (error) {
-                console.error('Error saving comment:', error);
-              }
-            });
-          }
-        });
-      });
-
-      // 스크롤이 페이지 하단에 도달하면 다음 페이지의 댓글을 로드
-      $(window).scroll(function() {
-        if ($(window).scrollTop() + $(window).height() == $(document).height()) {
-          currentPage++;
-          fetchComments(currentPage);
-        }
-      });
-
-      function fetchUserName(pageOwnerId){
-        $.ajax({
-          url: '/username',
-          method: 'GET',
-          data: { memberId: pageOwnerId },
-          success: function(response) {
-            console.log(response.memberName);
-            if (response) {
-              document.querySelector('.username-container').textContent = "@" + response.memberName;
-            }
-          },
-          error: function(error) {
-            console.error('Error fetching username:', error);
-          }
-        });
-      }
-
-      function fetchLatestComment(userId) {
-        $.ajax({
-          url: '/comment/latest',
-          method: 'GET',
-          data: { memberId: pageOwnerId },
-          success: function(response) {
-            if (response) {
-              const artists = response.artists.join(', '); // 아티스트 리스트를 콤마로 구분된 문자열로 변환
-              const commentInfo = document.querySelector('.icon-commentinfo');
-              latestCommentId = response.id;
-              commentInfo.innerHTML = `
-                <div class="icon"><i class="fas fa-music music-icon"></i></div>
-                <div class="comment-song">
-                  <div class="message">
-                    ${"${response.comment}"}
-                  </div>
-                  <div class="song-info">▶ ${'${response.title}'} - ${"${artists}"}</div>
-                </div>
-              `;
-
-              fetchComments(currentPage);
-            }
-          },
-          error: function(error) {
-            console.error('Error fetching latest comment:', error);
-          }
-        });
-      }
-
-      function fetchComments(page) {
-        console.log(latestCommentId);
-        $.ajax({
-          url: '/comments/guest',
-          method: 'GET',
-          data: {
-            page:page,
-            commentId: latestCommentId },
-          success: function(response) {
-            console.log(response.content);
-            if (response && response.content) {
-              const commentsContainer = document.querySelector('.comments');
-              response.content.forEach(comment => {
-                const commentElement = document.createElement('div');
-                commentElement.classList.add('comment-item');
-                commentElement.innerHTML = `
-                <div class="comment-box">
-                <div class="comment-profile">
-                  <img src="${"${comment.guestBgImgUrl}"}" alt="Profile Image">
-                </div>
-                <div class="comment-content">
-                    <div class="comment-header">
-                      <div class="comment-user">@${"${comment.guestName}"}</div>
-                    </div>
-                    <div class="comment-body">
-                      <div class="comment-text">${"${comment.comment}"}</div>
-                    </div>
-                    <div class="comment-footer">
-                      <div class="comment-date">${'${new Date(comment.date).toLocaleString()}'}</div>
-                    </div>
-                </div>
-              </div>
-            `;
-                commentsContainer.appendChild(commentElement);
-              });
-            }
-          },
-          error: function(error) {
-            console.error('Error fetching comments:', error);
-          }
-        });
-      }
-    </script>
 </head>
+<script>
+  let latestCommentId = null;
+  let userId = "<%= userId %>"; // pageOwnerId를 userId로 사용
+  let pageOwnerId = "<%= pageOwnerId %>"; // 실제 값 설정
+  let currentPage = 0; // 현재 페이지 번호를 저장할 변수
+</script>
 <body>
 <div class="container">
+    <input type="hidden" id="userId" value="<%= userId %>">
+    <input type="hidden" id="pageOwnerId" value="<%= pageOwnerId %>">
     <div id="main-content">
         <div class="playlist-info" id="loadNextScreen">
             <div class="icon-commentinfo">
@@ -189,15 +56,89 @@
             <li id="daily-turntable">dailyturntable</li>
             <li id="my-turntable">myturntable</li>
         </ul>
+
+        <% if (isOwner) { %>
+        <button id="add-playlist-btn">+</button>
+        <% } %>
+
+
         <div id="playlist-container">
             <!-- 플레이리스트 아이템들이 여기에 동적으로 로드됩니다 -->
         </div>
+        <!-- 플레이리스트 추가 모달 -->
+        <div id="add-playlist-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="modal-close-btn">&times;</span>
+                <h2>Create New Playlist</h2>
+                <label for="playlist-name">Playlist Name:</label>
+                <input type="text" id="playlist-name" name="playlist-name" required>
+                <input type="text" id="track-search" placeholder="Search for music...">
+                <div id="track-results">
+                    <!-- 음악 검색 결과가 여기에 표시됩니다. -->
+                </div>
+                <div id="selected-tracks">
+                    <!-- 선택된 음악들이 여기에 추가됩니다. -->
+                </div>
+                <div class="modal-buttons">
+                    <button id="create-playlist-btn" class="create-btn">Create Playlist</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <script>
-  $(document).ready(function(){
-    const pageOwnerId = "<%= pageOwnerId %>";
+  $(document).ready(function() {
+    fetchLatestComment(pageOwnerId);
+    fetchUserName(pageOwnerId);
+
+    // 이벤트 리스너 설정
+    $("#add-playlist-btn").click(function() {
+      $("#add-playlist-modal").addClass('show');
+    });
+
+    $("#modal-close-btn").click(function() {
+      $("#add-playlist-modal").removeClass('show');
+    });
+
+    $("#create-playlist-btn").click(function() {
+      createPlaylist();
+    });
+
+    $(".submit-button").click(function () {
+      var commentInput = $('.input-field').val().trim();
+      if (commentInput) {
+        var currentDate = new Date().toISOString().slice(0, -1);
+        $.ajax({
+          type: 'POST',
+          url: '/comment/guest',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            commentId: latestCommentId,
+            comment: commentInput,
+            date: currentDate,
+            guestId: userId
+          }),
+          success: function () {
+            window.location.href = "/main?pageOwnerId=" + pageOwnerId;
+          },
+          error: function (error) {
+            console.error('Error saving comment:', error);
+          }
+        });
+      }
+    });
+
+    $(window).scroll(function() {
+      if ($(window).scrollTop() + $(window).height() == $(document).height()) {
+        currentPage++;
+        fetchComments(currentPage);
+      }
+    });
+
+    setupSearch('track');
+
     $('#loadNextScreen').click(function() {
       window.location.href = "/comment?pageOwnerId=" + pageOwnerId;
     });
@@ -216,71 +157,258 @@
     });
 
     $('#daily-turntable').click(function() {
-      loadPlaylist('daily');
+      $("#add-playlist-btn").removeClass("show");
+      loadPlaylist('DAILY');
     });
 
     $('#my-turntable').click(function() {
-      loadPlaylist('my');
+      $("#add-playlist-btn").addClass("show");
+      loadPlaylist('MY');
     });
 
     // 기본으로 dailyturntable 로드
-    loadPlaylist('daily');
+    loadPlaylist('DAILY');
   });
+
+  function fetchUserName(pageOwnerId){
+    $.ajax({
+      url: '/username',
+      method: 'GET',
+      data: { memberId: pageOwnerId },
+      success: function(response) {
+        if (response) {
+          $('.username-container').text("@" + response.memberName);
+        }
+      },
+      error: function(error) {
+        console.error('Error fetching username:', error);
+      }
+    });
+  }
+
+  function fetchLatestComment(userId) {
+    $.ajax({
+      url: '/comment/latest',
+      method: 'GET',
+      data: { memberId: userId },
+      success: function(response) {
+        if (response) {
+          const artists = response.artists.join(', ');
+          const commentInfo = $('.icon-commentinfo');
+          latestCommentId = response.id;
+          commentInfo.html(`
+                    <div class="icon"><i class="fas fa-music music-icon"></i></div>
+                    <div class="comment-song">
+                        <div class="message">
+                            ${"${response.comment}"}
+                        </div>
+                        <div class="song-info">▶ ${"${response.title}"} - ${"${artists}"}</div>
+                    </div>
+                `);
+          fetchComments(currentPage);
+        }
+      },
+      error: function(error) {
+        console.error('Error fetching latest comment:', error);
+      }
+    });
+  }
+
+  function fetchComments(page) {
+    $.ajax({
+      url: '/comments/guest',
+      method: 'GET',
+      data: { page: page, commentId: latestCommentId },
+      success: function(response) {
+        if (response && response.content) {
+          const commentsContainer = $('.comments');
+          response.content.forEach(comment => {
+            const commentElement = $(`
+                        <div class="comment-item">
+                            <div class="comment-box">
+                                <div class="comment-profile">
+                                    <img src="${"${comment.guestBgImgUrl}"}" alt="Profile Image">
+                                </div>
+                                <div class="comment-content">
+                                    <div class="comment-header">
+                                        <div class="comment-user">@${"${comment.guestName}"}</div>
+                                    </div>
+                                    <div class="comment-body">
+                                        <div class="comment-text">${"${comment.comment}"}</div>
+                                    </div>
+                                    <div class="comment-footer">
+                                        <div class="comment-date">${"${new Date(comment.date).toLocaleString()}"}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+            commentsContainer.append(commentElement);
+          });
+        }
+      },
+      error: function(error) {
+        console.error('Error fetching comments:', error);
+      }
+    });
+  }
+
+  function setupSearch(type) {
+    const searchInput = document.getElementById(type + '-search');
+    const resultsContainer = document.getElementById(type + '-results');
+    const selectedContainer = document.getElementById('selected-' + type + 's');
+
+    function search() {
+      const query = searchInput.value;
+      if (!query.trim()) return; // 입력값이 비어있을 경우 요청하지 않음
+      resultsContainer.innerHTML = ''; // 기존 결과 초기화
+
+      // AJAX 요청을 통해 서버에서 검색 결과를 가져옴
+      $.ajax({
+        url: `/search/` + type,
+        method: 'GET',
+        data: { keyword: query },
+        success: function(data) {
+          data.forEach(item => {
+            const artists = item.artists.join(", ");
+            const displayName = item.name + ' - ' + artists;
+            const resultItem = document.createElement('div');
+            resultItem.textContent = displayName;
+            resultItem.classList.add('result-item');
+            resultItem.dataset.id = item.id;
+            resultItem.dataset.name = item.name;
+            resultItem.dataset.artists = artists;
+            resultItem.dataset.albumName = item.albumName;
+            resultItem.dataset.albumImgUrl = item.albumImgUrl;
+            resultItem.addEventListener('click', function() {
+              const selectedItem = document.createElement('div');
+              selectedItem.textContent = displayName;
+              selectedItem.classList.add('selected-item');
+              selectedItem.dataset.id = item.id;
+              selectedItem.dataset.name = item.name;
+              selectedItem.dataset.artists = artists;
+              selectedItem.dataset.albumName = item.albumName;
+              selectedItem.dataset.albumImgUrl = item.albumImgUrl;
+              selectedItem.addEventListener('click', function() {
+                selectedItem.remove();
+              });
+              selectedContainer.appendChild(selectedItem);
+              resultsContainer.innerHTML = '';
+            });
+            resultsContainer.appendChild(resultItem);
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error(`Error: ${status}, ${error}`);
+        }
+      });
+    }
+
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        search();
+      }
+    });
+
+    $('#search-music-btn').click(function() {
+      search();
+    });
+  }
+
+  function createPlaylist() {
+    var playlistName = $("#playlist-name").val();
+
+    const savetracks = Array.from(document.querySelectorAll('.selected-item')).map(item => {
+      return {
+        name: item.dataset.name,
+        artists: item.dataset.artists.split(', '),
+        albumName: item.dataset.albumName,
+        albumImgUrl: item.dataset.albumImgUrl
+      };
+    });
+
+    var newPlaylist = {
+      name: playlistName,
+      tracks: savetracks
+    };
+
+    // AJAX 요청으로 새로운 플레이리스트 생성
+    $.ajax({
+      url: "/api/playlists/create?state=MY",
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(newPlaylist),
+      success: function(response) {
+        alert("플레이리스트가 성공적으로 저장되었습니다!");
+        $("#add-playlist-modal").removeClass('show');
+        loadPlaylist('MY'); // 새로 생성된 플레이리스트를 표시하기 위해 목록을 새로 고침
+      },
+      error: function(xhr, status, error) {
+        console.error(`Error: ${status}, ${error}`);
+        alert("플레이리스트 저장 중 오류가 발생했습니다.");
+      }
+    });
+  }
 
   function loadPlaylist(type) {
     var playlistContainer = $("#playlist-container");
     playlistContainer.empty(); // 기존 콘텐츠 제거
 
-    var playlistData;
-    if (type === 'daily') {
-      playlistData = [
-        { id: 1, date: '2024.06.01', madeBy: 'made by @codnjs_99' },
-        { id: 2, date: '2024.06.02', madeBy: 'made by @codnjs_99' },
-        { id: 3, date: '2024.06.03', madeBy: 'made by @codnjs_99' }
-      ];
-    } else if (type === 'my') {
-      playlistData = [
-        { id: 4, date: '2024.07.01', madeBy: 'made by @codnjs_99' },
-        { id: 5, date: '2024.07.02', madeBy: 'made by @codnjs_99' },
-        { id: 6, date: '2024.07.03', madeBy: 'made by @codnjs_99' }
-      ];
-    }
-
-    playlistData.forEach(function(item) {
-      var playlistItem = $("<div>").addClass("playlist-item").attr("data-playlist-id", item.id);
-      playlistItem.html(`
-        <div class="item-header">
-          <div class="item-left">
-            <i class="fas fa-heart"></i>
-            <div class="item-text">
-              <div class="playlist-name">${"${item.date}"}</div>
-              <div class="madeby">${"${item.madeBy}"}</div>
-            </div>
-          </div>
-          <i class="fas fa-chevron-right"></i>
-        </div>
-      `);
-      playlistContainer.append(playlistItem);
+    $.ajax({
+      url: "/api/playlists/" +type+"/"+pageOwnerId,
+      type: "GET",
+      success: function(data) {
+        data.forEach(function(item) {
+          var playlistItem = $("<div>").addClass("playlist-item").attr("data-playlist-id", item.id);
+          playlistItem.html(`
+                    <div class="item-header">
+                        <div class="item-left">
+                            <i class="fas fa-heart"></i>
+                            <div class="item-text">
+                                <div class="playlist-name">${"${item.name}"}</div>
+                                <div class="madeby">madeby @${"${item.madeBy}"}</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                `);
+          playlistContainer.append(playlistItem);
+        });
+      },
+      error: function(error) {
+        console.error("Error loading playlist:", error);
+      }
     });
   }
 
   function togglePlaylistDetails(item, id) {
-    // 기존의 상세 목록이 있는지 확인하고 있으면 제거
     var existingDetails = item.next(".playlist-details");
     if (existingDetails.length) {
       existingDetails.remove();
       return;
     }
 
-    // 예시 데이터를 사용하여 상세 목록 생성
-    var details = $("<div>").addClass("playlist-details");
-    details.html(`
-      <div class="song-item"><i class="fas fa-music"></i> Song 1</div>
-      <div class="song-item"><i class="fas fa-music"></i> Song 2</div>
-      <div class="song-item"><i class="fas fa-music"></i> Song 3</div>
-    `);
-
-    item.after(details);
+    $.ajax({
+      url: "/api/playlists/detail",
+      type: "GET",
+      data: { playListId: id },
+      success: function(data) {
+        var details = $("<div>").addClass("playlist-details");
+        data.songs.forEach(function(song) {
+          const songArtists = song.artists.join(", ");
+          details.append(`
+                    <div class="song-item">
+                        <i class="fas fa-music"></i><strong>${"${song.name}"}</strong> <span class="song-artists"> - ${"${songArtists}"}</span>
+                    </div>
+                `);
+        });
+        item.after(details);
+        details.hide().slideDown();
+      },
+      error: function(error) {
+        console.error("Error loading playlist details:", error);
+      }
+    });
   }
 </script>
 </body>

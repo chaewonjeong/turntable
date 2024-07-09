@@ -15,6 +15,7 @@ public class PlayListDto {
     private final String name;
     private final LocalDate date;
     private final PlayListStatus state;
+    private final String madeBy;
 
     public static PlayListDto from(PlayList playList) {
         // return new PlayListDto(playList.getId(), playList.getName(), playList.getDate(), playList.getState());
@@ -23,6 +24,7 @@ public class PlayListDto {
                 .name(playList.getName())
                 .date(playList.getDate())
                 .state(playList.getState())
+                .madeBy(playList.getMember().getName())
                 .build();
     }
 
