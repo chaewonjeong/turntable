@@ -118,16 +118,6 @@
       });
     }
 
-    function displayFilteredUsers(filteredUsers) {
-      userGrid.empty();
-      filteredUsers.forEach(function(user) {
-        const userCard = userCardTemplate.clone().removeClass('template');
-        userCard.find('.profile-picture').attr('src', user.bgImgUrl);
-        userCard.find('.username').text('@' + user.username);
-        userCard.find('.email').text(user.playlistCount+'개의 플레이리스트');
-        userGrid.append(userCard);
-      });
-    }
   });
 </script>
 </body>

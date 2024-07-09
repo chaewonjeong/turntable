@@ -234,6 +234,7 @@
           success: function(response) {
             console.log("Received recommendations:", response);
             displayRecommendations(response);
+
           },
           error: function(xhr, status, error) {
             console.error(`Error: ${status}, ${error}`);

@@ -28,8 +28,8 @@
 
         <!-- 페이지네이션 버튼 -->
         <div class="pagination-buttons">
-            <button id="prev-page" disabled>이전 페이지</button>
-            <button id="next-page">다음 페이지</button>
+            <button id="prev-page" class="pagination-button" disabled>이전 페이지</button>
+            <button id="next-page" class="pagination-button">다음 페이지</button>
         </div>
 
         <!-- 모달 창 -->
