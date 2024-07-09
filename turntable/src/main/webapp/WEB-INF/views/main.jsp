@@ -17,6 +17,7 @@
       let latestCommentId = null;
       let userId = "<%= userId %>"; // pageOwnerId를 userId로 사용
       let pageOwnerId = "<%= pageOwnerId %>"; // 실제 값 설정
+      let currentPage = 0; // 현재 페이지 번호를 저장할 변수
 
       $(document).ready(function() {
         console.log("Page Owner from URL or Session: " + pageOwnerId);
@@ -56,6 +57,14 @@
         });
       });
 
+      // 스크롤이 페이지 하단에 도달하면 다음 페이지의 댓글을 로드
+      $(window).scroll(function() {
+        if ($(window).scrollTop() + $(window).height() == $(document).height()) {
+          currentPage++;
+          fetchComments(currentPage);
+        }
+      });
+
       function fetchUserName(pageOwnerId){
         $.ajax({
           url: '/username',
@@ -92,10 +101,55 @@
                   <div class="song-info">▶ ${'${response.title}'} - ${"${artists}"}</div>
                 </div>
               `;
+
+              fetchComments(currentPage);
             }
           },
           error: function(error) {
             console.error('Error fetching latest comment:', error);
+          }
+        });
+      }
+
+      function fetchComments(page) {
+        console.log(latestCommentId);
+        $.ajax({
+          url: '/comments/guest',
+          method: 'GET',
+          data: {
+            page:page,
+            commentId: latestCommentId },
+          success: function(response) {
+            console.log(response.content);
+            if (response && response.content) {
+              const commentsContainer = document.querySelector('.comments');
+              response.content.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.classList.add('comment-item');
+                commentElement.innerHTML = `
+                <div class="comment-box">
+                <div class="comment-profile">
+                  <img src="${"${comment.guestBgImgUrl}"}" alt="Profile Image">
+                </div>
+                <div class="comment-content">
+                    <div class="comment-header">
+                      <div class="comment-user">@${"${comment.guestName}"}</div>
+                    </div>
+                    <div class="comment-body">
+                      <div class="comment-text">${"${comment.comment}"}</div>
+                    </div>
+                    <div class="comment-footer">
+                      <div class="comment-date">${'${new Date(comment.date).toLocaleString()}'}</div>
+                    </div>
+                </div>
+              </div>
+            `;
+                commentsContainer.appendChild(commentElement);
+              });
+            }
+          },
+          error: function(error) {
+            console.error('Error fetching comments:', error);
           }
         });
       }
