@@ -11,6 +11,7 @@ import com.example.turntable.repository.PlayListSongRepository;
 import java.util.Optional;
 
 import com.example.turntable.repository.SongArtistRepository;
+import com.example.turntable.repository.SongArtistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,9 +42,10 @@ public class PlayListService {
         // 추천 받은 시점에서 이미 db에 song은 저장됨 플레이리스트를 만들고 곡들과 매핑해줘야함 추가 저장 x
         Member member = getMemberById(userId);
         PlayList playList = PlayList.of(member, playListCreateDto.getName(), playListStatus);
+        playList = playListRepository.save(playList);
 
         for (SongDto songDto : playListCreateDto.getTracks()) {
-            Optional<Song> song = songArtistService.findSongByTitleAndArtist(songDto.getName(), songDto.getArtist());
+            Optional<Song> song = songArtistService.findSongByTitleAndArtist(songDto.getName(), songDto.getArtists());
             if (song.isPresent()) {
                 PlayListSong playListSong = PlayListSong.of(playList, song.get());
                 playListSongRepository.save(playListSong);
@@ -62,7 +64,6 @@ public class PlayListService {
         List<PlayList> playLists = playListRepository.findAllByMemberAndState(member, state);
         return playLists.stream().map(PlayListDto::from).collect(Collectors.toList());
     }
-
 
     @Transactional(readOnly = true)
     public PlayListDetailDto getPlayListDetails(Long playListId) {
@@ -86,6 +87,8 @@ public class PlayListService {
         return memberRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
     }
+
+
 
 
     public int getPlaylistCount(Long memberId){
