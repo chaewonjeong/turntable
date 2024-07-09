@@ -2,10 +2,12 @@ package com.example.turntable.service;
 
 import com.example.turntable.domain.Artist;
 import com.example.turntable.domain.DailyComment;
+import com.example.turntable.domain.GuestComment;
 import com.example.turntable.domain.Member;
 import com.example.turntable.domain.Song;
 import com.example.turntable.dto.CommentResponseDto;
 import com.example.turntable.dto.WriteDailyCommentDto;
+import com.example.turntable.dto.WriteGuestCommentDto;
 import com.example.turntable.repository.DailyCommentRepository;
 import com.example.turntable.repository.GuestCommentRepository;
 import com.example.turntable.repository.MemberRepository;
@@ -47,6 +49,23 @@ public class CommentService {
             .member(memberOptional.get())
             .build();
         dailycommentRepository.save(dailyComment);
+    }
+
+    @Transactional
+    public void createGuestComment(WriteGuestCommentDto writeGuestCommentDto) {
+        Optional<Member> guest = memberRepository.findById(writeGuestCommentDto.getGuestId());
+        Optional<DailyComment> dailyComment = dailycommentRepository.findById(writeGuestCommentDto.getCommentId());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        LocalDateTime date = LocalDateTime.parse(writeGuestCommentDto.getDate(),formatter);
+
+        final GuestComment guestComment = GuestComment.builder()
+            .comment(writeGuestCommentDto.getComment())
+            .createdAt(date)
+            .dailyComment(dailyComment.get())
+            .visitorMember(guest.get())
+            .build();
+        guestCommentRepository.save(guestComment);
     }
 
     public Page<CommentResponseDto> getCommentsByPage(int page,Long memberId){

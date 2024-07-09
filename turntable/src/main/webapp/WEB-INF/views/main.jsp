@@ -14,13 +14,46 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Playwrite+IS:wght@100..400&display=swap" rel="stylesheet">
     <script>
-      document.addEventListener('DOMContentLoaded', (event) => {
-        const pageOwnerId = "<%= pageOwnerId %>";
-        console.log("Page Owner from URL or Session: " + pageOwnerId); // 콘솔에 출력
+      let latestCommentId = null;
+      let userId = "<%= userId %>"; // pageOwnerId를 userId로 사용
+      let pageOwnerId = "<%= pageOwnerId %>"; // 실제 값 설정
+
+      $(document).ready(function() {
+        console.log("Page Owner from URL or Session: " + pageOwnerId);
 
         // 최신 댓글 데이터를 가져와서 HTML에 추가
-        fetchLatestComment(pageOwnerId);
+        fetchLatestComment(userId);
         fetchUserName(pageOwnerId);
+
+        // 댓글 작성 버튼 클릭 이벤트 처리
+        $('.submit-button').click(function () {
+          var commentInput = $('.input-field').val().trim();
+
+          if (commentInput) {
+            // 현재 날짜를 가져오기
+            var currentDate = new Date().toISOString().slice(0, -1);
+
+            // 서버에 댓글을 저장하는 AJAX 호출
+            $.ajax({
+              type: 'POST',
+              url: '/comment/guest', // 서버의 댓글 저장 엔드포인트
+              contentType: 'application/json',
+              data: JSON.stringify({
+                commentId: latestCommentId,
+                comment: commentInput,
+                date: currentDate,
+                guestId: userId
+              }),
+              success: function () {
+                // 성공 시 페이지 리다이렉트
+                window.location.href = "/main?pageOwnerId=" + pageOwnerId; // 댓글 목록 페이지로 리다이렉트
+              },
+              error: function (error) {
+                console.error('Error saving comment:', error);
+              }
+            });
+          }
+        });
       });
 
       function fetchUserName(pageOwnerId){
@@ -31,11 +64,11 @@
           success: function(response) {
             console.log(response.memberName);
             if (response) {
-              document.querySelector('.username-container').textContent="@"+response.memberName;
+              document.querySelector('.username-container').textContent = "@" + response.memberName;
             }
           },
           error: function(error) {
-            console.error('Error fetching latest comment:', error);
+            console.error('Error fetching username:', error);
           }
         });
       }
@@ -44,18 +77,19 @@
         $.ajax({
           url: '/comment/latest',
           method: 'GET',
-          data: { memberId: userId },
+          data: { memberId: pageOwnerId },
           success: function(response) {
             if (response) {
               const artists = response.artists.join(', '); // 아티스트 리스트를 콤마로 구분된 문자열로 변환
               const commentInfo = document.querySelector('.icon-commentinfo');
+              latestCommentId = response.id;
               commentInfo.innerHTML = `
                 <div class="icon"><i class="fas fa-music music-icon"></i></div>
                 <div class="comment-song">
                   <div class="message">
-                    ${'${response.comment}'}
+                    ${"${response.comment}"}
                   </div>
-                  <div class="song-info">▶ ${'${response.title}'} - ${'${artists}'}</div>
+                  <div class="song-info">▶ ${'${response.title}'} - ${"${artists}"}</div>
                 </div>
               `;
             }
@@ -108,42 +142,40 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function(){
+  $(document).ready(function(){
     const pageOwnerId = "<%= pageOwnerId %>";
-    document.getElementById("loadNextScreen").addEventListener("click", function() {
-      window.location.href = "/comment?pageOwnerId="+pageOwnerId;
+    $('#loadNextScreen').click(function() {
+      window.location.href = "/comment?pageOwnerId=" + pageOwnerId;
     });
 
     <% if (isOwner) { %>
-    document.getElementById("todayPlaylistBtn").addEventListener("click", function() {
+    $('#todayPlaylistBtn').click(function() {
       window.location.href = "/todayplaylist";
     });
     <% } %>
-  });
 
-  // 이벤트 위임을 사용하여 동적으로 생성된 playlist-item에 이벤트 리스너 추가
-  document.querySelector(".drawer-content").addEventListener("click", function(e) {
-    if (e.target.closest(".playlist-item")) {
-      var playlistItem = e.target.closest(".playlist-item");
-      var playlistId = playlistItem.getAttribute("data-playlist-id");
+    // 이벤트 위임을 사용하여 동적으로 생성된 playlist-item에 이벤트 리스너 추가
+    $(".drawer-content").on("click", ".playlist-item", function() {
+      var playlistItem = $(this);
+      var playlistId = playlistItem.data("playlist-id");
       togglePlaylistDetails(playlistItem, playlistId);
-    }
-  });
+    });
 
-  document.getElementById("daily-turntable").addEventListener("click", function() {
+    $('#daily-turntable').click(function() {
+      loadPlaylist('daily');
+    });
+
+    $('#my-turntable').click(function() {
+      loadPlaylist('my');
+    });
+
+    // 기본으로 dailyturntable 로드
     loadPlaylist('daily');
   });
 
-  document.getElementById("my-turntable").addEventListener("click", function() {
-    loadPlaylist('my');
-  });
-
-  // 기본으로 dailyturntable 로드
-  loadPlaylist('daily');
-
   function loadPlaylist(type) {
-    var playlistContainer = document.getElementById("playlist-container");
-    playlistContainer.innerHTML = ''; // 기존 콘텐츠 제거
+    var playlistContainer = $("#playlist-container");
+    playlistContainer.empty(); // 기존 콘텐츠 제거
 
     var playlistData;
     if (type === 'daily') {
@@ -161,42 +193,40 @@
     }
 
     playlistData.forEach(function(item) {
-      var playlistItem = document.createElement("div");
-      playlistItem.classList.add("playlist-item");
-      playlistItem.setAttribute("data-playlist-id", item.id);
-      playlistItem.innerHTML = `
-                        <div class="item-header">
-                            <div class="item-left">
-                                <i class="fas fa-heart"></i>
-                                <div class="item-text">
-                                    <div class="playlist-name">${'${item.date}'}</div>
-                                    <div class="madeby">${'${item.madeBy}'}</div>
-                                </div>
-                            </div>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                    `;
-      playlistContainer.appendChild(playlistItem);
+      var playlistItem = $("<div>").addClass("playlist-item").attr("data-playlist-id", item.id);
+      playlistItem.html(`
+        <div class="item-header">
+          <div class="item-left">
+            <i class="fas fa-heart"></i>
+            <div class="item-text">
+              <div class="playlist-name">${"${item.date}"}</div>
+              <div class="madeby">${"${item.madeBy}"}</div>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      `);
+      playlistContainer.append(playlistItem);
     });
   }
 
   function togglePlaylistDetails(item, id) {
     // 기존의 상세 목록이 있는지 확인하고 있으면 제거
-    var existingDetails = item.nextElementSibling;
-    if (existingDetails && existingDetails.classList.contains("playlist-details")) {
+    var existingDetails = item.next(".playlist-details");
+    if (existingDetails.length) {
       existingDetails.remove();
       return;
     }
 
     // 예시 데이터를 사용하여 상세 목록 생성
-    var details = document.createElement("div");
-    details.classList.add("playlist-details");
-    details.innerHTML = `
-                    <div class="song-item"><i class="fas fa-music"></i> Song 1</div>
-                    <div class="song-item"><i class="fas fa-music"></i> Song 2</div>
-                    <div class="song-item"><i class="fas fa-music"></i> Song 3</div>`;
+    var details = $("<div>").addClass("playlist-details");
+    details.html(`
+      <div class="song-item"><i class="fas fa-music"></i> Song 1</div>
+      <div class="song-item"><i class="fas fa-music"></i> Song 2</div>
+      <div class="song-item"><i class="fas fa-music"></i> Song 3</div>
+    `);
 
-    item.insertAdjacentElement("afterend", details);
+    item.after(details);
   }
 </script>
 </body>

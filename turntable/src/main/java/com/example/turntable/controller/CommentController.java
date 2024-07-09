@@ -1,7 +1,9 @@
 package com.example.turntable.controller;
 
 import com.example.turntable.dto.CommentResponseDto;
+import com.example.turntable.dto.GuestCommentDto;
 import com.example.turntable.dto.WriteDailyCommentDto;
+import com.example.turntable.dto.WriteGuestCommentDto;
 import com.example.turntable.service.CommentService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +38,13 @@ public class CommentController {
     @ResponseBody
     public CommentResponseDto getLatestComment(@RequestParam Long memberId){
         return commentService.getLatestComment(memberId);
+    }
+
+    @PostMapping("/comment/guest")
+    @ResponseBody
+    public String writeGuestComment(@RequestBody WriteGuestCommentDto writeGuestCommentDto, HttpSession session) {
+        Long memberId = (Long) session.getAttribute("userId");
+        commentService.createGuestComment(writeGuestCommentDto);
+        return "redirect:/comment?pageOwnerId="+memberId;
     }
 }
