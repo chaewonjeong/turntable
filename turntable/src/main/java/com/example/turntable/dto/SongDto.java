@@ -13,10 +13,11 @@ import java.util.List;
 @Builder
 public class SongDto {
     private Long id;
-    private  String name;
+    private String name;
     private List<String> artists;
-    private  String albumName;
-    private  String albumImgUrl;
+    private String albumName;
+    private String albumImgUrl;
+    private String youtubeUrl;
 
     public static SongDto from(Song song, List<String> artists) {
         return SongDto.builder()
@@ -25,6 +26,7 @@ public class SongDto {
             .artists(artists)
             .albumName(song.getAlbumName())
             .albumImgUrl(song.getAlbumImgUrl())
+                .youtubeUrl(song.getYoutubeUrl())
             .build();
     }
 

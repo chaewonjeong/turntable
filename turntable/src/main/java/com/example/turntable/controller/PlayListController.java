@@ -2,6 +2,7 @@ package com.example.turntable.controller;
 
 import com.example.turntable.domain.PlayListStatus;
 import com.example.turntable.dto.PlayListCreateDto;
+import com.example.turntable.dto.PlayListDetailDto;
 import com.example.turntable.dto.PlayListDto;
 import com.example.turntable.service.PlayListService;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +33,15 @@ public class PlayListController {
     }
 
 
-    @GetMapping("status/{state}")
-    public ResponseEntity<List<PlayListDto>> getPlayList(@SessionAttribute(name = "userId", required = false) Long userId,
+    @GetMapping("/{state}")
+    public List<PlayListDto> getPlayList(@SessionAttribute(name = "userId", required = false) Long userId,
                                                          @PathVariable PlayListStatus state) {
-        if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        List<PlayListDto> playListDtos = playListService.getPlayListsByStatus(userId, state);
-        return ResponseEntity.ok(playListDtos);
+        return playListService.getPlayListsByStatus(userId, state);
+    }
+
+    @GetMapping("/detail")
+    public PlayListDetailDto getPlayListDetail(@RequestParam Long playListId) {
+        return playListService.getPlayListDetails(playListId);
     }
 }
 
