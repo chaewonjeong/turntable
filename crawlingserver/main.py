@@ -1,25 +1,30 @@
 from typing import Union
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from typing import List, Dict
 
 app = FastAPI()
 
 
-class Item(BaseModel):
+class Song(BaseModel):
     name: str
-    price: float
-    is_offer: Union[bool, None] = None
+    artists: List[str]
+    albumName: str
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+class SongRequest(BaseModel):
+    songs: List[Song]
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+@app.post("/getYoutubeUrls")
+async def get_youtube_urls(request: SongRequest):
+    results = []
+    for song in request.songs:
+        results.append({
+            "name": song.name,
+            "artists": song.artists,
+            "albumName": song.albumName,
+            "youtubeUrl": "test"
+        })
+    return {"results": results}
 
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item_id}
