@@ -3,6 +3,7 @@ package com.example.turntable.controller;
 import com.example.turntable.dto.MemberInfoResponseDto;
 import com.example.turntable.dto.SignupRequestDto;
 import com.example.turntable.service.MemberService;
+import com.example.turntable.service.PlayListService;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class MemberController {
     private final MemberService memberService;
+    private final PlayListService playListService;
 
     @PostMapping("/signup")
     public String signup(@ModelAttribute SignupRequestDto signupRequestDto, RedirectAttributes redirectAttributes) throws IOException {
@@ -70,6 +72,13 @@ public class MemberController {
     @ResponseBody
     public Page<MemberInfoResponseDto> findAllUsersByName(@RequestParam int page, @RequestParam String name){
         return memberService.getAllUsersInfoByName(page, name);
+    }
+
+    @GetMapping("/user/playlist-count")
+    @ResponseBody
+    public ResponseEntity<Integer> findAllUsersByName(@RequestParam Long userId){
+        int playlistCount = playListService.getPlaylistCount(userId);
+        return ResponseEntity.ok(playlistCount);
     }
 
     @PostMapping("user/change-username")

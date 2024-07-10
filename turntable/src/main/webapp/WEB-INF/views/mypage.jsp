@@ -23,7 +23,7 @@
             <div class="profile-picture"></div>
             <div class = profile-details>
                 <div class="username">@<%=username%></div>
-                <div class="playlist-count">9개의 플레이리스트</div>
+                <div class="playlist-count">플레이리스트 개수를 불러오는 중...</div>
             </div>
         </div>
         <button class="logout-button" onclick="logout()">로그아웃</button>
@@ -42,6 +42,26 @@
 </div>
 
 <script>
+  function fetchPlaylistCount() {
+    const userId = "<%= userId %>";
+    $.ajax({
+      url: '/user/playlist-count',
+      method: 'GET',
+      data: {
+        userId: userId
+      },
+      success: function(response) {
+        $('.playlist-count').text(response + '개의 플레이리스트');
+      },
+      error: function(error) {
+        console.error('플레이리스트 개수 가져오기 실패:', error);
+        $('.playlist-count').text('플레이리스트 개수를 가져오지 못했습니다.');
+      }
+    });
+  }
+  $(document).ready(function() {
+    fetchPlaylistCount();
+  });
   function changeUsername() {
     var newUsername = $('#new-username').val();
     $.ajax({
