@@ -49,7 +49,6 @@ public class MemberController {
         Long userId = memberService.getUserIdByName(username);
         session.setAttribute("username", username);
         session.setAttribute("userId",userId);
-        System.out.println(session.getAttribute("username").toString()+session.getAttribute("userId").toString());
         return "redirect:/main?pageOwnerId="+userId;
     }
 
@@ -69,5 +68,13 @@ public class MemberController {
     @ResponseBody
     public Page<MemberInfoResponseDto> findAllUsersByName(@RequestParam int page, @RequestParam String name){
         return memberService.getAllUsersInfoByName(page, name);
+    }
+
+    @PostMapping("user/change-username")
+    public String changeUsername(@RequestParam String username, HttpSession session){
+        Long userId = (Long) session.getAttribute("userId");
+        memberService.changeUserName(userId,username);
+        session.setAttribute("username", username);
+        return "redirect:/main?pageOwnerId="+userId;
     }
 }

@@ -97,4 +97,11 @@ public class MemberService {
         Optional<Member> member = memberRepository.findById(username);
         return member.get().getBackGroundImage();
     }
+
+    @Transactional
+    public String changeUserName(Long userId, String newMemberName) {
+        Member member = memberRepository.findById(userId).orElse(null);
+        member.changeNickname(newMemberName);
+        return newMemberName;
+    }
 }
