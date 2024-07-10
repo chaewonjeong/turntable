@@ -43,4 +43,9 @@ public class TurntableApplication {
 	public String getUsers() {
 		return "users";
 	}
+
+	@GetMapping("/mypage")
+	public String myPageFrom() {
+		return "mypage";
+	}
 }

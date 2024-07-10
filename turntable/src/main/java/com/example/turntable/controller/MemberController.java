@@ -15,8 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
@@ -71,10 +73,18 @@ public class MemberController {
     }
 
     @PostMapping("user/change-username")
-    public String changeUsername(@RequestParam String username, HttpSession session){
+    public String changeUsername(@RequestBody String newUsername, HttpSession session){
         Long userId = (Long) session.getAttribute("userId");
-        memberService.changeUserName(userId,username);
-        session.setAttribute("username", username);
+        memberService.changeUserName(userId,newUsername);
+        session.setAttribute("username", newUsername);
+        return "redirect:/main?pageOwnerId="+userId;
+    }
+
+    @PostMapping("user/change-bgimg")
+    public String changeUsername(@RequestBody MultipartFile newBgImg, HttpSession session)
+        throws IOException {
+        Long userId = (Long) session.getAttribute("userId");
+        memberService.changeBgImg(userId,newBgImg);
         return "redirect:/main?pageOwnerId="+userId;
     }
 }

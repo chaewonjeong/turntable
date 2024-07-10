@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
@@ -103,5 +104,13 @@ public class MemberService {
         Member member = memberRepository.findById(userId).orElse(null);
         member.changeNickname(newMemberName);
         return newMemberName;
+    }
+
+    @Transactional
+    public String changeBgImg(Long userId, MultipartFile newBgImg) throws IOException {
+        Member member = memberRepository.findById(userId).orElse(null);
+        String bgImgUrl = ncpService.uploadFile(newBgImg);
+        member.changeBackGroundImage(bgImgUrl);
+        return bgImgUrl;
     }
 }

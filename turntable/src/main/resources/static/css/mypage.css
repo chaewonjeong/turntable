@@ -1,0 +1,116 @@
+.mypage-container {
+  font-family: "Noto Serif";
+  width: 60%;
+  max-width: 600px;
+  margin: 200px auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 500px; /* 최소 높이 설정 */
+}
+
+.title {
+  display: block;
+  width: 100%;
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-align: center;
+  color:black;
+  margin-top: 10px;
+}
+
+.profile-logout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  margin-right: 10px;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.username {
+  font-weight: bold;
+  color: black;
+}
+
+.playlist-count {
+  color: #888;
+}
+
+.logout-button {
+  background-color: #f77;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.form-section {
+  margin: 20px 20px;
+  display: flex;
+  justify-content: left;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.form-group input {
+  width: 480px;
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-group button {
+  width: 80px;
+  padding: 10px 20px;
+  background-color: #f77;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.delete-button {
+  background-color: #f77;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  margin: 40px auto 20px;
+  font-size: 10px;
+}
