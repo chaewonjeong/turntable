@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface PlayListSongRepository extends JpaRepository<PlayListSong, Long> {
     List<PlayListSong> findAllByPlayList(PlayList playList);
+    void deleteByPlayList_Id(Long playListId);
 }

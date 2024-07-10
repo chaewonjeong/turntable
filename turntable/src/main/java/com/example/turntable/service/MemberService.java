@@ -21,10 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final PlayListRepository playListRepository;
     private final NcpService ncpService;
     private final PasswordEncoder passwordEncoder;
     private final PlayListService playListService;
+    private final CommentService commentService;
 
     @Transactional
     public boolean create(SignupRequestDto signupRequestDto) throws IOException {
@@ -42,6 +42,21 @@ public class MemberService {
         memberRepository.save(member);
         return true;
     }
+
+    public boolean deleteUserInfo(Long userId) throws Exception {
+        deleteUser(userId);
+        playListService.deleteAllPlaylistByMemberId(userId);
+        commentService.deleteDailyCommentByMemberId(userId);
+        return true;
+    }
+
+    @Transactional
+    protected boolean deleteUser(Long userId){
+        Optional<Member> member = memberRepository.findById(userId);
+        memberRepository.delete(member.get());
+        return true;
+    }
+
     public Page<MemberInfoResponseDto> getAllUsersInfo(int page){
         int pageSize = 9;
         PageRequest pageRequest = PageRequest.of(page,pageSize);

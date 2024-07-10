@@ -3,6 +3,7 @@ package com.example.turntable.service;
 import com.example.turntable.domain.DailyComment;
 import com.example.turntable.domain.GuestComment;
 import com.example.turntable.domain.Member;
+import com.example.turntable.domain.PlayList;
 import com.example.turntable.domain.Song;
 import com.example.turntable.dto.CommentResponseDto;
 import com.example.turntable.dto.GuestCommentResponseDto;
@@ -13,6 +14,7 @@ import com.example.turntable.repository.GuestCommentRepository;
 import com.example.turntable.repository.MemberRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -108,5 +110,22 @@ public class CommentService {
         return comments.map(comment -> {
             return GuestCommentResponseDto.from(comment);
         });
+    }
+
+    @Transactional
+    public boolean deleteGuestCommentByCommnetId(Long commentId){
+        return guestCommentRepository.deleteByDailyComment_Id(commentId);
+    }
+
+    @Transactional
+    public boolean deleteDailyCommentByMemberId(Long memberId) {
+        List<DailyComment> dailyCommentOptional = dailycommentRepository.findByMember_Id(memberId);
+        dailyCommentOptional.stream()
+            .map(DailyComment::getId)
+            .forEach(dailyCommentId -> {
+                deleteGuestCommentByCommnetId(dailyCommentId);
+            });
+        dailycommentRepository.deleteByMember_Id(memberId);
+        return true;
     }
 }

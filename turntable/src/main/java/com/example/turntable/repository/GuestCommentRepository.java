@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GuestCommentRepository extends JpaRepository<GuestComment, Long> {
+    boolean deleteByDailyComment_Id(Long dailyCommentId);
     List<GuestComment> findByDailyCommentId(Long commentId);
     Page<GuestComment> findAllByDailyCommentId(Pageable pageable,Long commentId);
 }

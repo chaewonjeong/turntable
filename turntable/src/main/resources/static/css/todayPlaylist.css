@@ -206,3 +206,10 @@
   border-radius: 5px;
   margin-left: 10px;
 }
+
+.loading-message {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 20px;
+  color: #888;
+}

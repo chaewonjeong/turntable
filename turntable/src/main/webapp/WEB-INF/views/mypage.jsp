@@ -113,6 +113,20 @@
         }
       });
     }
+
+  function deleteAccount() {
+    $.ajax({
+      url: '/withdraw',
+      type: 'POST',
+      success: function(response) {
+        alert('계정이 성공적으로 탈퇴되었습니다.');
+        window.location.href = '/';
+      },
+      error: function(error) {
+        alert('계정 탈퇴에 실패했습니다.');
+      }
+    });
+  }
 </script>
 </body>
 </html>

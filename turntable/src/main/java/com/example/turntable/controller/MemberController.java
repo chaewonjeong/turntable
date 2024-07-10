@@ -90,10 +90,28 @@ public class MemberController {
     }
 
     @PostMapping("user/change-bgimg")
-    public String changeUsername(@RequestBody MultipartFile newBgImg, HttpSession session)
+    public String changeBgImg(@RequestBody MultipartFile newBgImg, HttpSession session)
         throws IOException {
         Long userId = (Long) session.getAttribute("userId");
         memberService.changeBgImg(userId,newBgImg);
         return "redirect:/main?pageOwnerId="+userId;
+    }
+
+    @PostMapping("/withdraw")
+    public String deleteUser(HttpSession session) throws Exception {
+        Long userId = (Long) session.getAttribute("userId");
+
+        if (userId == null) {
+            return "redirect:/login"; // 세션에 사용자 ID가 없는 경우 로그인 페이지로 리다이렉트
+        }
+
+        boolean res = memberService.deleteUserInfo(userId);
+
+        if (res) {
+            session.invalidate(); // 탈퇴 성공 시 세션 무효화
+            return "redirect:/login"; // 로그인 페이지로 리다이렉트
+        } else {
+            return "redirect:/error"; // 탈퇴 실패 시 에러 페이지로 리다이렉트
+        }
     }
 }
