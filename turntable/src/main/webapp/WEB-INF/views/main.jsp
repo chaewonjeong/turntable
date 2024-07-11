@@ -17,6 +17,7 @@
 <script>
   let latestCommentId = null;
   let userId = "<%= userId %>"; // pageOwnerId를 userId로 사용
+  let pageOwnerName = null
   let pageOwnerId = "<%= pageOwnerId %>"; // 실제 값 설정
   let currentPage = 0; // 현재 페이지 번호를 저장할 변수
 </script>
@@ -34,7 +35,10 @@
 
         <% if (isOwner) { %>
         <!-- 현재 사용자의 페이지일 때만 표시 -->
-        <button class="playlist-button" id="todayPlaylistBtn"><span><i class="fa-solid fa-compact-disc" id="settings-icon"></i>Today Playlist !</span></button>
+        <button class="playlist-button" id="todayPlaylistBtn">
+            <span class="bg"></span>
+            <span class="text"><i class="fa-solid fa-compact-disc" id="settings-icon"></i> Today Playlist!</span>
+        </button>
         <% } %>
 
         <div class="input-section-container">
@@ -66,6 +70,17 @@
         <div id="playlist-container">
             <!-- 플레이리스트 아이템들이 여기에 동적으로 로드됩니다 -->
         </div>
+
+        <!-- YouTube Video Input and Display -->
+        <div class="youtube-container">
+            <label for="youtube-url">YouTube URL:</label>
+            <input type="text" id="youtube-url" placeholder="Enter YouTube URL...">
+            <button id="add-youtube-video-btn">Add Video</button>
+            <div id="youtube-video-display" class="mt-3">
+                <!-- YouTube Video will be displayed here -->
+            </div>
+        </div>
+
         <!-- 플레이리스트 추가 모달 -->
         <div id="add-playlist-modal" class="modal">
             <div class="modal-content">
@@ -91,8 +106,8 @@
 
 <script>
   $(document).ready(function() {
-    fetchLatestComment(pageOwnerId);
     fetchUserName(pageOwnerId);
+    fetchLatestComment(pageOwnerId);
 
     // 이벤트 리스너 설정
     $("#add-playlist-btn").click(function() {
@@ -125,6 +140,7 @@
             window.location.href = "/main?pageOwnerId=" + pageOwnerId;
           },
           error: function (error) {
+            alert("현재 페이지의 게시글이 존재하지 않아 댓글을 작성할 수 없습니다.");
             console.error('Error saving comment:', error);
           }
         });
@@ -169,7 +185,27 @@
 
     // 기본으로 dailyturntable 로드
     loadPlaylist('DAILY');
+
+    // YouTube 비디오 추가 버튼 이벤트 리스너
+    $("#add-youtube-video-btn").click(function() {
+      var url = $("#youtube-url").val();
+      var videoId = getYouTubeVideoId(url);
+      if (videoId) {
+        $("#youtube-video-display").html(`
+                <div class="youtube-video">
+                  <iframe width="560" height="200" src="https://www.youtube.com/embed/${'${videoId}'}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            `);
+      } else {
+        alert("Invalid YouTube URL");
+      }
+    });
   });
+
+  function getYouTubeVideoId(url) {
+    var match = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return (match && match[1]) ? match[1] : null;
+  }
 
   function fetchUserName(pageOwnerId){
     $.ajax({
@@ -179,6 +215,7 @@
       success: function(response) {
         if (response) {
           $('.username-container').text("@" + response.memberName);
+          pageOwnerName = response.memberName;
         }
       },
       error: function(error) {
@@ -204,19 +241,43 @@
                             ${"${response.comment}"}
                         </div>
                         <div class="song-info">▶ ${"${response.title}"} - ${"${artists}"}</div>
+                        <div class="youtube-video" id="latest-comment-video" style="display: none;"></div>
                     </div>
                 `);
           fetchComments(currentPage);
+
+          // 마우스 오버 이벤트 추가
+          commentInfo.on('mouseenter', function(event) {
+            console.log("hover");
+            var videoId = getYouTubeVideoId("https://www.youtube.com/watch?v=c_l1ZwJbAnc"); // response에 youtubeUrl이 있다고 가정
+            if (videoId) {
+              $('#latest-comment-video').html(`
+                  <iframe width="560" height="200" src="https://www.youtube.com/embed/${"${videoId}"}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                `).show();
+            }
+          })
+          .on('mouseleave', function() {
+            $('#latest-comment-video').hide();
+          });
         }
       },
       error: function(error) {
         console.error('Error fetching latest comment:', error);
         const commentInfo = $('.icon-commentinfo');
+        <% if (isOwner) { %>
         commentInfo.html(`
                     <div class="none-article" style="font-size : 12px; color:black">
                      <span> 최근 작성된 게시글이 없습니다. 이곳을 클릭해 오늘의 기분을 작성하고 원하는 음악을 공유해보세요 !
                     </div>
                 `);
+        <%}%>
+        <% if (!isOwner) { %>
+        commentInfo.html(`
+                    <div class="none-article" style="font-size : 12px; color:black">
+                     <span> 최근 ${"${pageOwnerName}"}님의 게시글이 없습니다.
+                    </div>
+                `);
+        <%}%>
       }
     });
   }
@@ -380,6 +441,16 @@
                     </div>
                 `);
           playlistContainer.append(playlistItem);
+
+          // YouTube Video Display
+          if (item.youtubeVideoId) {
+            var videoDisplay = $(`
+              <div class="youtube-video">
+                <iframe width="100%" height="315" src="https://www.youtube.com/embed/${item.youtubeVideoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+            `);
+            playlistContainer.append(videoDisplay);
+          }
         });
       },
       error: function(error) {
