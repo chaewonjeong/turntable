@@ -44,9 +44,9 @@ public class MemberService {
     }
 
     public boolean deleteUserInfo(Long userId) throws Exception {
-        deleteUser(userId);
         playListService.deleteAllPlaylistByMemberId(userId);
         commentService.deleteDailyCommentByMemberId(userId);
+        deleteUser(userId);
         return true;
     }
 

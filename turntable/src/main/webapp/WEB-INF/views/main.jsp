@@ -34,8 +34,9 @@
 
         <% if (isOwner) { %>
         <!-- 현재 사용자의 페이지일 때만 표시 -->
-        <button class="btn" id="todayPlaylistBtn"><span><i class="fa-solid fa-compact-disc" id="settings-icon"></i>Today Playlist !</span></button>
+        <button class="playlist-button" id="todayPlaylistBtn"><span><i class="fa-solid fa-compact-disc" id="settings-icon"></i>Today Playlist !</span></button>
         <% } %>
+
         <div class="input-section-container">
             <div class="input-section">
                 <input type="text" class="input-field" placeholder="댓글을 입력하세요">

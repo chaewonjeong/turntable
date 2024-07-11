@@ -22,9 +22,12 @@ public class SongArtistService {
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
 
+
     public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
         tracks.forEach(track -> {
             if (!isSongExist(track.getName(),track.getArtists())) {
+
+
                 Song song = track.toEntity();
                 saveTrackNeedToSave(song);
                 List<Artist> artists = artistsNeedToSave(track.getArtists());
@@ -40,6 +43,7 @@ public class SongArtistService {
     public Song saveTrackNeedToSave(Song song) {
         return songRepository.save(song);
     }
+
     @Transactional
     public List<Artist> saveAllArtistsNeedToSave(List<Artist> artists) {
         return artistRepository.saveAll(artists);

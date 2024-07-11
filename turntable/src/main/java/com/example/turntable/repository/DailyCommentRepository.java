@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DailyCommentRepository  extends JpaRepository<DailyComment, Long> {
     List <DailyComment> findByMember_Id(Long memberId);
-    boolean deleteByMember_Id(Long memberId);
+    int deleteByMember_Id(Long memberId);
     DailyComment findFirstByMember_IdOrderByCreatedAtDesc(Long memberId);
     Page<DailyComment> findAllByMemberId(Pageable pageable, Long memberId);
 }

@@ -113,7 +113,7 @@ public class CommentService {
     }
 
     @Transactional
-    public boolean deleteGuestCommentByCommnetId(Long commentId){
+    public int deleteGuestCommentByCommnetId(Long commentId){
         return guestCommentRepository.deleteByDailyComment_Id(commentId);
     }
 
