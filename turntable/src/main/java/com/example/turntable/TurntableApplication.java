@@ -48,4 +48,9 @@ public class TurntableApplication {
 	public String myPageFrom() {
 		return "mypage";
 	}
+
+	@GetMapping("/")
+	public String index() {
+		return "start";
+	}
 }

@@ -5,48 +5,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/signup.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<div class = "background-box">
-    <div class="signup-container">
-        <h2>회원가입</h2>
-        <form id="signup-form" action="/signup" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="nickname">이름:</label>
-                <input type="text" id="nickname" name="nickname" required>
-            </div>
-            <div class="form-group">
-                <label for="name">아이디:</label>
-                <input type="text" id="name" name="name" required>
-                <button type="button" id="check-username">중복확인</button>
-                <span id="username-message"></span>
-            </div>
-            <div class="form-group">
-                <label for="password">비밀번호:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="form-group">
-                <label for="confirm-password">비밀번호 확인:</label>
-                <input type="password" id="confirm-password" name="confirm-password" required>
-                <span id="password-message"></span>
-            </div>
-            <div class="form-group">
-                <label for="bgImg">배경화면 업로드:</label>
-                <input type="file" id="bgImg" name="bgImg" accept="image/*">
-                <span id="file-message"></span>
-            </div>
-            <button type="submit">회원가입</button>
-        </form>
+<div class="container">
+    <div class="left">
+        <h1>Turntable; 매일 당신만을 위한 플레이리스트</h1>
+        <p>Turntable ; 은 매일 새로운 음악을 발견하고 싶은 당신을 위해</p>
+        <p>맞춤형 플레이리스트를 제공합니다.</p>
+        <p>당신의 취향과 분위기에 맞춘 신선한 곡들을 추천받아</p>
+        <p>음악 감상의 즐거움을 누려보세요.</p>
+    </div>
+    <div class="right">
+        <div class="signup-container">
+            <h1 class="text-center">sign up</h1>
+            <form id="signup-form" action="/signup" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="nickname">이름:</label>
+                    <input type="text" class="form-control" id="nickname" name="nickname" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">아이디:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary" id="check-username">중복확인</button>
+                        </div>
+                    </div>
+                    <span id="username-message" class="form-text"></span>
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">비밀번호 확인:</label>
+                    <input type="password" class="form-control" id="confirm-password" name="confirm-password" required>
+                    <span id="password-message" class="form-text"></span>
+                </div>
+                <div class="form-group">
+                    <label for="bgImg">배경화면 업로드:</label>
+                    <input type="file" class="form-control-file" id="bgImg" name="bgImg" accept="image/*">
+                    <span id="file-message" class="form-text"></span>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">회원가입</button>
+            </form>
+        </div>
     </div>
 </div>
 
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
   $(document).ready(function() {
     const MAX_FILE_SIZE = 10*1024*1024;
 
-    $('#username').on('input', function() {
+    $('#name').on('input', function() {
       $('#username-message').text('');
     });
 
@@ -78,10 +95,10 @@
       }
 
       const fileInput = $('#bgImg')[0];
-      if(fileInput.files.length>0){
+      if(fileInput.files.length > 0){
         const file = fileInput.files[0];
-        if(file.size>MAX_FILE_SIZE){
-          $('#file-message').text("파일 크기가 너무 큽니다. 10MB 이하로 줄여주세요.")
+        if(file.size > MAX_FILE_SIZE){
+          $('#file-message').text("파일 크기가 너무 큽니다. 10MB 이하로 줄여주세요.");
           event.preventDefault();
           return;
         }
