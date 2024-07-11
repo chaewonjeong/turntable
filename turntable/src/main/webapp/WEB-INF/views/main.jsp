@@ -70,8 +70,8 @@
         <div id="add-playlist-modal" class="modal">
             <div class="modal-content">
                 <span class="close-btn" id="modal-close-btn">&times;</span>
-                <h2>Create New Playlist</h2>
-                <label for="playlist-name">Playlist Name:</label>
+                <h2>새 플레이리스트</h2>
+                <label for="playlist-name">플레이리스트 이름:</label>
                 <input type="text" id="playlist-name" name="playlist-name" required>
                 <input type="text" id="track-search" placeholder="Search for music...">
                 <div id="track-results">
