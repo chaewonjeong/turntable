@@ -1,5 +1,6 @@
 package com.example.turntable.service;
 
+import com.example.turntable.domain.Artist;
 import com.example.turntable.domain.DailyComment;
 import com.example.turntable.domain.GuestComment;
 import com.example.turntable.domain.Member;
@@ -72,10 +73,7 @@ public class CommentService {
         Page<DailyComment> comments = dailycommentRepository.findAllByMemberId(pageRequest,memberId);
 
         return comments.map(comment -> {
-            List<String> artists = songArtistService.findArtistsBySong(comment.getSong().getId()).stream()
-                .map(artist ->{
-                    return artist.getName();
-                }).collect(Collectors.toList());
+            List<String> artists = getStringArtistsFromSong(comment.getSong());
             int commentSize = guestCommentRepository.findByDailyCommentId(comment.getId()).size();
             return CommentResponseDto.of(comment,artists,commentSize);
         });
@@ -83,10 +81,7 @@ public class CommentService {
 
     public CommentResponseDto getLatestComment(Long memberId){
         DailyComment comment = dailycommentRepository.findFirstByMember_IdOrderByCreatedAtDesc(memberId);
-        List<String> artists = songArtistService.findArtistsBySong(comment.getSong().getId()).stream()
-            .map(artist ->{
-                return artist.getName();
-            }).collect(Collectors.toList());
+        List<String> artists = getStringArtistsFromSong(comment.getSong());
         int commentSize = guestCommentRepository.findByDailyCommentId(comment.getId()).size();
         return CommentResponseDto.of(comment,artists,commentSize);
     }
@@ -99,6 +94,13 @@ public class CommentService {
         return comments.map(comment -> {
             return GuestCommentResponseDto.from(comment);
         });
+    }
+
+    private List<String> getStringArtistsFromSong (Song song) {
+        return songArtistService.findArtistsBySong(song.getId()).stream()
+            .map(artist ->{
+                return artist.getName();
+            }).collect(Collectors.toList());
     }
 
     @Transactional
