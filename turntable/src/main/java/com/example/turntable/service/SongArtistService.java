@@ -26,8 +26,6 @@ public class SongArtistService {
     public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
         tracks.forEach(track -> {
             if (!isSongExist(track.getName(),track.getArtists())) {
-
-
                 Song song = track.toEntity();
                 saveTrackNeedToSave(song);
                 List<Artist> artists = artistsNeedToSave(track.getArtists());

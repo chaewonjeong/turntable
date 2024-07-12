@@ -26,7 +26,8 @@ public class TurntableApplication {
 
 	@GetMapping("/login")
 	public String loginForm() {
-		return "login";
+		System.out.println("loginForm");
+		return "loginForm";
 	}
 
 	@GetMapping("/signup")
