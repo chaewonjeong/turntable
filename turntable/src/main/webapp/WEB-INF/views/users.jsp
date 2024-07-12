@@ -19,7 +19,6 @@
         <div class="grid" id="userGrid"></div>
         <div class="pagination" id="pagination"></div>
     </div>
-
 <script>
   $(document).ready(function() {
     const userGrid = $('#userGrid');

@@ -14,9 +14,7 @@ import java.util.List;
 
 @Repository
 public interface PlayListRepository extends JpaRepository<PlayList, Long> {
-    Optional<PlayList> findByMember_Id(Long memberId);
+    List<PlayList> findByMember_Id(Long memberId);
     int countByMember_Id(Long memberId);
     List<PlayList> findAllByMemberAndState(Member member, PlayListStatus status);
-
-
 }

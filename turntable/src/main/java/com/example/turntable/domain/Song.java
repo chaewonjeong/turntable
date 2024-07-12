@@ -25,5 +25,4 @@ public class Song {
     private String albumImgUrl;
 
     private String youtubeUrl;
-
 }

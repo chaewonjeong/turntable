@@ -34,8 +34,9 @@
 
         <% if (isOwner) { %>
         <!-- 현재 사용자의 페이지일 때만 표시 -->
-        <button class="playlist-button" id="todayPlaylistBtn"><i class="fa-solid fa-compact-disc" id="settings-icon"></i>Today Playlist</button>
+        <button class="playlist-button" id="todayPlaylistBtn"><span><i class="fa-solid fa-compact-disc" id="settings-icon"></i>Today Playlist !</span></button>
         <% } %>
+
         <div class="input-section-container">
             <div class="input-section">
                 <input type="text" class="input-field" placeholder="댓글을 입력하세요">
@@ -69,8 +70,8 @@
         <div id="add-playlist-modal" class="modal">
             <div class="modal-content">
                 <span class="close-btn" id="modal-close-btn">&times;</span>
-                <h2>Create New Playlist</h2>
-                <label for="playlist-name">Playlist Name:</label>
+                <h2>새 플레이리스트</h2>
+                <label for="playlist-name">플레이리스트 이름:</label>
                 <input type="text" id="playlist-name" name="playlist-name" required>
                 <input type="text" id="track-search" placeholder="Search for music...">
                 <div id="track-results">
@@ -210,6 +211,12 @@
       },
       error: function(error) {
         console.error('Error fetching latest comment:', error);
+        const commentInfo = $('.icon-commentinfo');
+        commentInfo.html(`
+                    <div class="none-article" style="font-size : 12px; color:black">
+                     <span> 최근 작성된 게시글이 없습니다. 이곳을 클릭해 오늘의 기분을 작성하고 원하는 음악을 공유해보세요 !
+                    </div>
+                `);
       }
     });
   }
