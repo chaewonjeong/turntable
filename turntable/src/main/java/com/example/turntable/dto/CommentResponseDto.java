@@ -3,16 +3,28 @@ package com.example.turntable.dto;
 import com.example.turntable.domain.DailyComment;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Getter
+@Builder
 public class CommentResponseDto {
-    private final Long id;
-    private final String comment;
-    private final LocalDateTime date;
-    private final String title;
-    private final List<String> artists;
-    private final int commentCount;
+    private Long id;
+    private String comment;
+    private LocalDateTime date;
+    private String title;
+    private List<String> artists;
+    private int commentCount;
+
+    public static CommentResponseDto of(DailyComment comment, List<String> artists,
+        int commentCount) {
+        return CommentResponseDto.builder()
+            .id(comment.getId())
+            .comment(comment.getComment())
+            .date(comment.getCreatedAt())
+            .title(comment.getSong().getName())
+            .artists(artists)
+            .commentCount(commentCount)
+            .build();
+    }
 }

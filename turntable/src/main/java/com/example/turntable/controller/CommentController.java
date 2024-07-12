@@ -24,7 +24,7 @@ public class CommentController {
     @ResponseBody
     public String writeComment(@RequestBody WriteDailyCommentDto writeDailyCommentDto, HttpSession session) {
         Long memberId = (Long) session.getAttribute("userId");
-        commentService.create(writeDailyCommentDto,memberId);
+        commentService.createDailyComment(writeDailyCommentDto,memberId);
         return "redirect:/comment?pageOwnerId="+memberId;
     }
 

@@ -3,10 +3,7 @@ package com.example.turntable.repository;
 import com.example.turntable.domain.Member;
 import com.example.turntable.domain.PlayList;
 import com.example.turntable.domain.PlayListStatus;
-import java.util.Optional;
-import com.example.turntable.domain.PlayListStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.expression.spel.ast.OpAnd;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

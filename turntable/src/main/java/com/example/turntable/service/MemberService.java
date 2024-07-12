@@ -4,7 +4,6 @@ import com.example.turntable.domain.Member;
 import com.example.turntable.dto.MemberInfoResponseDto;
 import com.example.turntable.dto.SignupRequestDto;
 import com.example.turntable.repository.MemberRepository;
-import com.example.turntable.repository.PlayListRepository;
 import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
-import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -63,12 +61,9 @@ public class MemberService {
         Page<Member> members = memberRepository.findAll(pageRequest);
 
         return members.map(member -> {
-            return new MemberInfoResponseDto(
-                member.getId(),
-                member.getName(),
-                member.getBackGroundImage(),
-                playListService.getPlaylistCount(member.getId())
-            );}
+            int playlistCount = playListService.getPlaylistCount(member.getId());
+            return MemberInfoResponseDto.of(member,playlistCount);
+        }
         );
     }
     public Page<MemberInfoResponseDto> getAllUsersInfoByName(int page, String name){
@@ -77,25 +72,17 @@ public class MemberService {
         Page<Member> members = memberRepository.findByNameContaining(name,pageRequest);
 
         return members.map(member -> {
-            return new MemberInfoResponseDto(
-                member.getId(),
-                member.getName(),
-                member.getBackGroundImage(),
-                playListService.getPlaylistCount(member.getId())
-            );}
-        );
+            int playlistCount = playListService.getPlaylistCount(member.getId());
+            return MemberInfoResponseDto.of(member,playlistCount);
+        });
     }
 
     public MemberInfoResponseDto getUserById(Long memberId){
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         if (optionalMember.isPresent()) {
            Member member = optionalMember.get();
-            return new MemberInfoResponseDto(
-                member.getId(),
-                member.getName(),
-                member.getBackGroundImage(),
-                playListService.getPlaylistCount(member.getId())
-            );
+           int playlistCount = playListService.getPlaylistCount(member.getId());
+            return MemberInfoResponseDto.of(member,playlistCount);
         }
         else{
             return null;
