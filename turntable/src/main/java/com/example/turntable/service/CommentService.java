@@ -72,34 +72,23 @@ public class CommentService {
         Page<DailyComment> comments = dailycommentRepository.findAllByMemberId(pageRequest,memberId);
 
         return comments.map(comment -> {
-            return new CommentResponseDto(
-                comment.getId(),
-                comment.getComment(),
-                comment.getCreatedAt(),
-                comment.getSong().getName(),
-                songArtistService.findArtistsBySong(comment.getSong().getId()).stream()
-                    .map(artist ->{
-                        return artist.getName();
-                    }).collect(Collectors.toList()),
-                guestCommentRepository.findByDailyCommentId(comment.getId()).size()
-            );
+            List<String> artists = songArtistService.findArtistsBySong(comment.getSong().getId()).stream()
+                .map(artist ->{
+                    return artist.getName();
+                }).collect(Collectors.toList());
+            int commentSize = guestCommentRepository.findByDailyCommentId(comment.getId()).size();
+            return CommentResponseDto.of(comment,artists,commentSize);
         });
     }
 
     public CommentResponseDto getLatestComment(Long memberId){
         DailyComment comment = dailycommentRepository.findFirstByMember_IdOrderByCreatedAtDesc(memberId);
-
-        return new CommentResponseDto(
-            comment.getId(),
-            comment.getComment(),
-            comment.getCreatedAt(),
-            comment.getSong().getName(),
-            songArtistService.findArtistsBySong(comment.getSong().getId()).stream()
-                .map(artist ->{
-                    return artist.getName();
-                }).collect(Collectors.toList()),
-            guestCommentRepository.findByDailyCommentId(comment.getId()).size()
-        );
+        List<String> artists = songArtistService.findArtistsBySong(comment.getSong().getId()).stream()
+            .map(artist ->{
+                return artist.getName();
+            }).collect(Collectors.toList());
+        int commentSize = guestCommentRepository.findByDailyCommentId(comment.getId()).size();
+        return CommentResponseDto.of(comment,artists,commentSize);
     }
 
     public Page<GuestCommentResponseDto> getGuestCommentsByPage(int page,Long dailyCommentId){
