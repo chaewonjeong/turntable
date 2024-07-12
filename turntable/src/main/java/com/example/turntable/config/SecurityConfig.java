@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -29,14 +30,12 @@ public class SecurityConfig {
                 .loginPage("/login")
                 .defaultSuccessUrl("/login-success"))
             .logout(logout -> logout
-                .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
-                .logoutSuccessUrl("/main")
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true));
 
         return http.build();
-
     }
-
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -48,6 +47,9 @@ public class SecurityConfig {
         AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
 }
-
-

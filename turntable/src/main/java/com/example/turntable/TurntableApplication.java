@@ -26,7 +26,8 @@ public class TurntableApplication {
 
 	@GetMapping("/login")
 	public String loginForm() {
-		return "login";
+		System.out.println("loginForm");
+		return "loginForm";
 	}
 
 	@GetMapping("/signup")
@@ -42,5 +43,15 @@ public class TurntableApplication {
 	@GetMapping("/users")
 	public String getUsers() {
 		return "users";
+	}
+
+	@GetMapping("/mypage")
+	public String myPageFrom() {
+		return "mypage";
+	}
+
+	@GetMapping("/")
+	public String index() {
+		return "start";
 	}
 }

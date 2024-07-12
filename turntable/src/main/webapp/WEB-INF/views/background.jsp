@@ -34,6 +34,7 @@
 </head>
 <body>
 <div class="header">
+    <i class="fas fa-bars hamburger-icon" id="hamburger-icon"></i>
     <div class="top-bar">
         <i class="fas fa-user user-icon" id ="users-icon"></i>
         <i class="fas fa-home home-icon" id="home-icon"></i>
@@ -45,7 +46,7 @@
     const userId = "<%= userId %>";
 
       document.getElementById("home-icon").addEventListener("click", function() {
-        window.location.href = "/main?pageOwnerId="+userId;
+        window.location.href = "/main";
       });
       document.getElementById("users-icon").addEventListener("click", function() {
         window.location.href = "/users";
@@ -53,6 +54,9 @@
       document.getElementById("settings-icon").addEventListener("click", function() {
         document.getElementById("settings-drawer").classList.toggle("open");
       });
+    document.getElementById("hamburger-icon").addEventListener("click", function() {
+      window.location.href = "/mypage";
+    });
     });
 
   $("#footer-placeholder").load("footer.html");

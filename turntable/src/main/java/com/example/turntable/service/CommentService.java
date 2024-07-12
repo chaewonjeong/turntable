@@ -13,6 +13,7 @@ import com.example.turntable.repository.GuestCommentRepository;
 import com.example.turntable.repository.MemberRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,9 @@ public class CommentService {
     private final SongArtistService songArtistService;
 
     @Transactional
-    public void create(WriteDailyCommentDto writeDailyCommentDto, Long memberId) {
+    public void createDailyComment(WriteDailyCommentDto writeDailyCommentDto, Long memberId) {
         Optional<Member> memberOptional = memberRepository.findById(memberId);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-        LocalDateTime date = LocalDateTime.parse(writeDailyCommentDto.getDate(), formatter);
+        LocalDateTime date = stringDateToLocalDateTime(writeDailyCommentDto.getDate());
         Optional<Song> song = songArtistService.findSongByTitleAndArtist(writeDailyCommentDto.getTitle(),writeDailyCommentDto.getArtists());
 
         final DailyComment dailyComment = DailyComment.builder()
@@ -51,9 +50,7 @@ public class CommentService {
     public void createGuestComment(WriteGuestCommentDto writeGuestCommentDto) {
         Optional<Member> guest = memberRepository.findById(writeGuestCommentDto.getGuestId());
         Optional<DailyComment> dailyComment = dailycommentRepository.findById(writeGuestCommentDto.getCommentId());
-
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-        LocalDateTime date = LocalDateTime.parse(writeGuestCommentDto.getDate(),formatter);
+        LocalDateTime date = stringDateToLocalDateTime(writeGuestCommentDto.getDate());
 
         final GuestComment guestComment = GuestComment.builder()
             .comment(writeGuestCommentDto.getComment())
@@ -64,40 +61,27 @@ public class CommentService {
         guestCommentRepository.save(guestComment);
     }
 
+    private LocalDateTime stringDateToLocalDateTime(String date) {
+        return LocalDateTime.parse(date, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    }
+
     public Page<CommentResponseDto> getCommentsByPage(int page,Long memberId){
         int pageSize = 5;
         PageRequest pageRequest = PageRequest.of(page,pageSize,Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<DailyComment> comments = dailycommentRepository.findAllByMemberId(pageRequest,memberId);
 
         return comments.map(comment -> {
-            return new CommentResponseDto(
-                comment.getId(),
-                comment.getComment(),
-                comment.getCreatedAt(),
-                comment.getSong().getName(),
-                songArtistService.findArtistsBySong(comment.getSong().getId()).stream()
-                    .map(artist ->{
-                        return artist.getName();
-                    }).collect(Collectors.toList()),
-                guestCommentRepository.findByDailyCommentId(comment.getId()).size()
-            );
+            List<String> artists = getStringArtistsFromSong(comment.getSong());
+            int commentSize = guestCommentRepository.findByDailyCommentId(comment.getId()).size();
+            return CommentResponseDto.of(comment,artists,commentSize);
         });
     }
 
     public CommentResponseDto getLatestComment(Long memberId){
         DailyComment comment = dailycommentRepository.findFirstByMember_IdOrderByCreatedAtDesc(memberId);
-
-        return new CommentResponseDto(
-            comment.getId(),
-            comment.getComment(),
-            comment.getCreatedAt(),
-            comment.getSong().getName(),
-            songArtistService.findArtistsBySong(comment.getSong().getId()).stream()
-                .map(artist ->{
-                    return artist.getName();
-                }).collect(Collectors.toList()),
-            guestCommentRepository.findByDailyCommentId(comment.getId()).size()
-        );
+        List<String> artists = getStringArtistsFromSong(comment.getSong());
+        int commentSize = guestCommentRepository.findByDailyCommentId(comment.getId()).size();
+        return CommentResponseDto.of(comment,artists,commentSize);
     }
 
     public Page<GuestCommentResponseDto> getGuestCommentsByPage(int page,Long dailyCommentId){
@@ -108,5 +92,29 @@ public class CommentService {
         return comments.map(comment -> {
             return GuestCommentResponseDto.from(comment);
         });
+    }
+
+    private List<String> getStringArtistsFromSong (Song song) {
+        return songArtistService.findArtistsBySong(song.getId()).stream()
+            .map(artist ->{
+                return artist.getName();
+            }).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public int deleteGuestCommentByCommnetId(Long commentId){
+        return guestCommentRepository.deleteByDailyComment_Id(commentId);
+    }
+
+    @Transactional
+    public boolean deleteDailyCommentByMemberId(Long memberId) {
+        List<DailyComment> dailyCommentOptional = dailycommentRepository.findByMember_Id(memberId);
+        dailyCommentOptional.stream()
+            .map(DailyComment::getId)
+            .forEach(dailyCommentId -> {
+                deleteGuestCommentByCommnetId(dailyCommentId);
+            });
+        dailycommentRepository.deleteByMember_Id(memberId);
+        return true;
     }
 }

@@ -58,6 +58,7 @@
             </div>
 
         <div id="recommendations-section" class="recommendations-section">
+            <div id="loading-message" class="loading-message" style="display: none;">불러오는 중...</div>
             <div id="recommendations-list" class="recommendations-list"></div>
             <button class="save-playlist-button">플레이리스트 등록</button>
         </div>
@@ -214,6 +215,7 @@
     }
 
       function submitRecommendations() {
+        $('#loading-message').show();  // 로딩 메시지 표시
         const seedArtists = Array.from(document.querySelectorAll('#selected-artists .selected-item')).map(item => item.dataset.id);
         const seedTracks = Array.from(document.querySelectorAll('#selected-tracks .selected-item')).map(item => item.dataset.id);
         const seedGenres = Array.from(document.querySelectorAll('#selected-genres .selected-item')).map(item => item.textContent);
@@ -232,6 +234,7 @@
           contentType: 'application/json',
           data: JSON.stringify(RecommendRequestDto),
           success: function(response) {
+            $('#loading-message').hide();  // 로딩 메시지 숨기기
             console.log("Received recommendations:", response);
             displayRecommendations(response);
 

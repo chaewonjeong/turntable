@@ -1,9 +1,7 @@
 package com.example.turntable.dto;
 
-import com.example.turntable.domain.PlayList;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 

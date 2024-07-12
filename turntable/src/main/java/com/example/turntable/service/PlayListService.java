@@ -78,10 +78,25 @@ public class PlayListService {
     }
 
 
-
-
     public int getPlaylistCount(Long memberId){
         return playListRepository.countByMember_Id(memberId);
+    }
+
+    @Transactional
+    public void deletePlayListSongByPlaylistId(Long playlistId){
+        playListSongRepository.deleteByPlayList_Id(playlistId);
+    }
+
+    @Transactional
+    public boolean deleteAllPlaylistByMemberId(Long memberId) {
+        List<PlayList> playListOptional = playListRepository.findByMember_Id(memberId);
+        playListOptional.stream()
+                .map(PlayList::getId)
+                .forEach(playListId -> {
+                    deletePlayListSongByPlaylistId(playListId);
+                    playListRepository.delete(playListRepository.findById(playListId).orElseThrow());
+                });
+        return true;
     }
 
 }
