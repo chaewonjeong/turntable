@@ -33,11 +33,9 @@ public class CommentService {
     private final SongArtistService songArtistService;
 
     @Transactional
-    public void create(WriteDailyCommentDto writeDailyCommentDto, Long memberId) {
+    public void createDailyComment(WriteDailyCommentDto writeDailyCommentDto, Long memberId) {
         Optional<Member> memberOptional = memberRepository.findById(memberId);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-        LocalDateTime date = LocalDateTime.parse(writeDailyCommentDto.getDate(), formatter);
+        LocalDateTime date = stringDateToLocalDateTime(writeDailyCommentDto.getDate());
         Optional<Song> song = songArtistService.findSongByTitleAndArtist(writeDailyCommentDto.getTitle(),writeDailyCommentDto.getArtists());
 
         final DailyComment dailyComment = DailyComment.builder()
@@ -53,9 +51,7 @@ public class CommentService {
     public void createGuestComment(WriteGuestCommentDto writeGuestCommentDto) {
         Optional<Member> guest = memberRepository.findById(writeGuestCommentDto.getGuestId());
         Optional<DailyComment> dailyComment = dailycommentRepository.findById(writeGuestCommentDto.getCommentId());
-
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-        LocalDateTime date = LocalDateTime.parse(writeGuestCommentDto.getDate(),formatter);
+        LocalDateTime date = stringDateToLocalDateTime(writeGuestCommentDto.getDate());
 
         final GuestComment guestComment = GuestComment.builder()
             .comment(writeGuestCommentDto.getComment())
@@ -64,6 +60,10 @@ public class CommentService {
             .visitorMember(guest.get())
             .build();
         guestCommentRepository.save(guestComment);
+    }
+
+    private LocalDateTime stringDateToLocalDateTime(String date) {
+        return LocalDateTime.parse(date, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     public Page<CommentResponseDto> getCommentsByPage(int page,Long memberId){
