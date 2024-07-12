@@ -2,7 +2,6 @@ package com.example.turntable.repository;
 
 import com.example.turntable.domain.PlayList;
 import com.example.turntable.domain.PlayListSong;
-import com.example.turntable.domain.Song;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

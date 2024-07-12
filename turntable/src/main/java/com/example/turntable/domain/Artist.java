@@ -1,13 +1,11 @@
 package com.example.turntable.domain;
 
 import jakarta.persistence.*;
-import java.net.SocketOption;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter

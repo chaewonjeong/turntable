@@ -4,7 +4,6 @@ package com.example.turntable.dto;
 import com.example.turntable.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @Builder

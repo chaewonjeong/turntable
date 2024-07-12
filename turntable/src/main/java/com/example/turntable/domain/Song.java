@@ -1,6 +1,5 @@
 package com.example.turntable.domain;
 
-import com.example.turntable.dto.SongDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -3,10 +3,8 @@ package com.example.turntable.dto;
 import com.example.turntable.domain.DailyComment;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @Builder

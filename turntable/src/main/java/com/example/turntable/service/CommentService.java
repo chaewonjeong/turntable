@@ -1,10 +1,8 @@
 package com.example.turntable.service;
 
-import com.example.turntable.domain.Artist;
 import com.example.turntable.domain.DailyComment;
 import com.example.turntable.domain.GuestComment;
 import com.example.turntable.domain.Member;
-import com.example.turntable.domain.PlayList;
 import com.example.turntable.domain.Song;
 import com.example.turntable.dto.CommentResponseDto;
 import com.example.turntable.dto.GuestCommentResponseDto;
