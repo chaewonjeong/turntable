@@ -17,7 +17,7 @@
   ### 팀원 구성 (멀티잇 백엔드 개발(스프링) 24회차 5조)
   | 정채원 | 강지원 |
   | :--------: | :--------: |
-  |   @chaeonejung    |      @onegqueen      |
+  |   @chae2nejeong    |      @onegqueen      |
 
 ## 2. 개발 환경
 - **Front** : HTML, JSP, JQuery
