@@ -6,6 +6,9 @@ from selenium import webdriver as wb
 from selenium.webdriver.common.by import By
 import urllib.parse
 
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 driver = wb.Chrome()
 
 app = FastAPI()
@@ -13,6 +16,7 @@ app = FastAPI()
 # youtube data api key
 # AIzaSyBd-ELfGyhe8pTI8HF9k2vU6vdVsJ9tCGE
 class Song(BaseModel):
+    songId: int
     name: str
     artists: List[str]
     albumName: str
@@ -26,6 +30,7 @@ class SongRequest(BaseModel):
 async def get_youtube_urls(request: SongRequest):
     results = []
     for song in request.songs:
+        song_id = song.songId
         name = song.name
         artists = song.artists
         album_name = song.albumName
@@ -38,10 +43,12 @@ async def get_youtube_urls(request: SongRequest):
             f"https://www.youtube.com/results?search_query={encoded_search_query}"
         )
         driver.get(youtube_search_url)
-        video_url = driver.find_element(By.CSS_SELECTOR, "div#dismissible.style-scope.ytd-video-renderer > ytd-thumbnail > a#thumbnail").get_attribute("href")
+        wait = WebDriverWait(driver, 10)
+        video_url = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-video-renderer a#thumbnail"))).get_attribute("href")
 
         # 결과에 추가
         results.append({
+            "songId": song_id,
             "name": name,
             "artists": artists,
             "albumName": album_name,

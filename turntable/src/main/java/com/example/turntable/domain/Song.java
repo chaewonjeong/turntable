@@ -23,5 +23,11 @@ public class Song {
     private String albumName;
     private String albumImgUrl;
 
+    @Column(length = 50000)
     private String youtubeUrl;
+
+
+    public void changeYoutubeUrl(final String youtubeUrl) {
+        this.youtubeUrl = youtubeUrl;
+    }
 }

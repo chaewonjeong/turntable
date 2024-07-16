@@ -1,5 +1,6 @@
 package com.example.turntable.youtube.dto;
 
+import com.example.turntable.domain.Song;
 import lombok.*;
 
 import java.util.List;

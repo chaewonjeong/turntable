@@ -2,6 +2,7 @@ package com.example.turntable.service;
 
 import com.example.turntable.domain.Song;
 import com.example.turntable.event.TrackSavedEvent;
+import com.example.turntable.repository.SongArtistRepository;
 import com.example.turntable.repository.SongRepository;
 import com.example.turntable.spotify.dto.TrackResponseDto;
 import com.example.turntable.youtube.YoutubeUrlsService;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,34 +28,41 @@ public class YoutubeUrlsUpdateService {
 
     private final YoutubeUrlsService youtubeUrlsService;
     private final SongRepository songRepository;
+    private final SongArtistService songArtistService;
+    private final SongArtistRepository songArtistRepository;
     private static Logger logger = LoggerFactory.getLogger(YoutubeUrlsUpdateService.class);
 
     @Async
     @EventListener
+    @Transactional
     public void handleTrackSavedEvent(TrackSavedEvent event) {
-        List<TrackResponseDto> tracks = event.getTracks();
-        if (tracks == null || tracks.isEmpty()) {
+        List<Song> songs = event.getSongs();
+
+        if (songs == null || songs.isEmpty()) {
             logger.warn("Empty or null track list received in TrackSavedEvent");
             return;
         }
         // 크롤링 서버에 요청 -> url 획득 -> DB update
-        SongsRequest songsRequest = convertToSongsRequest(tracks);
+        SongsRequest songsRequest = convertToSongsRequest(songs);
         SongsResponse songsResponse = fetchYoutubeUrls(songsRequest);
 
         if (songsResponse == null) {
-            logger.error("Failed to fetch YouTube URLs for tracks: {}", tracks);
+            logger.error("Failed to fetch YouTube URLs for tracks: {}", songs);
             return;
         }
-        updateSongsWithYoutubeUrls(tracks, songsResponse);
+        updateSongsWithYoutubeUrls(songsResponse);
     }
 
     // tracks -> SongsRequest
-    private SongsRequest convertToSongsRequest (List<TrackResponseDto> tracks) {
-        List<SongRequest> songs = new ArrayList<>();
-        for(TrackResponseDto track : tracks) {
-            songs.add(SongRequest.from(track));
+    private SongsRequest convertToSongsRequest (List<Song> songs) {
+        List<SongRequest> songRequests = new ArrayList<>();
+        for(Song song : songs) {
+            List<String> artists = songArtistService.findArtistsBySong(song.getId()).stream()
+                            .map(songArtist -> songArtist.getName())
+                                    .collect(Collectors.toList());
+            songRequests.add(SongRequest.fromSong(song, artists));
         }
-        return SongsRequest.of(songs);
+        return SongsRequest.of(songRequests);
     }
 
 
@@ -64,8 +73,8 @@ public class YoutubeUrlsUpdateService {
 
     // URL을 DB에 업데이트하는 메서드
     @Transactional
-    public void updateSongsWithYoutubeUrls(List<TrackResponseDto> tracks, SongsResponse songsResponse) {
-        if (tracks == null || songsResponse == null) {
+    public void updateSongsWithYoutubeUrls(SongsResponse songsResponse) {
+        if (songsResponse == null) {
             return;
         }
 
@@ -73,16 +82,8 @@ public class YoutubeUrlsUpdateService {
 
         for (SongResponse songResponse : songResponses) {
             String youtubeUrl = songResponse.getYoutubeUrl();
-
-            // TrackResponseDto에서 해당 노래를 찾아서 업데이트
-            tracks.forEach(track -> {
-                if (track.getName().equals(songResponse.getName()) &&
-                        track.getAlbumName().equals(songResponse.getAlbumName()) &&
-                        track.getArtists().containsAll(songResponse.getArtists())) {
-//                    updateYoutubeUrl(track.toEntity().getId(), youtubeUrl);
-                    System.out.println(track.getId());
-                }
-            });
+            Long songId = songResponse.getSongId();
+            updateYoutubeUrl(songId, youtubeUrl);
         }
     }
 
@@ -93,11 +94,11 @@ public class YoutubeUrlsUpdateService {
             return;
         }
 
-        Song song = songRepository.findById(songId).orElseThrow(()-> new IllegalArgumentException("Song not found"));
-        Song updatedSong = Song.builder()
-                .youtubeUrl(youtubeUrl) // 여기서 youtubeUrl을 업데이트
-                .build();
-        songRepository.save(updatedSong);
+        Song song = songRepository.findById(songId)
+                .orElseThrow(() -> new IllegalArgumentException("Song not found"));
+
+        song.changeYoutubeUrl(youtubeUrl); // 여기서 youtubeUrl을 업데이트
+        songRepository.save(song);
     }
 
 }

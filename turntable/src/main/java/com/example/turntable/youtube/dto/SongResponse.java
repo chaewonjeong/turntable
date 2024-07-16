@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SongResponse {
+    private Long songId;
     private String name;
     private List<String> artists;
     private String albumName;

@@ -28,10 +28,13 @@ public class SongArtistService {
 
     @TransactionalEventListener
     public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
+        // 추가
+        List<Song> savedSongs = new ArrayList<>();
+
         tracks.forEach(track -> {
             if (!isSongExist(track.getName(),track.getArtists())) {
                 Song song = track.toEntity();
-                saveTrackNeedToSave(song);
+                savedSongs.add(saveTrackNeedToSave(song));
                 List<Artist> artists = artistsNeedToSave(track.getArtists());
                 saveAllArtistsNeedToSave(artists);
                 List<SongArtist> songArtists = songArtistsNeedToSave(song,track.getArtists());
@@ -39,8 +42,7 @@ public class SongArtistService {
             }
         });
         // tracks를 요청하면 안됨 -> DB에 저장된
-        // ** 수정 필요 ** //
-        eventPublisher.publishEvent(new TrackSavedEvent(tracks));
+        eventPublisher.publishEvent(new TrackSavedEvent(savedSongs));
        return true;
     }
 
