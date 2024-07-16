@@ -498,11 +498,12 @@
         var details = $("<div>").addClass("playlist-details");
         data.songs.forEach(function(song) {
           const songArtists = song.artists.join(", ");
-          details.append(`
-                    <div class="song-item">
+          const songItem = $(`
+                    <div class="song-item" data-video-id="${"${getYouTubeVideoId(song.youtubeUrl)}"}">
                         <i class="fas fa-music"></i><strong>${"${song.name}"}</strong> <span class="song-artists"> - ${"${songArtists}"}</span>
                     </div>
                 `);
+          details.append(songItem);
 
           var videoId = getYouTubeVideoId(song.youtubeUrl);
           if (videoId) {
@@ -511,6 +512,17 @@
           } else {
               alert("Invalid YouTube URL for song: " + song.name);
             }
+
+          // 노래 항목 클릭 이벤트 추가
+          songItem.click(function() {
+            var selectedVideoId = $(this).data("video-id");
+            if (selectedVideoId) {
+              player.loadVideoById(selectedVideoId);
+              $("#youtube-video-container").show(); // 플레이어를 표시
+            } else {
+              alert("Invalid YouTube URL for this song.");
+            }
+          });
         });
 
         console.log(videoIdList);
@@ -521,6 +533,7 @@
         if (videoIdList.length > 0) {
           currentVideoIndex = 0;
           player.loadVideoById(videoIdList[currentVideoIndex]);
+          $("#youtube-video-container").show(); // 플레이어를 표시
         }
       },
       error: function(error) {
