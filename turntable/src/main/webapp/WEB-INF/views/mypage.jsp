@@ -59,9 +59,34 @@
       }
     });
   }
+
+  function fetchProfilePicture() {
+    const pageOwnerId = "<%= pageOwnerId %>";
+    fetch('/imgurl?pageOwnerId=' + pageOwnerId, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then(imageUrl => {
+      console.log("Image URL:", imageUrl); // URL을 로그로 출력
+      $('.profile-picture').css('background-image', 'url(' + imageUrl + ')');
+      $('.profile-picture').css('background-size', 'cover');
+    })
+    .catch(error => console.error('Error fetching image URL:', error));
+  }
+
   $(document).ready(function() {
     fetchPlaylistCount();
+    fetchProfilePicture();
   });
+
   function changeUsername() {
     var newUsername = $('#new-username').val();
     $.ajax({
@@ -75,7 +100,7 @@
         window.location.href = "/main";
       },
       error: function(error) {
-        alert('아이디 변경에 실패했습니다.');
+        alert('이미 존재하는 아이디 입니다.');
       }
     });
   }

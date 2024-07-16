@@ -21,8 +21,6 @@ public class SongArtistService {
     private final SongArtistRepository songArtistRepository;
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
-
-
     public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
         tracks.forEach(track -> {
             if (!isSongExist(track.getName(),track.getArtists())) {
@@ -34,8 +32,9 @@ public class SongArtistService {
                 saveAllSongArtistsNeedToSave(songArtists);
             }
         });
-       return true;
+        return true;
     }
+
 
     @Transactional
     public Song saveTrackNeedToSave(Song song) {

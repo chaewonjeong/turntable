@@ -15,8 +15,8 @@ public interface SongArtistRepository extends JpaRepository<SongArtist, Long> {
         + "JOIN SA.song S "
         + "JOIN SA.artist A "
         + "WHERE S.name LIKE :title "
-        + "AND A.name IN :artistNames G"
-        + "ROUP BY SA.song.Id, S.name "
+        + "AND A.name IN :artistNames "
+        + "GROUP BY SA.song.Id, S.name "
         + "HAVING COUNT(DISTINCT A.id) = :artistCount")
     List<SongNameInfo> findBySongTitleAndArtistNamesIn(@Param("title") String title, @Param("artistNames") List<String> artistNames, @Param("artistCount") int artistCount);
     List<SongArtist> findBySongId(Long songId);

@@ -72,6 +72,7 @@
             const artists = comment.artists.join(', '); // 아티스트 리스트를 콤마로 구분된 문자열로 변환
             const commentElement = document.createElement('div');
             commentElement.classList.add('comment-info');
+            commentElement.dataset.commentId = comment.id; // comment-id 속성 추가
             commentElement.innerHTML = `
               <div class="icon-commentinfo">
                 <i class="fas fa-music music-icon"></i>
@@ -109,6 +110,94 @@
       currentPage++;
       loadComments(currentPage);
     });
+
+    // 댓글 클릭 이벤트 처리
+    $(document).on('click', '.icon-commentinfo', function () {
+      const commentId = $(this).closest('.comment-info').data('comment-id');
+      const commentBox = $(this).closest('.comment-info');
+      const repliesContainer = commentBox.find('.replies-container');
+
+      if (repliesContainer.length > 0) {
+        // 대댓글 컨테이너가 이미 있으면 제거하여 닫기
+        repliesContainer.remove();
+      } else {
+        // 대댓글 컨테이너가 없으면 대댓글 불러오기
+        const currentReplyPage = 0;
+        loadReplies(commentId, commentBox, currentReplyPage);
+      }
+    });
+
+    // 대댓글 목록 불러오기
+    function loadReplies(commentId, commentBox, page) {
+      $.ajax({
+        url: '/comments/guest',
+        method: 'GET',
+        data: { page: page, commentId: commentId },
+        success: function(response) {
+          if (response && response.content) {
+            let repliesContainer = commentBox.find('.replies-container');
+            if (repliesContainer.length === 0) {
+              repliesContainer = $('<div>').addClass('replies-container');
+              commentBox.append(repliesContainer);
+            }
+            repliesContainer.html(''); // 기존 대댓글 초기화
+
+            response.content.forEach(reply => {
+              const replyElement = $(`
+              <div class="reply-item">
+                <div class="reply-box">
+                  <div class="reply-profile">
+                    <img src="${"${reply.guestBgImgUrl}"}" alt="Profile Image">
+                  </div>
+                  <div class="reply-content">
+                    <div class="reply-header">
+                      <div class="reply-user">@${"${reply.guestName}"}</div>
+                    </div>
+                    <div class="reply-body">
+                      <div class="reply-text">${"${reply.comment}"}</div>
+                    </div>
+                    <div class="reply-footer">
+                      <div class="reply-date">${"${new Date(reply.date).toLocaleString()}"}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `);
+              repliesContainer.append(replyElement);
+            });
+
+            // 페이지네이션 버튼 추가
+            const paginationButtons = $(`
+            <div class="reply-pagination-buttons">
+              <button class="reply-prev-page" ${"${page <= 0 ? 'disabled' : ''}"}>이전 페이지</button>
+              <button class="reply-next-page" ${"${response.last ? 'disabled' : ''}"}>다음 페이지</button>
+            </div>
+          `);
+
+            // 기존 페이지네이션 버튼 제거 및 새로 추가
+            commentBox.find('.reply-pagination-buttons').remove();
+            repliesContainer.append(paginationButtons);
+
+            // 이전 페이지 버튼 클릭 이벤트 처리
+            paginationButtons.find('.reply-prev-page').click(function () {
+              if (page > 0) {
+                loadReplies(commentId, commentBox, page - 1);
+              }
+            });
+
+            // 다음 페이지 버튼 클릭 이벤트 처리
+            paginationButtons.find('.reply-next-page').click(function () {
+              if (!response.last) {
+                loadReplies(commentId, commentBox, page + 1);
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.error('Error fetching replies:', error);
+        }
+      });
+    }
 
     <% if (isOwner) { %>
     // 댓글 작성 버튼 클릭 이벤트 처리
@@ -234,6 +323,9 @@
       });
     }
     <% } %>
+
+
+
   }); // 닫는 중괄호 추가
 </script>
 </body>

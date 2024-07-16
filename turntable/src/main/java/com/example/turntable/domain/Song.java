@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Song {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "song_id")
@@ -22,6 +21,5 @@ public class Song {
 
     private String albumName;
     private String albumImgUrl;
-
     private String youtubeUrl;
 }

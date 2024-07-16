@@ -3,6 +3,8 @@ package com.example.turntable.service;
 import com.example.turntable.domain.Member;
 import com.example.turntable.dto.MemberInfoResponseDto;
 import com.example.turntable.dto.SignupRequestDto;
+import com.example.turntable.exception.CustomErrorCode;
+import com.example.turntable.exception.DuplicatedUsernameException;
 import com.example.turntable.repository.MemberRepository;
 import java.io.IOException;
 import java.util.Optional;
@@ -92,7 +94,7 @@ public class MemberService {
         return memberRepository.findByName(username).map(Member::getId).orElse(null);
     }
 
-    public boolean isUsernameExist(String username) {
+    public boolean isNotUsernameExist(String username) {
         return memberRepository.findByName(username).isEmpty();
     }
 
@@ -104,8 +106,13 @@ public class MemberService {
     @Transactional
     public String changeUserName(Long userId, String newMemberName) {
         Member member = memberRepository.findById(userId).orElse(null);
-        member.changeNickname(newMemberName);
-        return newMemberName;
+        if (isNotUsernameExist(newMemberName)) {
+            member.changeNickname(newMemberName);
+            return newMemberName;
+        }
+        else{
+            throw new DuplicatedUsernameException(CustomErrorCode.ALREADY_EXIST_USERNAME);
+        }
     }
 
     @Transactional

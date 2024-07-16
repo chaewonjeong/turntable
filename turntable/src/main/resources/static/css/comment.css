@@ -99,7 +99,9 @@
   border-radius: 10px;
   margin-bottom: 20px;
   text-align: left; /* 왼쪽 정렬 */
-
+}
+.comment-info:hover {
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .icon-commentinfo{
@@ -288,4 +290,65 @@
 
 .selected-item:hover {
   background-color: #bcd4c7;
+}
+
+
+/*방명록*/
+.reply-item {
+  margin-bottom: 10px;
+}
+
+.reply-box {
+  background: rgba(255, 255, 255, 0.7);
+  color:black;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 20px auto;
+  width: 95%;
+  cursor: pointer; /* 클릭 가능하도록 포인터 변경 */
+  transition: background-color 0.3s ease; /* 부드러운 전환 효과 추가 */
+  display: flex;
+  align-items: flex-start;
+}
+
+.reply-profile {
+  margin-right: 10px;
+}
+
+.reply-profile img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.reply-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.reply-header {
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0px;
+  font-size: 14px;
+}
+
+.reply-body {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  font-size: 13px;
+}
+
+.reply-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  margin-top: 0px;
+  font-size: 10px;
 }
