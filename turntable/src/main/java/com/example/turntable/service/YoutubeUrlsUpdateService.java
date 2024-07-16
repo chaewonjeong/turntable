@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,7 @@ public class YoutubeUrlsUpdateService {
     @Async
     @EventListener
     @Transactional
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     public void handleTrackSavedEvent(TrackSavedEvent event) {
         List<Song> songs = event.getSongs();
 
@@ -42,6 +45,7 @@ public class YoutubeUrlsUpdateService {
             logger.warn("Empty or null track list received in TrackSavedEvent");
             return;
         }
+
         // 크롤링 서버에 요청 -> url 획득 -> DB update
         SongsRequest songsRequest = convertToSongsRequest(songs);
         SongsResponse songsResponse = fetchYoutubeUrls(songsRequest);

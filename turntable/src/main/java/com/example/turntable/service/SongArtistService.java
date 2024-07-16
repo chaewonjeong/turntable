@@ -44,7 +44,6 @@ public class SongArtistService {
 
         // tracks를 요청하면 안됨 -> DB에 저장된
         eventPublisher.publishEvent(new TrackSavedEvent(savedSongs));
-
         return true;
     }
 
