@@ -4,9 +4,6 @@ from typing import List
 
 from selenium import webdriver as wb
 from selenium.webdriver.common.by import By
-import time
-from bs4 import BeautifulSoup
-import requests
 import urllib.parse
 
 driver = wb.Chrome()
