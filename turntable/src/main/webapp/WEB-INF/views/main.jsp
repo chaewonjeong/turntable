@@ -106,6 +106,7 @@
   var currentVideoIndex = 0;
 
   function onYouTubeIframeAPIReady() {
+    // 플레이어를 생성하되 처음에는 숨겨둔다
     createPlayer();
   }
 
@@ -121,10 +122,7 @@
   }
 
   function onPlayerReady(event) {
-    // 처음 영상 재생 준비가 되면 첫 번째 영상을 재생
-    if (videoIdList.length > 0) {
-      event.target.playVideo(videoIdList[currentVideoIndex]);
-    }
+    // 처음에는 아무 것도 하지 않음
   }
 
   function onPlayerStateChange(event) {
@@ -132,15 +130,25 @@
       // 영상이 종료되면 다음 영상 재생
       currentVideoIndex++;
       if (currentVideoIndex < videoIdList.length) {
-        player.playVideo(videoIdList[currentVideoIndex]);
+        player.loadVideoById(videoIdList[currentVideoIndex]);
       } else {
         currentVideoIndex = 0;
-        player.playVideo(videoIdList[currentVideoIndex]);
+        player.loadVideoById(videoIdList[currentVideoIndex]);
       }
     }
   }
 
   $(document).ready(function() {
+    // YouTube API가 이미 로드되었는지 확인
+    if (window.YT && window.YT.Player) {
+      createPlayer();
+    } else {
+      // YouTube API가 아직 로드되지 않았을 경우
+      window.onYouTubeIframeAPIReady = function() {
+        createPlayer();
+      };
+    }
+
     fetchUserName(pageOwnerId);
     fetchLatestComment(pageOwnerId);
 
@@ -512,7 +520,7 @@
         // YouTube 비디오 재생 초기화
         if (videoIdList.length > 0) {
           currentVideoIndex = 0;
-          player.playVideo(videoIdList[currentVideoIndex]);
+          player.loadVideoById(videoIdList[currentVideoIndex]);
         }
       },
       error: function(error) {
