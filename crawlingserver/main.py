@@ -9,7 +9,7 @@ import urllib.parse
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-driver = wb.Chrome()
+
 
 app = FastAPI()
 
@@ -28,6 +28,7 @@ class SongRequest(BaseModel):
 #json request 요청양식은 이쪽에서 정의
 @app.post("/getYoutubeUrls")
 async def get_youtube_urls(request: SongRequest):
+    driver = wb.Chrome()
     results = []
     for song in request.songs:
         song_id = song.songId
@@ -54,6 +55,7 @@ async def get_youtube_urls(request: SongRequest):
             "albumName": album_name,
             "youtubeUrl": video_url if video_url else "URL not found"
         })
+    wait.quite()
 
     return {"results": results}
 
