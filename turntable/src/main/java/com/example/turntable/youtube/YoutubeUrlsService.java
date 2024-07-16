@@ -19,6 +19,7 @@ public class YoutubeUrlsService {
         ResponseEntity<SongsResponse> response = restTemplate.postForEntity(url, request, SongsResponse.class);
 
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            System.out.println(response.getBody().getClass().getName());
             return response.getBody();
         } else {
             throw new RuntimeException("Failed to get YouTube URLs");

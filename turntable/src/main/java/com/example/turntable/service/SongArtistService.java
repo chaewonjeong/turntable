@@ -3,6 +3,7 @@ package com.example.turntable.service;
 import com.example.turntable.domain.Artist;
 import com.example.turntable.domain.Song;
 import com.example.turntable.domain.SongArtist;
+import com.example.turntable.event.TrackSavedEvent;
 import com.example.turntable.repository.ArtistRepository;
 import com.example.turntable.repository.SongArtistRepository;
 import com.example.turntable.repository.SongNameInfo;
@@ -12,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Service
 @RequiredArgsConstructor
@@ -21,19 +24,25 @@ public class SongArtistService {
     private final SongArtistRepository songArtistRepository;
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-
+    @TransactionalEventListener
     public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
+        // 추가
+        List<Song> savedSongs = new ArrayList<>();
+
         tracks.forEach(track -> {
             if (!isSongExist(track.getName(),track.getArtists())) {
                 Song song = track.toEntity();
-                saveTrackNeedToSave(song);
+                savedSongs.add(saveTrackNeedToSave(song));
                 List<Artist> artists = artistsNeedToSave(track.getArtists());
                 saveAllArtistsNeedToSave(artists);
                 List<SongArtist> songArtists = songArtistsNeedToSave(song,track.getArtists());
                 saveAllSongArtistsNeedToSave(songArtists);
             }
         });
+        // tracks를 요청하면 안됨 -> DB에 저장된
+        eventPublisher.publishEvent(new TrackSavedEvent(savedSongs));
        return true;
     }
 

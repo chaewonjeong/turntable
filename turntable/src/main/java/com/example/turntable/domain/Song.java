@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class Song {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "song_id")
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false, name = "song_name")
     private String name;
@@ -23,5 +23,11 @@ public class Song {
     private String albumName;
     private String albumImgUrl;
 
+    @Column(length = 50000)
     private String youtubeUrl;
+
+
+    public void changeYoutubeUrl(final String youtubeUrl) {
+        this.youtubeUrl = youtubeUrl;
+    }
 }
