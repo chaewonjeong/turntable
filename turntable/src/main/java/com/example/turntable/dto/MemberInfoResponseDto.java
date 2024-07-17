@@ -10,6 +10,7 @@ import lombok.Getter;
 public class MemberInfoResponseDto {
     private Long memberId;
     private String memberName;
+    private String memberNickname;
     private String bgImgUrl;
     private int playlistCount;
 
@@ -17,6 +18,7 @@ public class MemberInfoResponseDto {
         return MemberInfoResponseDto.builder()
             .memberId(member.getId())
             .memberName(member.getName())
+            .memberNickname(member.getNickname())
             .bgImgUrl(member.getBackGroundImage())
             .playlistCount(playlistCount)
             .build();

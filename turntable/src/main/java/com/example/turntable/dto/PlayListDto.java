@@ -18,13 +18,12 @@ public class PlayListDto {
     private final String madeBy;
 
     public static PlayListDto from(PlayList playList) {
-        // return new PlayListDto(playList.getId(), playList.getName(), playList.getDate(), playList.getState());
         return PlayListDto.builder()
                 .id(playList.getId())
                 .name(playList.getName())
                 .date(playList.getDate())
                 .state(playList.getState())
-                .madeBy(playList.getMember().getName())
+                .madeBy(playList.getMember().getNickname())
                 .build();
     }
 

@@ -54,7 +54,7 @@
             <div class="user-card-content">
               <img class="profile-picture" src="${"${user.bgImgUrl}"}" alt="Profile Picture" width="50" height="50">
               <div class="user-info">
-                <h3 class="username">@${"${user.memberName}"}</h3>
+                <h3 class="username">@${"${user.memberNickname}"}</h3>
                 <p class="email">${"${user.playlistCount}"}개의 플레이리스트</p>
               </div>
             </div>
