@@ -17,14 +17,16 @@ public class GuestCommentResponseDto {
     private LocalDateTime date;
     private String guestName;
     private String guestBgImgUrl;
+    private boolean isOwner;
 
-    public static GuestCommentResponseDto from (GuestComment guestComment) {
+    public static GuestCommentResponseDto from (GuestComment guestComment, Long currentUserId) {
         return GuestCommentResponseDto.builder()
             .Id(guestComment.getId())
             .comment(guestComment.getComment())
             .date(guestComment.getCreatedAt())
             .guestName(guestComment.getVisitorMember().getName())
             .guestBgImgUrl(guestComment.getVisitorMember().getBackGroundImage())
-            .build();
+                .isOwner(guestComment.getVisitorMember().getId().equals(currentUserId))
+                .build();
     }
 }

@@ -84,13 +84,13 @@ public class CommentService {
         return CommentResponseDto.of(comment,artists,commentSize);
     }
 
-    public Page<GuestCommentResponseDto> getGuestCommentsByPage(int page,Long dailyCommentId){
+    public Page<GuestCommentResponseDto> getGuestCommentsByPage(int page,Long dailyCommentId, Long currentUserId){
         int pageSize = 5;
         PageRequest pageRequest = PageRequest.of(page,pageSize,Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<GuestComment> comments = guestCommentRepository.findAllByDailyCommentId(pageRequest,dailyCommentId);
 
         return comments.map(comment -> {
-            return GuestCommentResponseDto.from(comment);
+            return GuestCommentResponseDto.from(comment, currentUserId);
         });
     }
 

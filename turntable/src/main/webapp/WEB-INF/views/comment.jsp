@@ -132,7 +132,7 @@
       $.ajax({
         url: '/comments/guest',
         method: 'GET',
-        data: { page: page, commentId: commentId },
+        data: { page: page, commentId: commentId},
         success: function(response) {
           if (response && response.content) {
             let repliesContainer = commentBox.find('.replies-container');
@@ -141,7 +141,6 @@
               commentBox.append(repliesContainer);
             }
             repliesContainer.html(''); // 기존 대댓글 초기화
-
             response.content.forEach(reply => {
               const replyElement = $(`
               <div class="reply-item">
@@ -158,6 +157,7 @@
                     </div>
                     <div class="reply-footer">
                       <div class="reply-date">${"${new Date(reply.date).toLocaleString()}"}</div>
+                      ${"${reply.owner ? `<button>삭제</button>` : `''`}"}
                     </div>
                   </div>
                 </div>
