@@ -24,7 +24,7 @@ public class GuestCommentResponseDto {
             .Id(guestComment.getId())
             .comment(guestComment.getComment())
             .date(guestComment.getCreatedAt())
-            .guestName(guestComment.getVisitorMember().getName())
+            .guestName(guestComment.getVisitorMember().getNickname())
             .guestBgImgUrl(guestComment.getVisitorMember().getBackGroundImage())
                 .isOwner(guestComment.getVisitorMember().getId().equals(currentUserId))
                 .build();

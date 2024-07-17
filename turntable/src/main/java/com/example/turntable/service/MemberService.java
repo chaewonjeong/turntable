@@ -9,6 +9,7 @@ import com.example.turntable.repository.MemberRepository;
 import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,19 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional
 public class MemberService {
-    private final MemberRepository memberRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
     private final NcpService ncpService;
     private final PasswordEncoder passwordEncoder;
     private final PlayListService playListService;
     private final CommentService commentService;
 
     @Transactional
-    public boolean create(SignupRequestDto signupRequestDto) throws IOException {
+    public Member create(SignupRequestDto signupRequestDto) throws IOException {
         Optional<Member> existingUser = memberRepository.findByName(signupRequestDto.getName());
         if (existingUser.isPresent()) {
-            return false;
+            return null;
         }
 
         final Member member = Member.builder()
@@ -39,8 +42,8 @@ public class MemberService {
             .password(passwordEncoder.encode(signupRequestDto.getPassword()))
             .backGroundImage(ncpService.uploadFile(signupRequestDto.getBgImg()))
             .build();
-        memberRepository.save(member);
-        return true;
+
+        return memberRepository.save(member);
     }
 
     public boolean deleteUserInfo(Long userId) throws Exception {
@@ -68,10 +71,10 @@ public class MemberService {
         }
         );
     }
-    public Page<MemberInfoResponseDto> getAllUsersInfoByName(int page, String name){
+    public Page<MemberInfoResponseDto> getAllUsersInfoByNickname(int page, String Nickname){
         int pageSize = 9;
         PageRequest pageRequest = PageRequest.of(page,pageSize);
-        Page<Member> members = memberRepository.findByNameContaining(name,pageRequest);
+        Page<Member> members = memberRepository.findByNicknameContaining(Nickname,pageRequest);
 
         return members.map(member -> {
             int playlistCount = playListService.getPlaylistCount(member.getId());

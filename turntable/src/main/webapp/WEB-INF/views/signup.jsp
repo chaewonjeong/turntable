@@ -22,7 +22,7 @@
     </div>
     <div class="right">
         <div class="signup-container">
-            <h1 class="text-center">sign up</h1>
+            <h1 class="text-center">Sign up</h1>
             <form id="signup-form" action="/signup" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="nickname">이름:</label>

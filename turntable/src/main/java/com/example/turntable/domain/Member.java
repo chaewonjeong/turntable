@@ -29,6 +29,11 @@ public class Member {
     @Column(name = "back_ground_image")
     private String backGroundImage;
 
+    public void setOAuth2User(final String name, final String nickname,final String backGroundImage) {
+        this.name = name;
+        this.nickname = nickname;
+        this.backGroundImage=backGroundImage;
+    }
     public void changeNickname(final String newNickname) {
         this.name = newNickname;
     }
