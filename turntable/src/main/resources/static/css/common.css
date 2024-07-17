@@ -75,12 +75,13 @@ h2 {
 }
 
 button[type="submit"] {
+  width: 150px;
   margin-top: 1rem;
   padding: 0.5rem 1.5rem;
   background-color: #0072ff;
   color: #ffffff;
   border: none;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
   font-size: 1rem;
   display: block;
@@ -89,4 +90,10 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
   background-color: #005bb5;
+}
+
+.login-button img {
+  margin-top:10px;
+  width: 150px; /* 원하는 너비로 변경 */
+  height: auto; /* 비율을 유지하려면 auto로 설정 */
 }

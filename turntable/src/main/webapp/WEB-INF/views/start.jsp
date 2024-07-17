@@ -26,7 +26,6 @@
         <a href="/signup" class="button">Signup</a>
         <div class="login-prompt">
             <p>이미 계정이 있나요? <a href="/login">로그인</a></p>
-            <a href="/oauth2/authorization/naver">Login with Naver</a>
         </div>
     </div>
 </div>

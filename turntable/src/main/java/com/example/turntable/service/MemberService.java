@@ -71,10 +71,10 @@ public class MemberService {
         }
         );
     }
-    public Page<MemberInfoResponseDto> getAllUsersInfoByName(int page, String name){
+    public Page<MemberInfoResponseDto> getAllUsersInfoByNickname(int page, String Nickname){
         int pageSize = 9;
         PageRequest pageRequest = PageRequest.of(page,pageSize);
-        Page<Member> members = memberRepository.findByNameContaining(name,pageRequest);
+        Page<Member> members = memberRepository.findByNicknameContaining(Nickname,pageRequest);
 
         return members.map(member -> {
             int playlistCount = playListService.getPlaylistCount(member.getId());
