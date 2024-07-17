@@ -9,6 +9,7 @@ import urllib.parse
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
 driver = wb.Chrome()
 
 app = FastAPI()
@@ -37,14 +38,15 @@ async def get_youtube_urls(request: SongRequest):
         video_url = None
 
         # YouTube 검색 URL 생성
-        search_query = f"{name}|{'|'.join(artists)}|{album_name}"
+        search_query = f"{name}|{'|'.join(artists)}"
         encoded_search_query = urllib.parse.quote(search_query)
         youtube_search_url = (
-            f"https://www.youtube.com/results?search_query={encoded_search_query}"
+            f"https://www.youtube.com/results?search_query={encoded_search_query}&sp=CAMSAhAB"
         )
         driver.get(youtube_search_url)
         wait = WebDriverWait(driver, 10)
-        video_url = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-video-renderer a#thumbnail"))).get_attribute("href")
+        video_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-video-renderer a#thumbnail")))
+        video_url = video_element.get_attribute("href")
 
         # 결과에 추가
         results.append({
