@@ -37,7 +37,8 @@ async def get_youtube_urls(request: SongRequest):
         )
         driver.get(youtube_search_url)
         wait = WebDriverWait(driver, 10)
-        video_url = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-video-renderer a#thumbnail"))).get_attribute("href")
+        video_element = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-video-renderer a#thumbnail")))
+        video_url = video_element.get_attribute("href")
 
         # 결과에 추가
         results.append({

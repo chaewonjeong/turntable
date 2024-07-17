@@ -22,7 +22,7 @@
         <div class="profile-info">
             <div class="profile-picture"></div>
             <div class = profile-details>
-                <div class="username">@<%=username%></div>
+                <div class="username"></div>
                 <div class="playlist-count">플레이리스트 개수를 불러오는 중...</div>
             </div>
         </div>
@@ -83,9 +83,29 @@
   }
 
   $(document).ready(function() {
+    const userId = "<%= userId %>";
+
     fetchPlaylistCount();
     fetchProfilePicture();
+    fetchUserName(userId);
   });
+
+  function fetchUserName(pageOwnerId){
+    $.ajax({
+      url: '/username',
+      method: 'GET',
+      data: { memberId: pageOwnerId },
+      success: function(response) {
+        if (response) {
+          console.log("username:"+response.memberNickname);
+          $('.username').text("@" + response.memberNickname);
+        }
+      },
+      error: function(error) {
+        console.error('Error fetching username:', error);
+      }
+    });
+  }
 
   function changeUsername() {
     var newUsername = $('#new-username').val();

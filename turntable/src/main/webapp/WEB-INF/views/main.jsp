@@ -243,8 +243,8 @@
       data: { memberId: pageOwnerId },
       success: function(response) {
         if (response) {
-          $('.username-container').text("@" + response.memberName);
-          pageOwnerName = response.memberName;
+          $('.username-container').text("@" + response.memberNickname);
+          pageOwnerName = response.memberNickname;
         }
       },
       error: function(error) {
