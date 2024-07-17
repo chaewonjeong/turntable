@@ -21,7 +21,7 @@
     </div>
     <div class="right">
         <div class="login-container">
-            <h2 class="text-center">signin</h2>
+            <h2 class="text-center">Sign in</h2>
             <form action="/login" method="POST">
                 <div class="form-group">
                     <input type="text" class="form-control" name="username" id="username" placeholder="아이디" required>
@@ -31,6 +31,9 @@
                 </div>
                 <div class="form-group text-center">
                     <button type="submit" class="btn btn-primary">로그인</button>
+                    <a href="/oauth2/authorization/naver" class="login-button">
+                        <img src="/css/bgimg/네이버로그인라이트.png" alt="Login with Naver">
+                    </a>
                 </div>
             </form>
         </div>

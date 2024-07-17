@@ -52,7 +52,7 @@ public class MemberController {
     @GetMapping("/users/nickname")
     @ResponseBody
     public Page<MemberInfoResponseDto> findAllUsersByName(@RequestParam int page, @RequestParam String name){
-        return memberService.getAllUsersInfoByName(page, name);
+        return memberService.getAllUsersInfoByNickname(page, name);
     }
 
     @GetMapping("/user/playlist-count")
