@@ -41,10 +41,12 @@ public class SongArtistService {
                 saveAllSongArtistsNeedToSave(songArtists);
             }
         });
+
         // tracks를 요청하면 안됨 -> DB에 저장된
         eventPublisher.publishEvent(new TrackSavedEvent(savedSongs));
-       return true;
+        return true;
     }
+
 
     @Transactional
     public Song saveTrackNeedToSave(Song song) {

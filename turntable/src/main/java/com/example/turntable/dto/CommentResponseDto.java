@@ -15,6 +15,7 @@ public class CommentResponseDto {
     private String title;
     private List<String> artists;
     private int commentCount;
+    private String youtubeUrl;
 
     public static CommentResponseDto of(DailyComment comment, List<String> artists,
         int commentCount) {
@@ -25,6 +26,7 @@ public class CommentResponseDto {
             .title(comment.getSong().getName())
             .artists(artists)
             .commentCount(commentCount)
+            .youtubeUrl(comment.getSong().getYoutubeUrl())
             .build();
     }
 }

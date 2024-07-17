@@ -30,5 +30,4 @@ public class PlayListSong {
                 .song(song)
                 .build();
     }
-
 }

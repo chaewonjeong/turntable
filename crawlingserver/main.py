@@ -1,20 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
-
 from selenium import webdriver as wb
 from selenium.webdriver.common.by import By
-import urllib.parse
-
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-driver = wb.Chrome()
-
 app = FastAPI()
 
-# youtube data api key
-# AIzaSyBd-ELfGyhe8pTI8HF9k2vU6vdVsJ9tCGE
 class Song(BaseModel):
     songId: int
     name: str
@@ -24,10 +17,10 @@ class Song(BaseModel):
 class SongRequest(BaseModel):
     songs: List[Song]
 
-
 #json request 요청양식은 이쪽에서 정의
 @app.post("/getYoutubeUrls")
 async def get_youtube_urls(request: SongRequest):
+    driver = wb.Chrome()
     results = []
     for song in request.songs:
         song_id = song.songId
@@ -37,10 +30,10 @@ async def get_youtube_urls(request: SongRequest):
         video_url = None
 
         # YouTube 검색 URL 생성
-        search_query = f"{name}|{'|'.join(artists)}|{album_name}"
-        encoded_search_query = urllib.parse.quote(search_query)
+        search_query = f"{name}+{'+'.join(artists)}+{'official'}+{'MV'}"
+        # encoded_search_query = urllib.parse.quote(search_query)
         youtube_search_url = (
-            f"https://www.youtube.com/results?search_query={encoded_search_query}"
+            f"https://www.youtube.com/results?search_query={search_query}"
         )
         driver.get(youtube_search_url)
         wait = WebDriverWait(driver, 10)
@@ -54,6 +47,5 @@ async def get_youtube_urls(request: SongRequest):
             "albumName": album_name,
             "youtubeUrl": video_url if video_url else "URL not found"
         })
-
     return {"results": results}
 

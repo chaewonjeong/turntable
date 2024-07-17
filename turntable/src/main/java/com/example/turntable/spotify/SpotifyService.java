@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 public class SpotifyService {
 
     private final SpotifyApi spotifyApi;
-    private final SongArtistService songArtistService;
 
     public List<TrackResponseDto> searchTracks(String keyword){
         SearchTracksRequest searchTracksRequest = spotifyApi.searchTracks(keyword).build();

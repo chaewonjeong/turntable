@@ -258,9 +258,9 @@
 
 .settings-drawer {
   position: fixed;
-  right: -300px;
+  right: -340px;
   top: 60px;
-  width: 300px;
+  width: 340px;
   height: calc(80% - 60px);
   background: rgba(255, 255, 255, 0.9);
   color: black;

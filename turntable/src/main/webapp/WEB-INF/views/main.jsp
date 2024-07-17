@@ -13,6 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Playwrite+IS:wght@100..400&display=swap" rel="stylesheet">
+    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <script>
   let latestCommentId = null;
@@ -66,20 +67,15 @@
         <button id="add-playlist-btn">+</button>
         <% } %>
 
-
+        <div id="player"></div>
         <div id="playlist-container">
             <!-- 플레이리스트 아이템들이 여기에 동적으로 로드됩니다 -->
         </div>
 
         <!-- YouTube Video Input and Display -->
-        <div class="youtube-container">
-            <label for="youtube-url">YouTube URL:</label>
-            <input type="text" id="youtube-url" placeholder="Enter YouTube URL...">
-            <button id="add-youtube-video-btn">Add Video</button>
             <div id="youtube-video-display" class="mt-3">
                 <!-- YouTube Video will be displayed here -->
             </div>
-        </div>
 
         <!-- 플레이리스트 추가 모달 -->
         <div id="add-playlist-modal" class="modal">
@@ -105,7 +101,54 @@
 </div>
 
 <script>
+  var player;
+  var videoIdList = [];
+  var currentVideoIndex = 0;
+
+  function onYouTubeIframeAPIReady() {
+    // 플레이어를 생성하되 처음에는 숨겨둔다
+    createPlayer();
+  }
+
+  function createPlayer() {
+    player = new YT.Player('youtube-video-display', {
+      height: '200',
+      width: '300',
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+
+  function onPlayerReady(event) {
+    // 처음에는 아무 것도 하지 않음
+  }
+
+  function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.ENDED) {
+      // 영상이 종료되면 다음 영상 재생
+      currentVideoIndex++;
+      if (currentVideoIndex < videoIdList.length) {
+        player.loadVideoById(videoIdList[currentVideoIndex]);
+      } else {
+        currentVideoIndex = 0;
+        player.loadVideoById(videoIdList[currentVideoIndex]);
+      }
+    }
+  }
+
   $(document).ready(function() {
+    // YouTube API가 이미 로드되었는지 확인
+    if (window.YT && window.YT.Player) {
+      createPlayer();
+    } else {
+      // YouTube API가 아직 로드되지 않았을 경우
+      window.onYouTubeIframeAPIReady = function() {
+        createPlayer();
+      };
+    }
+
     fetchUserName(pageOwnerId);
     fetchLatestComment(pageOwnerId);
 
@@ -186,20 +229,6 @@
     // 기본으로 dailyturntable 로드
     loadPlaylist('DAILY');
 
-    // YouTube 비디오 추가 버튼 이벤트 리스너
-    $("#add-youtube-video-btn").click(function() {
-      var url = $("#youtube-url").val();
-      var videoId = getYouTubeVideoId(url);
-      if (videoId) {
-        $("#youtube-video-display").html(`
-                <div class="youtube-video">
-                  <iframe width="560" height="200" src="https://www.youtube.com/embed/${'${videoId}'}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            `);
-      } else {
-        alert("Invalid YouTube URL");
-      }
-    });
   });
 
   function getYouTubeVideoId(url) {
@@ -249,10 +278,15 @@
           // 마우스 오버 이벤트 추가
           commentInfo.on('mouseenter', function(event) {
             console.log("hover");
-            var videoId = getYouTubeVideoId("https://www.youtube.com/watch?v=c_l1ZwJbAnc"); // response에 youtubeUrl이 있다고 가정
+            var videoId = getYouTubeVideoId(response.youtubeUrl); // response에 youtubeUrl이 있다고 가정
             if (videoId) {
               $('#latest-comment-video').html(`
                   <iframe width="560" height="200" src="https://www.youtube.com/embed/${"${videoId}"}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                `).show();
+            }
+            else{
+              $('#latest-comment-video').html(`
+                  <div>아직 영상을 준비중입니다 조금만 기다려 주세요 !</div>
                 `).show();
             }
           })
@@ -441,16 +475,6 @@
                     </div>
                 `);
           playlistContainer.append(playlistItem);
-
-          // YouTube Video Display
-          if (item.youtubeVideoId) {
-            var videoDisplay = $(`
-              <div class="youtube-video">
-                <iframe width="100%" height="315" src="https://www.youtube.com/embed/${item.youtubeVideoId}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-            `);
-            playlistContainer.append(videoDisplay);
-          }
         });
       },
       error: function(error) {
@@ -474,14 +498,43 @@
         var details = $("<div>").addClass("playlist-details");
         data.songs.forEach(function(song) {
           const songArtists = song.artists.join(", ");
-          details.append(`
-                    <div class="song-item">
+          const songItem = $(`
+                    <div class="song-item" data-video-id="${"${getYouTubeVideoId(song.youtubeUrl)}"}">
                         <i class="fas fa-music"></i><strong>${"${song.name}"}</strong> <span class="song-artists"> - ${"${songArtists}"}</span>
                     </div>
                 `);
+          details.append(songItem);
+
+          var videoId = getYouTubeVideoId(song.youtubeUrl);
+          if (videoId) {
+            console.log(videoId);
+            videoIdList.push(videoId); // 유튜브 영상 ID를 리스트에 추가
+          } else {
+              alert("Invalid YouTube URL for song: " + song.name);
+            }
+
+          // 노래 항목 클릭 이벤트 추가
+          songItem.click(function() {
+            var selectedVideoId = $(this).data("video-id");
+            if (selectedVideoId) {
+              player.loadVideoById(selectedVideoId);
+              $("#youtube-video-container").show(); // 플레이어를 표시
+            } else {
+              alert("Invalid YouTube URL for this song.");
+            }
+          });
         });
+
+        console.log(videoIdList);
         item.after(details);
         details.hide().slideDown();
+
+        // YouTube 비디오 재생 초기화
+        if (videoIdList.length > 0) {
+          currentVideoIndex = 0;
+          player.loadVideoById(videoIdList[currentVideoIndex]);
+          $("#youtube-video-container").show(); // 플레이어를 표시
+        }
       },
       error: function(error) {
         console.error("Error loading playlist details:", error);
