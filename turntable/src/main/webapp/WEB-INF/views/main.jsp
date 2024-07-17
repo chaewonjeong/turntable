@@ -278,15 +278,15 @@
           // 마우스 오버 이벤트 추가
           commentInfo.on('mouseenter', function(event) {
             console.log("hover");
-            var videoId = getYouTubeVideoId(response.youtubeUrl); // response에 youtubeUrl이 있다고 가정
-            if (videoId) {
+            if (response.youtubeUrl!=null) {
+              var videoId = getYouTubeVideoId(response.youtubeUrl); // response에 youtubeUrl이 있다고 가정
               $('#latest-comment-video').html(`
                   <iframe width="560" height="200" src="https://www.youtube.com/embed/${"${videoId}"}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 `).show();
             }
             else{
               $('#latest-comment-video').html(`
-                  <div>아직 영상을 준비중입니다 조금만 기다려 주세요 !</div>
+                  <div style="font-size:20px; hight:20%;">아직 영상을 준비중입니다 조금만 기다려 주세요 !</div>
                 `).show();
             }
           })
@@ -489,30 +489,28 @@
       existingDetails.remove();
       return;
     }
-
     $.ajax({
       url: "/api/playlists/detail",
       type: "GET",
       data: { playListId: id },
       success: function(data) {
+        videoIdList=[];
         var details = $("<div>").addClass("playlist-details");
         data.songs.forEach(function(song) {
           const songArtists = song.artists.join(", ");
+          var videoId = null;
+          if (song.youtubeUrl!=null) {
+            console.log("youtubeUrl"+song.youtubeUrl);
+            videoId = getYouTubeVideoId(song.youtubeUrl);
+            videoIdList.push(videoId); // 유튜브 영상 ID를 리스트에 추가
+          }
           const songItem = $(`
-                    <div class="song-item" data-video-id="${"${getYouTubeVideoId(song.youtubeUrl)}"}">
+                    <div class="song-item" data-video-id="${"${videoId}"}">
                         <i class="fas fa-music"></i><strong>${"${song.name}"}</strong> <span class="song-artists"> - ${"${songArtists}"}</span>
                     </div>
                 `);
           details.append(songItem);
-
-          var videoId = getYouTubeVideoId(song.youtubeUrl);
-          if (videoId) {
-            console.log(videoId);
-            videoIdList.push(videoId); // 유튜브 영상 ID를 리스트에 추가
-          } else {
-              alert("Invalid YouTube URL for song: " + song.name);
-            }
-
+          console.log(videoIdList);
           // 노래 항목 클릭 이벤트 추가
           songItem.click(function() {
             var selectedVideoId = $(this).data("video-id");
