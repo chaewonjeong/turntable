@@ -117,4 +117,9 @@ public class CommentService {
         dailycommentRepository.deleteByMember_Id(memberId);
         return true;
     }
+
+    @Transactional
+    public void deleteGuestCommentById(Long commentId) {
+        guestCommentRepository.deleteById(commentId);
+    }
 }

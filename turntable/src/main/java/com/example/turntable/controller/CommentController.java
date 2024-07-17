@@ -54,6 +54,6 @@ public class CommentController {
     @DeleteMapping("/comment/{commentId}")
     @ResponseBody
     public void deleteGuestComment(@PathVariable Long commentId) {
-        commentService.deleteGuestCommentByCommnetId(commentId);
+        commentService.deleteGuestCommentById(commentId);
     }
 }

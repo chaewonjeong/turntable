@@ -143,7 +143,7 @@
             repliesContainer.html(''); // 기존 대댓글 초기화
             response.content.forEach(reply => {
               const replyElement = $(`
-              <div class="reply-item">
+              <div class="reply-item" data-reply-id = ${"${reply.id}"}>
                 <div class="reply-box">
                   <div class="reply-profile">
                     <img src="${"${reply.guestBgImgUrl}"}" alt="Profile Image">
@@ -157,7 +157,7 @@
                     </div>
                     <div class="reply-footer">
                       <div class="reply-date">${"${new Date(reply.date).toLocaleString()}"}</div>
-                      ${"${reply.owner ? `<button>삭제</button>` : `''`}"}
+                      ${"${reply.owner ? `<button class = 'delete-reply-button'>삭제</button>` : `''`}"}
                     </div>
                   </div>
                 </div>
@@ -190,6 +190,22 @@
               if (!response.last) {
                 loadReplies(commentId, commentBox, page + 1);
               }
+            });
+
+            $(`.delete-reply-button`).click(function () {
+                const replyId = $(this).closest(`.reply-item`).data(`reply-id`);
+                if(confirm('정말로 댓글을 삭제하시겠습니까?')) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '/comment/'+replyId,
+                        success: function () {
+                            loadReplies(commentId, commentBox, page);
+                        },
+                        error: function (error) {
+                            console.error('Error deleting reply:', error);
+                        }
+                    })
+                }
             });
           }
         },
