@@ -27,7 +27,8 @@ public class DailyComment {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(name = "comment", nullable = false, length = 500000)
+    @Column(name = "comment", nullable = false)
+    @Lob
     private String comment;
 
     @ManyToOne(fetch = LAZY)
