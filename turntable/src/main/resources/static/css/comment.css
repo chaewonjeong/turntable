@@ -352,3 +352,43 @@
   margin-top: 0px;
   font-size: 10px;
 }
+
+.reply-input-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+
+.reply-input-field {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  margin-right: 10px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.reply-input-field:focus {
+  border-color: #ff6868;
+}
+
+.reply-submit-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ff8a8a;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.reply-submit-button:hover {
+  background-color: white;
+  color: black;
+}

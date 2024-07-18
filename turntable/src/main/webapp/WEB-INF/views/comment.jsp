@@ -74,7 +74,7 @@
             commentElement.classList.add('comment-info');
             commentElement.dataset.commentId = comment.id; // comment-id 속성 추가
             commentElement.innerHTML = `
-              <div class="icon-commentinfo">
+              <div class="icon-commentinfo" data-comment-id=${"${comment.id}"}>
                 <i class="fas fa-music music-icon"></i>
                 <div class="comment-song">
                   <div class="comment-message">${'${comment.comment}'}</div>
@@ -140,9 +140,14 @@
               repliesContainer = $('<div>').addClass('replies-container');
               commentBox.append(repliesContainer);
             }
-            repliesContainer.html(''); // 기존 대댓글 초기화
+
+              repliesContainer.html(''); // 기존 대댓글 초기화
             response.content.forEach(reply => {
               const replyElement = $(`
+              <div class="reply-input-section">
+                    <input type="text" class="reply-input-field" placeholder="댓글을 입력하세요">
+                    <button class="reply-submit-button">댓글 등록</button>
+                  </div>
               <div class="reply-item" data-reply-id = ${"${reply.id}"}>
                 <div class="reply-box">
                   <div class="reply-profile">
@@ -157,7 +162,8 @@
                     </div>
                     <div class="reply-footer">
                       <div class="reply-date">${"${new Date(reply.date).toLocaleString()}"}</div>
-                      ${"${reply.owner ? `<button class = 'delete-reply-button'>삭제</button>` : `''`}"}
+                      ${"${reply.owner ? `<button class = 'update-reply-button'>수정</button>` : ``}"}
+                      ${"${reply.owner ? `<button class = 'delete-reply-button'>삭제</button>` : ``}"}
                     </div>
                   </div>
                 </div>
@@ -172,7 +178,7 @@
               <button class="reply-prev-page" ${"${page <= 0 ? 'disabled' : ''}"}>이전 페이지</button>
               <button class="reply-next-page" ${"${response.last ? 'disabled' : ''}"}>다음 페이지</button>
             </div>
-          `);
+            `);
 
             // 기존 페이지네이션 버튼 제거 및 새로 추가
             commentBox.find('.reply-pagination-buttons').remove();
@@ -204,9 +210,73 @@
                         error: function (error) {
                             console.error('Error deleting reply:', error);
                         }
-                    })
+                    });
                 }
             });
+
+              // 댓글 수정 버튼 클릭 이벤트 처리
+              $('.update-reply-button').click(function () {
+                  const replyItem = $(this).closest('.reply-item');
+                  const replyId = replyItem.data('reply-id');
+                  const replyText = replyItem.find('.reply-text').text();
+
+                  // 댓글 텍스트를 입력 필드로 교체
+                  replyItem.find('.reply-text').replaceWith(`
+                      <textarea class="update-reply-textarea">${replyText}</textarea>
+                    `);
+
+                  // 수정 버튼을 저장 버튼으로 교체
+                  $(this).replaceWith(`<button class='save-reply-button'>저장</button>`);
+
+                  // 저장 버튼 클릭 이벤트 처리
+                  $('.save-reply-button').click(function () {
+                      const newReplyText = replyItem.find('.update-reply-textarea').val().trim();
+
+                      if (newReplyText) {
+                          $.ajax({
+                              type: 'PUT',
+                              url: '/comment/' + replyId,
+                              contentType: 'application/json',
+                              data: JSON.stringify({ comment: newReplyText }),
+                              success: function () {
+                                  // 댓글 수정 후 다시 불러오기
+                                  loadReplies(commentId, commentBox, page);
+                              },
+                              error: function (error) {
+                                  console.error('Error updating reply:', error);
+                              }
+                          });
+                      }
+                  });
+              });
+
+              $('.reply-submit-button').click(function () {
+                  const replyInput = $(this).siblings('.reply-input-field');
+                  const replyText = replyInput.val().trim();
+
+                  if (replyText) {
+                      var currentDate = new Date().toISOString().slice(0, -1);
+                      $.ajax({
+                          type: 'POST',
+                          url: '/comment/guest', // 엔드포인트 비워둠
+                          contentType: 'application/json',
+                          data: JSON.stringify({
+                              commentId: commentId,
+                              comment: replyText,
+                              date: currentDate,
+                              guestId: 1
+                          }),
+                          success: function () {
+                              // 대댓글 작성 후 입력 필드 초기화 및 대댓글 목록 다시 불러오기
+                              replyInput.val('');
+                              loadReplies(commentId, commentBox, page);
+                          },
+                          error: function (error) {
+                              console.error('Error submitting reply:', error);
+                          }
+                      });
+                  }
+              });
           }
         },
         error: function(error) {
@@ -214,6 +284,7 @@
         }
       });
     }
+
 
     <% if (isOwner) { %>
     // 댓글 작성 버튼 클릭 이벤트 처리
