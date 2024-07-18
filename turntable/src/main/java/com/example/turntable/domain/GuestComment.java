@@ -39,4 +39,8 @@ public class GuestComment {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public void changeComment(final String newComment) {this.comment = newComment;}
+    public void changeUpdatedAt(final LocalDateTime newUpdatedAt) {this.updatedAt = newUpdatedAt;}
+
 }

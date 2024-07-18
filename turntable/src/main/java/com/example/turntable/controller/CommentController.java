@@ -1,9 +1,6 @@
 package com.example.turntable.controller;
 
-import com.example.turntable.dto.CommentResponseDto;
-import com.example.turntable.dto.GuestCommentResponseDto;
-import com.example.turntable.dto.WriteDailyCommentDto;
-import com.example.turntable.dto.WriteGuestCommentDto;
+import com.example.turntable.dto.*;
 import com.example.turntable.service.CommentService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -55,5 +52,11 @@ public class CommentController {
     @ResponseBody
     public void deleteGuestComment(@PathVariable Long commentId) {
         commentService.deleteGuestCommentById(commentId);
+    }
+
+    @PutMapping("/comment/guest")
+    @ResponseBody
+    public void updateGuestComment(@RequestBody UpdateGuestCommentDto updateGuestCommentDto) {
+        commentService.updateGuestComment(updateGuestCommentDto);
     }
 }

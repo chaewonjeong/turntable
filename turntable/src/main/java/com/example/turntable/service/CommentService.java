@@ -4,10 +4,7 @@ import com.example.turntable.domain.DailyComment;
 import com.example.turntable.domain.GuestComment;
 import com.example.turntable.domain.Member;
 import com.example.turntable.domain.Song;
-import com.example.turntable.dto.CommentResponseDto;
-import com.example.turntable.dto.GuestCommentResponseDto;
-import com.example.turntable.dto.WriteDailyCommentDto;
-import com.example.turntable.dto.WriteGuestCommentDto;
+import com.example.turntable.dto.*;
 import com.example.turntable.repository.DailyCommentRepository;
 import com.example.turntable.repository.GuestCommentRepository;
 import com.example.turntable.repository.MemberRepository;
@@ -59,6 +56,18 @@ public class CommentService {
             .visitorMember(guest.get())
             .build();
         guestCommentRepository.save(guestComment);
+    }
+
+    public void updateGuestComment(UpdateGuestCommentDto updateGuestCommentDto) {
+        Optional<GuestComment> guestCommentOptional = guestCommentRepository.findById(updateGuestCommentDto.getCommentId());
+        if (guestCommentOptional.isPresent()) {
+            GuestComment guestComment = guestCommentOptional.get();
+            guestComment.changeComment(updateGuestCommentDto.getComment());
+            guestComment.changeUpdatedAt(stringDateToLocalDateTime(updateGuestCommentDto.getDate()));
+            guestCommentRepository.save(guestComment);
+        } else {
+            throw new IllegalArgumentException("Comment not found");
+        }
     }
 
     private LocalDateTime stringDateToLocalDateTime(String date) {
@@ -122,4 +131,5 @@ public class CommentService {
     public void deleteGuestCommentById(Long commentId) {
         guestCommentRepository.deleteById(commentId);
     }
+
 }

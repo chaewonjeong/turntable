@@ -392,3 +392,62 @@
   background-color: white;
   color: black;
 }
+.update-reply-button, .delete-reply-button, .save-reply-button {
+  padding: 8px 16px; /* 버튼 패딩 조정 */
+  border: none; /* 기본 테두리 제거 */
+  border-radius: 5px; /* 테두리 둥글게 */
+  cursor: pointer; /* 포인터 커서 */
+  font-size: 12px; /* 글꼴 크기 */
+  transition: background-color 0.3s ease, color 0.3s ease; /* 부드러운 전환 효과 */
+  margin-left: 5px; /* 버튼 간격 조정 */
+}
+
+.update-reply-button {
+  background-color: #ff8a8a; /* 수정 버튼 배경색 (분홍색 계열) */
+  color: white; /* 글자색 */
+}
+
+.delete-reply-button {
+  background-color: #ff6868; /* 삭제 버튼 배경색 (더 진한 분홍색 계열) */
+  color: white; /* 글자색 */
+}
+
+.save-reply-button {
+  background-color: #ff8a8a; /* 저장 버튼 배경색 (분홍색 계열) */
+  color: white; /* 글자색 */
+}
+
+.update-reply-button:hover {
+  background-color: #ff6f6f; /* 수정 버튼 hover 시 배경색 */
+}
+
+.delete-reply-button:hover {
+  background-color: #ff4e4e; /* 삭제 버튼 hover 시 배경색 */
+}
+
+.save-reply-button:hover {
+  background-color: #ff6f6f; /* 저장 버튼 hover 시 배경색 */
+}
+
+.update-reply-button:disabled, .delete-reply-button:disabled, .save-reply-button:disabled {
+  background-color: #ccc; /* 비활성화 상태의 배경색 */
+  cursor: not-allowed; /* 비활성화 상태의 커서 */
+  color: #666; /* 비활성화 상태의 글자색 */
+}
+
+.update-reply-textarea {
+  width: 100%; /* 입력 필드의 너비를 100%로 설정 */
+  padding: 10px; /* 내부 여백 설정 */
+  border: 1px solid #ff8a8a; /* 테두리 색상 설정 */
+  border-radius: 5px; /* 둥근 테두리 */
+  font-size: 14px; /* 글꼴 크기 설정 */
+  font-family: "Noto Sans KR", sans-serif; /* 폰트 설정 */
+  outline: none; /* 포커스 시 기본 외곽선 제거 */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* 부드러운 전환 효과 */
+  margin-top: 10px; /* 입력 필드와 상단 요소 사이의 여백 */
+}
+
+.update-reply-textarea:focus {
+  border-color: #ff6f6f; /* 포커스 시 테두리 색상 변경 */
+  box-shadow: 0 0 5px rgba(255, 107, 107, 0.5); /* 포커스 시 그림자 효과 추가 */
+}

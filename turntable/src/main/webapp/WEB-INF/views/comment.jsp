@@ -230,7 +230,7 @@
 
                   // 댓글 텍스트를 입력 필드로 교체
                   replyItem.find('.reply-text').replaceWith(`
-                      <textarea class="update-reply-textarea">${replyText}</textarea>
+                      <textarea class="update-reply-textarea">${"${replyText}"}</textarea>
                     `);
 
                   // 수정 버튼을 저장 버튼으로 교체
@@ -241,11 +241,16 @@
                       const newReplyText = replyItem.find('.update-reply-textarea').val().trim();
 
                       if (newReplyText) {
+                          var currentDate = new Date().toISOString().slice(0, -1);
                           $.ajax({
                               type: 'PUT',
-                              url: '/comment/' + replyId,
+                              url: '/comment/guest',
                               contentType: 'application/json',
-                              data: JSON.stringify({ comment: newReplyText }),
+                              data: JSON.stringify({
+                                  commentId: replyId,
+                                  comment: newReplyText,
+                                  date: currentDate
+                              }),
                               success: function () {
                                   // 댓글 수정 후 다시 불러오기
                                   loadReplies(commentId, commentBox, page);
@@ -258,7 +263,7 @@
                   });
               });
 
-              $('.reply-submit-button').click(function () {
+              $('.reply-submit-button').off('click').click(function () {
                   const replyInput = $(this).siblings('.reply-input-field');
                   const replyText = replyInput.val().trim();
 
