@@ -4,10 +4,7 @@ import com.example.turntable.domain.DailyComment;
 import com.example.turntable.domain.GuestComment;
 import com.example.turntable.domain.Member;
 import com.example.turntable.domain.Song;
-import com.example.turntable.dto.CommentResponseDto;
-import com.example.turntable.dto.GuestCommentResponseDto;
-import com.example.turntable.dto.WriteDailyCommentDto;
-import com.example.turntable.dto.WriteGuestCommentDto;
+import com.example.turntable.dto.*;
 import com.example.turntable.repository.DailyCommentRepository;
 import com.example.turntable.repository.GuestCommentRepository;
 import com.example.turntable.repository.MemberRepository;
@@ -61,6 +58,18 @@ public class CommentService {
         guestCommentRepository.save(guestComment);
     }
 
+    public void updateGuestComment(UpdateGuestCommentDto updateGuestCommentDto) {
+        Optional<GuestComment> guestCommentOptional = guestCommentRepository.findById(updateGuestCommentDto.getCommentId());
+        if (guestCommentOptional.isPresent()) {
+            GuestComment guestComment = guestCommentOptional.get();
+            guestComment.changeComment(updateGuestCommentDto.getComment());
+            guestComment.changeUpdatedAt(stringDateToLocalDateTime(updateGuestCommentDto.getDate()));
+            guestCommentRepository.save(guestComment);
+        } else {
+            throw new IllegalArgumentException("Comment not found");
+        }
+    }
+
     private LocalDateTime stringDateToLocalDateTime(String date) {
         return LocalDateTime.parse(date, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
@@ -84,13 +93,13 @@ public class CommentService {
         return CommentResponseDto.of(comment,artists,commentSize);
     }
 
-    public Page<GuestCommentResponseDto> getGuestCommentsByPage(int page,Long dailyCommentId){
+    public Page<GuestCommentResponseDto> getGuestCommentsByPage(int page,Long dailyCommentId, Long currentUserId){
         int pageSize = 5;
         PageRequest pageRequest = PageRequest.of(page,pageSize,Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<GuestComment> comments = guestCommentRepository.findAllByDailyCommentId(pageRequest,dailyCommentId);
 
         return comments.map(comment -> {
-            return GuestCommentResponseDto.from(comment);
+            return GuestCommentResponseDto.from(comment, currentUserId);
         });
     }
 
@@ -117,4 +126,10 @@ public class CommentService {
         dailycommentRepository.deleteByMember_Id(memberId);
         return true;
     }
+
+    @Transactional
+    public void deleteGuestCommentById(Long commentId) {
+        guestCommentRepository.deleteById(commentId);
+    }
+
 }

@@ -52,6 +52,7 @@
     let selectedTitle = ""; // 선택된 노래의 제목을 저장할 변수
     let selectedArtists = []; // 선택된 노래의 아티스트를 저장할 배열
     let currentPage = 0;
+    const userId = "<%= userId%>";
     const pageOwnerId = "<%= pageOwnerId %>";
 
     // 페이지 로드 시 댓글 목록 불러오기
@@ -74,7 +75,7 @@
             commentElement.classList.add('comment-info');
             commentElement.dataset.commentId = comment.id; // comment-id 속성 추가
             commentElement.innerHTML = `
-              <div class="icon-commentinfo">
+              <div class="icon-commentinfo" data-comment-id=${"${comment.id}"}>
                 <i class="fas fa-music music-icon"></i>
                 <div class="comment-song">
                   <div class="comment-message">${'${comment.comment}'}</div>
@@ -116,13 +117,24 @@
       const commentId = $(this).closest('.comment-info').data('comment-id');
       const commentBox = $(this).closest('.comment-info');
       const repliesContainer = commentBox.find('.replies-container');
+      const replyInputSection = commentBox.find('.reply-input-section');
 
-      if (repliesContainer.length > 0) {
+      if (repliesContainer.length > 0 || replyInputSection.length > 0) {
         // 대댓글 컨테이너가 이미 있으면 제거하여 닫기
         repliesContainer.remove();
+        replyInputSection.remove();
       } else {
-        // 대댓글 컨테이너가 없으면 대댓글 불러오기
-        const currentReplyPage = 0;
+          // 대댓글 컨테이너가 없으면 대댓글 불러오기
+          const currentReplyPage = 0;
+          if (replyInputSection.length == 0) {
+              const replyInputSection = $(`
+              <div class="reply-input-section">
+                    <input type="text" class="reply-input-field" placeholder="댓글을 입력하세요">
+                    <button class="reply-submit-button">댓글 등록</button>
+                  </div>
+              `);
+          commentBox.append(replyInputSection);
+        }
         loadReplies(commentId, commentBox, currentReplyPage);
       }
     });
@@ -132,7 +144,7 @@
       $.ajax({
         url: '/comments/guest',
         method: 'GET',
-        data: { page: page, commentId: commentId },
+        data: { page: page, commentId: commentId},
         success: function(response) {
           if (response && response.content) {
             let repliesContainer = commentBox.find('.replies-container');
@@ -140,11 +152,11 @@
               repliesContainer = $('<div>').addClass('replies-container');
               commentBox.append(repliesContainer);
             }
-            repliesContainer.html(''); // 기존 대댓글 초기화
 
+              repliesContainer.html(''); // 기존 대댓글 초기화
             response.content.forEach(reply => {
               const replyElement = $(`
-              <div class="reply-item">
+              <div class="reply-item" data-reply-id = ${"${reply.id}"}>
                 <div class="reply-box">
                   <div class="reply-profile">
                     <img src="${"${reply.guestBgImgUrl}"}" alt="Profile Image">
@@ -158,6 +170,8 @@
                     </div>
                     <div class="reply-footer">
                       <div class="reply-date">${"${new Date(reply.date).toLocaleString()}"}</div>
+                      ${"${reply.owner ? `<button class = 'update-reply-button'>수정</button>` : ``}"}
+                      ${"${reply.owner ? `<button class = 'delete-reply-button'>삭제</button>` : ``}"}
                     </div>
                   </div>
                 </div>
@@ -172,7 +186,7 @@
               <button class="reply-prev-page" ${"${page <= 0 ? 'disabled' : ''}"}>이전 페이지</button>
               <button class="reply-next-page" ${"${response.last ? 'disabled' : ''}"}>다음 페이지</button>
             </div>
-          `);
+            `);
 
             // 기존 페이지네이션 버튼 제거 및 새로 추가
             commentBox.find('.reply-pagination-buttons').remove();
@@ -191,6 +205,91 @@
                 loadReplies(commentId, commentBox, page + 1);
               }
             });
+
+            $(`.delete-reply-button`).click(function () {
+                const replyId = $(this).closest(`.reply-item`).data(`reply-id`);
+                if(confirm('정말로 댓글을 삭제하시겠습니까?')) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '/comment/'+replyId,
+                        success: function () {
+                            loadReplies(commentId, commentBox, page);
+                        },
+                        error: function (error) {
+                            console.error('Error deleting reply:', error);
+                        }
+                    });
+                }
+            });
+
+              // 댓글 수정 버튼 클릭 이벤트 처리
+              $('.update-reply-button').click(function () {
+                  const replyItem = $(this).closest('.reply-item');
+                  const replyId = replyItem.data('reply-id');
+                  const replyText = replyItem.find('.reply-text').text();
+
+                  // 댓글 텍스트를 입력 필드로 교체
+                  replyItem.find('.reply-text').replaceWith(`
+                      <textarea class="update-reply-textarea">${"${replyText}"}</textarea>
+                    `);
+
+                  // 수정 버튼을 저장 버튼으로 교체
+                  $(this).replaceWith(`<button class='save-reply-button'>저장</button>`);
+
+                  // 저장 버튼 클릭 이벤트 처리
+                  $('.save-reply-button').click(function () {
+                      const newReplyText = replyItem.find('.update-reply-textarea').val().trim();
+
+                      if (newReplyText) {
+                          var currentDate = new Date().toISOString().slice(0, -1);
+                          $.ajax({
+                              type: 'PUT',
+                              url: '/comment/guest',
+                              contentType: 'application/json',
+                              data: JSON.stringify({
+                                  commentId: replyId,
+                                  comment: newReplyText,
+                                  date: currentDate
+                              }),
+                              success: function () {
+                                  // 댓글 수정 후 다시 불러오기
+                                  loadReplies(commentId, commentBox, page);
+                              },
+                              error: function (error) {
+                                  console.error('Error updating reply:', error);
+                              }
+                          });
+                      }
+                  });
+              });
+
+              $('.reply-submit-button').off('click').click(function () {
+                  const replyInput = $(this).siblings('.reply-input-field');
+                  const replyText = replyInput.val().trim();
+
+                  if (replyText) {
+                      var currentDate = new Date().toISOString().slice(0, -1);
+                      $.ajax({
+                          type: 'POST',
+                          url: '/comment/guest', // 엔드포인트 비워둠
+                          contentType: 'application/json',
+                          data: JSON.stringify({
+                              commentId: commentId,
+                              comment: replyText,
+                              date: currentDate,
+                              guestId: userId
+                          }),
+                          success: function () {
+                              // 대댓글 작성 후 입력 필드 초기화 및 대댓글 목록 다시 불러오기
+                              replyInput.val('');
+                              loadReplies(commentId, commentBox, page);
+                          },
+                          error: function (error) {
+                              console.error('Error submitting reply:', error);
+                          }
+                      });
+                  }
+              });
           }
         },
         error: function(error) {
@@ -198,6 +297,7 @@
         }
       });
     }
+
 
     <% if (isOwner) { %>
     // 댓글 작성 버튼 클릭 이벤트 처리
