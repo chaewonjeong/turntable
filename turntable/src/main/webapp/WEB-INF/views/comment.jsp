@@ -159,7 +159,7 @@
               <div class="reply-item" data-reply-id = ${"${reply.id}"}>
                 <div class="reply-box">
                   <div class="reply-profile">
-                    <img src="${"${reply.guestBgImgUrl}"}" alt="Profile Image">
+                    <img src="${"${reply.guestBgImgUrl}"}" alt="Profile Image" data-guest-id= ${"${reply.guestId}"}>
                   </div>
                   <div class="reply-content">
                     <div class="reply-header">
@@ -289,6 +289,11 @@
                           }
                       });
                   }
+              });
+
+              $('.reply-profile img').click(function () {
+                  const guestId = $(this).data('guest-id');
+                  window.location.href = `/main?pageOwnerId=${"${guestId}"}`
               });
           }
         },

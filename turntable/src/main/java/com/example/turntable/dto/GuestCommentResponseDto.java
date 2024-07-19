@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GuestCommentResponseDto {
     private Long Id;
+    private Long guestId;
     private String comment;
     private LocalDateTime date;
     private String guestName;
@@ -22,6 +23,7 @@ public class GuestCommentResponseDto {
     public static GuestCommentResponseDto from (GuestComment guestComment, Long currentUserId) {
         return GuestCommentResponseDto.builder()
             .Id(guestComment.getId())
+                .guestId(guestComment.getVisitorMember().getId())
             .comment(guestComment.getComment())
             .date(guestComment.getCreatedAt())
             .guestName(guestComment.getVisitorMember().getNickname())

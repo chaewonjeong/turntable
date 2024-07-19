@@ -339,10 +339,10 @@
           const commentsContainer = $('.comments');
           response.content.forEach(comment => {
             const commentElement = $(`
-                        <div class="comment-item">
+                        <div class="comment-item" data-comment-id = ${"${comment.id}"}>
                             <div class="comment-box">
                                 <div class="comment-profile">
-                                    <img src="${"${comment.guestBgImgUrl}"}" alt="Profile Image">
+                                    <img src="${"${comment.guestBgImgUrl}"}" alt="Profile Image" data-guest-id = ${"${comment.guestId}"}>
                                 </div>
                                 <div class="comment-content">
                                     <div class="comment-header">
@@ -360,6 +360,11 @@
                     `);
             commentsContainer.append(commentElement);
           });
+
+            $('.comment-profile img').click(function () {
+                const guestId = $(this).data('guest-id');
+            window.location.href = `/main?pageOwnerId=${"${guestId}"}`
+            });
         }
       },
       error: function(error) {
