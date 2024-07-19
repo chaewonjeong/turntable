@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -26,11 +25,9 @@ public class SongArtistService {
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private final ConversionService conversionService;
 
     @TransactionalEventListener
     public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
-        // 추가
         List<Song> needYoutubeUrlSongs = new ArrayList<>();
 
         tracks.forEach(track -> {
