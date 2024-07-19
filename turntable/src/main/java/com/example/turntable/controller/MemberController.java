@@ -62,12 +62,11 @@ public class MemberController {
         return ResponseEntity.ok(playlistCount);
     }
 
-    @PostMapping("user/change-username")
-    public String changeUsername(@RequestBody String newUsername, HttpSession session){
+    @PostMapping("user/change-nickname")
+    public String changeNickname(@RequestBody String newNickname, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
-        memberService.changeUserName(userId,newUsername);
-        session.setAttribute("username", newUsername);
-        return "redirect:/main?pageOwnerId="+userId;
+        memberService.changeNickName(userId, newNickname);
+        return "redirect:/main?pageOwnerId=" + userId;
     }
 
     @PostMapping("user/change-bgimg")

@@ -38,10 +38,6 @@ public class SongArtistService {
                 saveAllArtistsNeedToSave(artists);
                 List<SongArtist> songArtists = songArtistsNeedToSave(song,track.getArtists());
                 saveAllSongArtistsNeedToSave(songArtists);
-            } else if (track.toEntity().getYoutubeUrl()==null) {
-                List<SongNameInfo> songNameInfos = songArtistRepository.findBySongTitleAndArtistNamesIn(track.getName(),track.getArtists(),track.getArtists().size());
-                Optional<Song> song = songRepository.findById(songNameInfos.get(0).getSongId());
-                needYoutubeUrlSongs.add(song.get());
             }
         });
 
