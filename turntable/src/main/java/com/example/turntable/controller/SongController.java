@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -19,5 +20,11 @@ public class SongController {
     @ResponseBody
     public String getYoutubeUrl(@RequestParam Long songId){
         return songService.getYoutubeUrl(songId);
+    }
+
+    @PostMapping("/song/youtube-url")
+    @ResponseBody
+    public void updateYoutubeUrl(@RequestParam Long songId){
+        songService.updateYoutubeUrl(songId);
     }
 }

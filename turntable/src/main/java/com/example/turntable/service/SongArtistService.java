@@ -29,12 +29,12 @@ public class SongArtistService {
     @TransactionalEventListener
     public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
         // 추가
-        List<Song> savedSongs = new ArrayList<>();
+        List<Song> needYoutubeUrlSongs = new ArrayList<>();
 
         tracks.forEach(track -> {
             if (!isSongExist(track.getName(),track.getArtists())) {
                 Song song = track.toEntity();
-                savedSongs.add(saveTrackNeedToSave(song));
+                needYoutubeUrlSongs.add(saveTrackNeedToSave(song));
                 List<Artist> artists = artistsNeedToSave(track.getArtists());
                 saveAllArtistsNeedToSave(artists);
                 List<SongArtist> songArtists = songArtistsNeedToSave(song,track.getArtists());
@@ -43,7 +43,7 @@ public class SongArtistService {
         });
 
         // tracks를 요청하면 안됨 -> DB에 저장된
-        eventPublisher.publishEvent(new TrackSavedEvent(savedSongs));
+        eventPublisher.publishEvent(new TrackSavedEvent(needYoutubeUrlSongs));
         return true;
     }
 
