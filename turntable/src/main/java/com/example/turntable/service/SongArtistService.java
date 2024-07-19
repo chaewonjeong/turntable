@@ -39,14 +39,19 @@ public class SongArtistService {
                 saveAllArtistsNeedToSave(artists);
                 List<SongArtist> songArtists = songArtistsNeedToSave(song,track.getArtists());
                 saveAllSongArtistsNeedToSave(songArtists);
+            } else if (track.toEntity().getYoutubeUrl()==null) {
+                needYoutubeUrlSongs.add(track.toEntity());
+
             }
         });
 
-        // tracks를 요청하면 안됨 -> DB에 저장된
-        eventPublisher.publishEvent(new TrackSavedEvent(needYoutubeUrlSongs));
+        youtubePublishEvent(needYoutubeUrlSongs);
         return true;
     }
 
+    public void youtubePublishEvent(List<Song> songs){
+        eventPublisher.publishEvent(new TrackSavedEvent(songs));
+    }
 
     @Transactional
     public Song saveTrackNeedToSave(Song song) {

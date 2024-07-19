@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SongService {
     private final SongRepository songRepository;
+    private final SongArtistService songArtistService;
     private final ApplicationEventPublisher eventPublisher;
 
     public String getYoutubeUrl(Long songId){
@@ -24,8 +25,7 @@ public class SongService {
         Song song = songRepository.findById(songId).orElse(null);
         List<Song> savedSongs = new ArrayList<>();
         savedSongs.add(song);
-        // tracks를 요청하면 안됨 -> DB에 저장된
-        eventPublisher.publishEvent(new TrackSavedEvent(savedSongs));
+        songArtistService.youtubePublishEvent(savedSongs);
     }
 
 }
