@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -25,6 +26,7 @@ public class SongArtistService {
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final ConversionService conversionService;
 
     @TransactionalEventListener
     public boolean saveTrackInfo(List<TrackResponseDto> tracks) {
@@ -40,8 +42,9 @@ public class SongArtistService {
                 List<SongArtist> songArtists = songArtistsNeedToSave(song,track.getArtists());
                 saveAllSongArtistsNeedToSave(songArtists);
             } else if (track.toEntity().getYoutubeUrl()==null) {
-                needYoutubeUrlSongs.add(track.toEntity());
-
+                List<SongNameInfo> songNameInfos = songArtistRepository.findBySongTitleAndArtistNamesIn(track.getName(),track.getArtists(),track.getArtists().size());
+                Optional<Song> song = songRepository.findById(songNameInfos.get(0).getSongId());
+                needYoutubeUrlSongs.add(song.get());
             }
         });
 
