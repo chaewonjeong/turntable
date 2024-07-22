@@ -30,8 +30,8 @@
     </div>
     <div class="form-section">
         <div class="form-group">
-            <input type="text" id="new-username" placeholder="아이디 변경">
-            <button onclick="changeUsername()">변경하기</button>
+            <input type="text" id="new-nickname" placeholder="닉네임 변경">
+            <button onclick="changeNickname()">변경하기</button>
         </div>
         <div class="form-group">
             <input type="file" id="bg-image" placeholder="배경화면 변경">
@@ -107,12 +107,12 @@
     });
   }
 
-  function changeUsername() {
-    var newUsername = $('#new-username').val();
+  function changeNickname() {
+    var newNickname = $('#new-nickname').val();
     $.ajax({
-      url: '/user/change-username',
+      url: '/user/change-nickname',
       type: 'POST',
-      data: newUsername,
+      data: newNickname,
       contentType: 'application/json; charset=utf-8',
       success: function(response) {
         alert('아이디가 변경되었습니다.');

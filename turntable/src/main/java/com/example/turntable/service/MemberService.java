@@ -107,16 +107,18 @@ public class MemberService {
     }
 
     @Transactional
-    public String changeUserName(Long userId, String newMemberName) {
+    public String changeNickName(Long userId, String newNickName) {
         Member member = memberRepository.findById(userId).orElse(null);
-        if (isNotUsernameExist(newMemberName)) {
-            member.changeNickname(newMemberName);
-            return newMemberName;
+        if (isNotUsernameExist(newNickName)) {
+            member.changeNickname(newNickName);
+            memberRepository.save(member);
+            return newNickName;
         }
         else{
             throw new DuplicatedUsernameException(CustomErrorCode.ALREADY_EXIST_USERNAME);
         }
     }
+
 
     @Transactional
     public String changeBgImg(Long userId, MultipartFile newBgImg) throws IOException {

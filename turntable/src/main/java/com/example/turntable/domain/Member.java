@@ -35,7 +35,7 @@ public class Member {
         this.backGroundImage=backGroundImage;
     }
     public void changeNickname(final String newNickname) {
-        this.name = newNickname;
+        this.nickname = newNickname;
     }
     public void changeBackGroundImage(final String newBackGroundImage) {this.backGroundImage=newBackGroundImage;}
 }

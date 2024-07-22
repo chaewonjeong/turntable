@@ -12,6 +12,7 @@ public class CommentResponseDto {
     private Long id;
     private String comment;
     private LocalDateTime date;
+    private Long songId;
     private String title;
     private List<String> artists;
     private int commentCount;
@@ -23,6 +24,7 @@ public class CommentResponseDto {
             .id(comment.getId())
             .comment(comment.getComment())
             .date(comment.getCreatedAt())
+            .songId(comment.getSong().getId())
             .title(comment.getSong().getName())
             .artists(artists)
             .commentCount(commentCount)
