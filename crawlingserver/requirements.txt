@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pydantic
+selenium
+urllib3
+webdriver-manager
