@@ -1,16 +1,15 @@
 import urllib
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
 from selenium import webdriver as wb
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-import requests
+import os
+
 
 app = FastAPI()
 
@@ -23,19 +22,20 @@ class Song(BaseModel):
 class SongRequest(BaseModel):
     songs: List[Song]
 
-options = ChromeOptions()
-options.add_argument('headless')
-options.add_argument('window-size=1920x1080')
-options.add_argument("disable-gpu")
-options.add_argument(f'user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36')
-options.add_argument("--no-sandbox")
-options.add_argument('--disable-dev-shm-usage')
 
-service = ChromeService(executable_path=ChromeDriverManager().install())
-driver = wb.Chrome(service=service, options=options)
 
 @app.post("/getYoutubeUrls")
 async def get_youtube_urls(request: SongRequest):
+    options = ChromeOptions()
+    options.add_argument('headless')
+    options.add_argument('window-size=1920x1080')
+    options.add_argument("disable-gpu")
+    options.add_argument(f'user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36')
+    options.add_argument("--no-sandbox")
+    options.add_argument('--disable-dev-shm-usage')
+
+    hub_url = os.getenv("SELENIUM_HUB_URL")
+    driver = wb.Remote(command_executor=hub_url, options=options)
 
     results = []
     for song in request.songs:
@@ -63,4 +63,5 @@ async def get_youtube_urls(request: SongRequest):
             "albumName": album_name,
             "youtubeUrl": video_url if video_url else "URL not found"
         })
+    driver.quit()
     return {"results": results}

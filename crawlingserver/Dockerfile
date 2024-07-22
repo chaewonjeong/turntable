@@ -1,10 +1,5 @@
-FROM --platform=linux/amd64 python:3.9
-WORKDIR /app
-RUN apt-get -y update && \
-    apt install wget && \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt -y install ./google-chrome-stable_current_amd64.deb   # Google Chrome 다운로드 및 설치
-
+FROM python:3.11
+WORKDIR /code
 
 # Copy the requirements.txt file into the working directory
 COPY requirements.txt .
