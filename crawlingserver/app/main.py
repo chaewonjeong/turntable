@@ -23,7 +23,7 @@ class SongRequest(BaseModel):
     songs: List[Song]
 
 
-
+hub_url = os.getenv("SELENIUM_HUB_URL")
 @app.post("/getYoutubeUrls")
 async def get_youtube_urls(request: SongRequest):
     options = ChromeOptions()
@@ -34,7 +34,7 @@ async def get_youtube_urls(request: SongRequest):
     options.add_argument("--no-sandbox")
     options.add_argument('--disable-dev-shm-usage')
 
-    hub_url = os.getenv("SELENIUM_HUB_URL")
+
     driver = wb.Remote(command_executor=hub_url, options=options)
 
     results = []

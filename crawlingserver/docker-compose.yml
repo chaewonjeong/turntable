@@ -1,7 +1,7 @@
 version: '3'
 services:
   selenium-hub:
-    image: selenium/hub:4.1.0
+    image: seleniarm/standalone-chromium
     container_name: selenium-hub
     ports:
       - "4444:4444"
@@ -12,7 +12,7 @@ services:
       retries: 5
 
   chrome:
-    image: selenium/node-chrome:4.1.0
+    image: seleniarm/node-chromium
     container_name: chrome
     depends_on:
       - selenium-hub
