@@ -43,5 +43,13 @@ public class ncpController {
         String userBgimg = memberService.getUserBgImg(pageOwnerId);
         return ResponseEntity.ok(userBgimg);
     }
+
+    /*
+    @GetMapping("/imgurl")
+    public ResponseEntity<String> getUserImageUrl(@RequestParam Long pageOwnerId, HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        String userBgimg = memberService.getUserBgImg(pageOwnerId);
+        return ResponseEntity.ok(userBgimg);
+    }*/
 }
 

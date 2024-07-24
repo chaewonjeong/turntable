@@ -7,7 +7,13 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +27,9 @@ public class NcpService {
 
     @Value("${cloud.aws.credentials.bucket}")
     private String bucketName;
+
+    @Value("${upload.dir}")
+    private String uploadDir;
 
     /*이미지를 얻음*/
     public byte[] getImgObject(String key) throws IOException {
@@ -51,4 +60,31 @@ public class NcpService {
         }
     }
 
+    /*
+    public String uploadFile(MultipartFile file) throws IOException {
+        if (file!=null){
+            // Ensure the directory exists
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Generate a unique file name
+            String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path destinationFilePath = uploadPath.resolve(uniqueFileName);
+
+            // Copy the file to the destination
+            Files.copy(file.getInputStream(), destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // Encode the file name for URL
+            String encodedFileName = URLEncoder.encode(uniqueFileName, "UTF-8");
+            // Construct the URL to access the uploaded file
+
+            String fileUrl = "C:\\Users\\JIWON\\IdeaProjects\\turntable\\turntable\\src\\main\\resources\\static\\bgimg" + encodedFileName;
+            return fileUrl;
+        }
+        else{
+            return "/bgimg/default1.jpg";
+        }
+    }*/
 }
