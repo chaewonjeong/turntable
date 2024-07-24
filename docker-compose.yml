@@ -1,0 +1,90 @@
+version: '3'
+
+services:
+  selenium-hub:
+    image: seleniarm/standalone-chromium
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/wd/hub/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test_network
+
+  chrome:
+    image: seleniarm/node-chromium
+    container_name: chrome
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5555"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test_network
+
+  fastapi-app:
+    build:
+      context: ./crawlingserver
+    container_name: fastapi-app
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      - SELENIUM_HUB_URL=http://selenium-hub:4444
+    networks:
+      - test_network
+
+  database:
+    container_name: mysql_db
+    image: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: users_db
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: 1234
+      TZ: 'Asia/Seoul'
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d
+    command:
+      - "mysqld"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    networks:
+      - test_network
+
+  application:
+    container_name: turntable
+    restart: on-failure
+    build:
+      context: ./turntable
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_db:3306/users_db?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "1234"
+      CRAWLER_SERVICE_URL: http://fastapi-app:8000/getYoutubeUrls
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - database
+      - fastapi-app
+    networks:
+      - test_network
+
+networks:
+  test_network:
+    driver: bridge
