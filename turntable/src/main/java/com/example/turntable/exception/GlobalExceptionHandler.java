@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(DuplicatedUsernameException.class)
     public ResponseEntity<ErrorResponse> handleDuplicatedUsernameException(DuplicatedUsernameException ex) {
         ErrorResponse error = new ErrorResponse(ex.getErrorCode(),ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);

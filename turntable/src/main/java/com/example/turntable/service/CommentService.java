@@ -116,6 +116,11 @@ public class CommentService {
     }
 
     @Transactional
+    public int deleteGuestCommentByMemberId(Long memberId){
+        return guestCommentRepository.deleteByVisitorMember_Id(memberId);
+    }
+
+    @Transactional
     public boolean deleteDailyCommentByMemberId(Long memberId) {
         List<DailyComment> dailyCommentOptional = dailycommentRepository.findByMember_Id(memberId);
         dailyCommentOptional.stream()

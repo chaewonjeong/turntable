@@ -1,4 +1,4 @@
-package com.example.turntable.controller;
+package com.example.turntable.auth;
 
 
 import com.example.turntable.dto.SignupRequestDto;

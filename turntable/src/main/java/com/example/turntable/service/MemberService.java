@@ -49,6 +49,7 @@ public class MemberService {
     public boolean deleteUserInfo(Long userId) throws Exception {
         playListService.deleteAllPlaylistByMemberId(userId);
         commentService.deleteDailyCommentByMemberId(userId);
+        commentService.deleteGuestCommentByMemberId(userId);
         deleteUser(userId);
         return true;
     }
