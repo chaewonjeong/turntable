@@ -151,7 +151,9 @@
 
 ## 10. 트러블 슈팅
  ### 1. 회원 탈퇴 기능 구현 중 발생한 연관 데이터 삭제 오류 해결
+ https://fan-butterkase-444.notion.site/847ff4a867514413bed91e6015b2ad16?pvs=4
  ### 2. 비동기 이벤트 처리 중 발생한 트랜잭션 문제 해결
+ http://fan-butterkase-444.notion.site
  
 ## 11. 개선 목표
 ### 1. 기능추가
