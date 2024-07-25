@@ -3,7 +3,8 @@
 **당신의 취향과 분위기에 맞춘 신선한 곡들을 추천받아 음악 감상의 즐거움을 누려보세요.**
 
 
-![image](https://github.com/user-attachments/assets/9e553810-402c-4055-b895-1f998020481a)
+![image](https://github.com/user-attachments/assets/1f9ef720-e940-4889-af99-f40a26101002)
+
 
 
 ## 1. 프로젝트 소개
