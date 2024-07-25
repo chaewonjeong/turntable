@@ -31,18 +31,53 @@
 ## 3. 채택한 개발 기술과 브랜치 전략
 
 ## 4. 프로젝트 구조
- └─turntable
-     ├─auth
-     ├─config
-     ├─controller
-     ├─domain 
-     ├─dto 
-     ├─event 
-     ├─exception 
-     ├─repository 
-     ├─service
-     ├─spotify 
-     └─youtube 
+```
+├─.github
+│  └─ISSUE_TEMPLATE
+├─.idea
+│  └─modules
+├─crawlingserver
+│  └─__pycache__
+└─turntable
+    ├─.gradle
+    ├─build
+    ├─gradle
+    ├─out
+    └─src
+        ├─main
+        │  ├─java
+        │  │  └─com
+        │  │      └─example
+        │  │          └─turntable
+        │  │              ├─auth
+        │  │              ├─config
+        │  │              ├─controller
+        │  │              ├─domain
+        │  │              ├─dto
+        │  │              ├─event
+        │  │              ├─exception
+        │  │              ├─repository
+        │  │              ├─service
+        │  │              ├─spotify
+        │  │              │  └─dto
+        │  │              └─youtube
+        │  │                  └─dto
+        │  ├─resources
+        │  │  ├─META-INF
+        │  │  └─static
+        │  │      ├─bgimg
+        │  │      ├─css
+        │  │      │  └─bgimg
+        │  │      └─js
+        │  └─webapp
+        │      └─WEB-INF
+        │          └─views
+        └─test
+            └─java
+                └─com
+                    └─example
+                        └─turntable
+```
 
 ## 5. 역할 분담
 🎀 강지원
