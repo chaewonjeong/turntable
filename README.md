@@ -20,16 +20,33 @@
   |   @chaewonjeong    |      @onegqueen      |
 
 ## 2. 개발 환경
-- **Front** : HTML, JSP, JQuery
-- **Back-end** : Springboot 3.(JAVA) , IntelliJ , Sptify Api, JPA
-- **DB** : Mysql(배포용) , H2(개발용)
-- **버전 및 이슈관리** : Github, Github Issues, Github Project
-- **협업 툴** : Notion, ZOOM
-- **서비스 배포 환경** : 
-- **디자인** : Figma
+
+- **Front** : 
+![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+- **Back-end** : 
+![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![IntelliJ IDEA](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)
+![Spotify](https://img.shields.io/badge/Spotify-1ED760?style=for-the-badge&logo=spotify&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+- **DB** : 
+![MySQL](https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)
+- **버전 및 이슈관리** : 
+![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+- **협업 툴** :
+![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)
+![Google Drive](https://img.shields.io/badge/Google%20Drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)
+- **서비스 배포 환경** :
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+
+- **디자인** :
+![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
 
 ## 3. 채택한 개발 기술과 브랜치 전략
-- Git-flow 전략을 기반으로 main브랜치를 개발(develop)브랜치로 운용하며 feature,fix,refact 등의 보조 브랜치를 운용했습니다.
+- `Git-flow` 전략을 기반으로 `main`브랜치를 개발(`develop`)브랜치로 운용하며 `feature,fix,refact` 등의 보조 브랜치를 운용했습니다.
+- 기능별 이슈 생성 : 이슈템플릿을 활용하여 가독성 높은 이슈 작성을 하였고 이슈번호에 따른 브랜치를 생성하였습니다.
 - 브랜치명 : `feat/{이슈번호}`
 
 
@@ -95,10 +112,10 @@
 
 ## 6. 개발 기간 및 작업 관리
 **개발 기간**
-  전체 개발 기간 : 2024-06-14 ~ 2022-07-25
+  - 전체 개발 기간 : `2024-06-14 ~ 2022-07-25`
 
 **작업 관리**
-  - GitHub Projects와 Issues를 사용하여 진행 상황을 공유했습니다.
+  - `GitHub Projects`와 `Issues`를 사용하여 진행 상황을 공유했습니다.
   - 일일회의를 진행하며 작업 순서와 방향성에 대한 고민을 나누고 일일 개발 회의록을 작성하였습니다.
 
 ## 7. 페이지별 기능
@@ -122,10 +139,29 @@
  ### 2. 비동기 이벤트 처리 중 발생한 트랜잭션 문제 해결
  
 ## 9. 개선 목표
-  1. 팔로우 및 좋아요 기능 추가
-  2. 플레이리스트 공유 기능 추가
-  3. 프리미엄 구독 모델 고안
-  4. 기타 예외처리
+### 1. 기능추가
+사용자 간 상호작용을 강화하고 음악 공유를 활성화하며, 개인 맞춤형 음악 추천 서비스로 인한 사용자 유입 및  수익 창출을 기대할 수 있습니다.
+
+   **1-1. 팔로우 및 좋아요 기능 추가**
+     
+     - 사용자들이 서로를 팔로우하고 좋아요를 표시할 수 있는 기능을 추가하여 소셜 네트워킹을 강화합니다.
+  
+   **1-2. 플레이리스트 공유 기능 추가**
+     
+     - 다른 사용자의 플레이리스트를 자신의 플레이리스트에 저장할 수 있는 기능을 구현하여 사용자 간 음악 공유를 활성화합니다.
+  
+   **1-3. 프리미엄 구독 모델 고안**
+     
+     - 프리미엄 구독 모델을 도입하여 사용자 취향 분석을 고도화하고, 개인 맞춤형 음악 추천 서비스를 제공합니다.
+     
+### 2. 성능 개선
+부족한 성능을 개선하여 사용자 경험을 향상시킬 수 있습니다.
+
+  **2-1. 부족한 예외처리 추가**
+
+   **2-2. 단위테스트 코드 추가**
+
+   **2-3. 음악 검색 성능 개선**
 
 ## 10. 프로젝트 회고
 🎀강지원
