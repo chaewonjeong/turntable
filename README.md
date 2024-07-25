@@ -19,7 +19,8 @@
   ### 팀원 구성 (멀티잇 백엔드 개발(스프링) 24회차 5조)
   | 정채원 | 강지원 |
   | :--------: | :--------: |
-  |   @chaewonjeong    |      @onegqueen      |
+  |<a href = "https://github.com/chaewonjeong"> <img width="200" src="https://github.com/user-attachments/assets/2386dc94-bdb2-451f-9771-71699fa214d2"></a>|<a href = "https://github.com/onegqueen"> <img width="200" src="https://github.com/user-attachments/assets/1ef89f28-6b5b-452a-93b1-241bebfb0437"></a>|
+  |   **@chaewonjeong**    |      **@onegqueen**      |
 
 ## 2. 개발 환경
 
@@ -104,13 +105,13 @@
 ## 5. 역할 분담
 #### 🎀 강지원
 - `Backend(Springboot)` / `Frontend`
-- 주요기능
+- **주요기능**
   - 사용자 인증 및 권한관리
   - 음악 추천 알고리즘 적용
     
 #### 💩정채원
 - `Backend(Springboot , Fastapi)`
-- 기능
+- **주요기능**
 
 ## 6. 개발 기간 및 작업 관리
 **개발 기간**
