@@ -105,7 +105,8 @@
                     └─example
                         └─turntable
 ```
-![image](https://github.com/user-attachments/assets/9f25d24b-1018-46f2-a0e9-cb6afac8960c)
+![image](https://github.com/user-attachments/assets/048ae03a-bdf0-4c04-8639-92805afaa236)
+
 
 
 ## 6. 역할 분담
